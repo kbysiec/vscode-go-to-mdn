@@ -27,11 +27,11 @@
     },
     "commands": [
       {
-        "command": "extension.goToMdn",
+        "command": "goToMDN.browse",
         "title": "Go to MDN: Browse"
       },
       {
-        "command": "extension.clearCache",
+        "command": "goToMDN.clearCache",
         "title": "Go to MDN: Clear cache"
       }
     ]
