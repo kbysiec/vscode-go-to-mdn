@@ -1,65 +1,47 @@
-# vscode-go-to-mdn README
+# Go to MDN
 
-This is the README for your extension "vscode-go-to-mdn". After writing up a brief description, we recommend including the following sections.
+The extension is a complement for feature added in version 1.38 (August 2019 release).
+It allows user to browse MDN web docs directly from Visual Studio Code using command palette.
+
+The data comes from [MDN Github repository](https://github.com/mdn/browser-compat-data).
+Big thanks for MDN and all contributors for great job.
+
+Due to big amount of data, to avoid delay in downloading everything at once, the requested data are lazy loaded.
+It means that they are downloaded once the user asks for them and cached after that.
+Second call for the same data will be fed from cache, not from github api.
+This approach allows to keep the extension responsive.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+The data provided in extension are limited to the ones with valid url in MDN github repository mentioned at the beginning.
+Once confirming the interested item, the default browser will be opened with direct url according your request.
 
-For example if there is an image subfolder under your extension project workspace:
+![Preview of the browse feature](img/browse.gif)
 
-\!\[feature X\]\(images/feature-x.png\)
+If you do not find what you are looking for, you could just type the term you are looking, press Enter and you MDN web docs
+website will be opened with search results for your query.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+![Preview of the search feature](img/search.gif)
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+* `goToMDN.githubPersonalAccessToken`: Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
 
-For example:
+Github API has limits for requests number. For unauthenticated users it is 60 requests per hour.
+For authenticated it equals to 5000 requests per hour.
+Most of users should not need more than 60, but in case anyone would like to browse a lot, he/she should
+provide a personal access token (in settings) generated in his/her github account to increase the available
+requests number.
 
-This extension contributes the following settings:
+## Source Code
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+The source code is available on GitHub [here](https://github.com/AgilePlayers/vscode-go-to-mdn).
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
 
-Initial release of ...
+Initial release.
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+## Author
+[Kamil Bysiec](https://github.com/kbysiec)
