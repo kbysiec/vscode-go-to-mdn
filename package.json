@@ -66,5 +66,6 @@
   },
   "bugs": {
     "url": "https://github.com/AgilePlayers/vscode-go-to-mdn/issues"
-  }
+  },
+  "icon": "img/icon.png"
 }
