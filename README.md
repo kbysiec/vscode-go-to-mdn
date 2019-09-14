@@ -1,6 +1,6 @@
 # Go to MDN
 
-The extension is a complement for feature added in version 1.38 (August 2019 release).
+The extension is a complement for feature added in version 1.38 (August 2019 release) - [MDN Reference for HTML and CSS](https://code.visualstudio.com/updates/v1_38#_mdn-reference-for-html-and-css).
 It allows user to browse MDN web docs directly from Visual Studio Code using command palette.
 
 The data comes from [MDN Github repository](https://github.com/mdn/browser-compat-data).
@@ -23,9 +23,21 @@ website will be opened with search results for your query.
 
 ![Preview of the search feature](img/search.gif)
 
+## Commands
+
+* `goToMDN.browse`
+
+  Search any text or browse available data downloaded from MDN API.
+
+* `goToMDN.clearCache`
+
+  If you know that the cached data is outdated, clear extension cache to download it one more time.
+
 ## Extension Settings
 
-* `goToMDN.githubPersonalAccessToken`: Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
+* `goToMDN.githubPersonalAccessToken`
+
+  Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
 
 Github API has limits for requests number. For unauthenticated users it is 60 requests per hour.
 For authenticated it equals to 5000 requests per hour.
@@ -38,6 +50,10 @@ requests number.
 The source code is available on GitHub [here](https://github.com/AgilePlayers/vscode-go-to-mdn).
 
 ## Release Notes
+
+### 1.0.1
+
+Polishing Readme
 
 ### 1.0.0
 
