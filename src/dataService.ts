@@ -7,7 +7,7 @@ import ItemType from "./enums/itemType";
 class DataService {
   constructor(private config: Config) {}
 
-  downloadData = async (item?: Item) => {
+  async downloadData(item?: Item) {
     if (!item) {
       item = {
         name: "root",
@@ -29,9 +29,9 @@ class DataService {
     }
 
     return items;
-  };
+  }
 
-  private parseRootDirectories = (content: any) => {
+  private parseRootDirectories(content: any) {
     const results = content.match(this.config.regex) || [];
     const data: Array<Item> = results.map((el: any) => {
       const url = this.normalizeUrl(el);
@@ -46,9 +46,9 @@ class DataService {
     });
 
     return data;
-  };
+  }
 
-  private parseDirectories = (content: any, item: Item) => {
+  private parseDirectories(content: any, item: Item) {
     const data: Array<Item> = content.map((el: any) => {
       const url = el.url;
       const type = this.getItemType(el);
@@ -65,9 +65,9 @@ class DataService {
     });
 
     return data;
-  };
+  }
 
-  private parseElements = (content: any, item: Item) => {
+  private parseElements(content: any, item: Item) {
     const data: Array<Item> = [];
     let itemElements = JSON.parse(content);
 
@@ -80,7 +80,7 @@ class DataService {
     this.addElements(data, itemElements, item);
 
     return data;
-  };
+  }
 
   private getItemElementsAtFirstItemLevel(itemElements: any) {
     while (!itemElements.hasOwnProperty(this.config.accessProperty)) {
@@ -138,7 +138,7 @@ class DataService {
     }
   }
 
-  private getItemType = (item: any) => {
+  private getItemType(item: any) {
     if (
       item.type === ItemType.Directory ||
       (item.type === ItemType.File && !item.content)
@@ -146,9 +146,9 @@ class DataService {
       return ItemType.Directory;
     }
     return ItemType.File;
-  };
+  }
 
-  private fetch = async (url: string, callback: Function) => {
+  private async fetch(url: string, callback: Function) {
     const config = vscode.workspace.getConfiguration();
     const token = config.get("goToMDN.githubPersonalAccessToken");
     const fetchConfig = {
@@ -163,16 +163,16 @@ class DataService {
       }
     );
     return await callback(response);
-  };
+  }
 
-  private getJson = async (response: Response) => {
+  private async getJson(response: Response) {
     const statusCode = response.status;
     const json = await response.json();
     if (statusCode === 200) {
       return json;
     }
     throw new Error(json.message);
-  };
+  }
 
   private getContent = async (response: Response) => {
     let json = await this.getJson(response);
@@ -181,30 +181,30 @@ class DataService {
       : json;
   };
 
-  private normalizeItemName = (name: string) => {
+  private normalizeItemName(name: string) {
     return name
       .replace(".json", "")
       .split(/(?=[A-Z][a-z])/)
       .join(" ");
-  };
+  }
 
-  private normalizeUrl = (url: string) => {
+  private normalizeUrl(url: string) {
     const splitPathName = this.getPathNameSplit(url);
     return `${this.config.urlNormalizer.to}repos/${splitPathName[0]}/${splitPathName[1]}/contents/${splitPathName[4]}${this.config.urlNormalizer.queryString}`;
-  };
+  }
 
-  private getPathNameSplit = (url: string) => {
+  private getPathNameSplit(url: string) {
     return url
       .replace(this.config.urlNormalizer.from, "")
       .replace(this.config.urlNormalizer.to, "")
       .replace(this.config.urlNormalizer.queryString, "")
       .split("/");
-  };
+  }
 
-  private getNameFromUrl = (url: string) => {
+  private getNameFromUrl(url: string) {
     const splitPathName = this.getPathNameSplit(url);
     return splitPathName[splitPathName.length - 1];
-  };
+  }
 }
 
 export default DataService;

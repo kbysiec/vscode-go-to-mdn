@@ -25,6 +25,7 @@ class ExtensionController {
         queryString: "?ref=master"
       },
       accessProperty: "__compat",
+      higherLevelLabel: '..',
       cacheKey: "cache"
     };
     this.dataService = new DataService(this.config);
@@ -106,7 +107,7 @@ class ExtensionController {
   private async getQuickPickData(value: QuickPickExtendedItem) {
     let data: Array<QuickPickExtendedItem>;
     const name = this.getNameFromQuickPickItem(value);
-    if (name === "..") {
+    if (name === this.config.higherLevelLabel) {
       data = this.getHigherLevelQpData();
     } else {
       data = await this.getLowerLevelQpData(value);
@@ -243,7 +244,7 @@ class ExtensionController {
       // tslint:disable-next-line: no-unused-expression
       data[0].parent &&
         qpData.unshift({
-          label: `$(file-directory) ..`,
+          label: `$(file-directory) ${this.config.higherLevelLabel}`,
           description: data.length ? this.prepareBreadcrumbs(data[0]) : "",
           type: ItemType.Directory,
           url: "#",

@@ -6,6 +6,7 @@ interface Config {
   rootUrl: string;
   urlNormalizer: UrlNormalizer;
   accessProperty: string;
+  higherLevelLabel: string;
   cacheKey: string;
 }
 
