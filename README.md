@@ -51,13 +51,17 @@ The source code is available on GitHub [here](https://github.com/AgilePlayers/vs
 
 ## Release Notes
 
+### 1.0.2
+
+Refactoring and improvements
+
 ### 1.0.1
 
 Polishing Readme
 
 ### 1.0.0
 
-Initial release.
+Initial release
 
 ## Author
 [Kamil Bysiec](https://github.com/kbysiec)
