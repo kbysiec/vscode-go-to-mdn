@@ -7,7 +7,7 @@ import ItemType from "./enums/itemType";
 class DataService {
   constructor(private config: Config) {}
 
-  async downloadData(item?: Item) {
+  async downloadData(item?: Item): Promise<Array<Item>> {
     if (!item) {
       item = {
         name: "root",
@@ -31,7 +31,7 @@ class DataService {
     return items;
   }
 
-  private parseRootDirectories(content: any) {
+  private parseRootDirectories(content: any): Array<Item> {
     const results = content.match(this.config.regex) || [];
     const data: Array<Item> = results.map((el: any) => {
       const url = this.normalizeUrl(el);
@@ -48,7 +48,7 @@ class DataService {
     return data;
   }
 
-  private parseDirectories(content: any, item: Item) {
+  private parseDirectories(content: any, item: Item): Array<Item> {
     const data: Array<Item> = content.map((el: any) => {
       const url = el.url;
       const type = this.getItemType(el);
@@ -67,7 +67,7 @@ class DataService {
     return data;
   }
 
-  private parseElements(content: any, item: Item) {
+  private parseElements(content: any, item: Item): Array<Item> {
     const data: Array<Item> = [];
     let itemElements = JSON.parse(content);
 
@@ -82,7 +82,7 @@ class DataService {
     return data;
   }
 
-  private getItemElementsAtFirstItemLevel(itemElements: any) {
+  private getItemElementsAtFirstItemLevel(itemElements: any): any {
     while (!itemElements.hasOwnProperty(this.config.accessProperty)) {
       const propertyName = Object.keys(itemElements)[0] || "";
       itemElements = itemElements[propertyName];
@@ -94,7 +94,7 @@ class DataService {
     data: Array<Item>,
     itemElements: any,
     item: Item
-  ) {
+  ): void {
     data.push({
       name: `${item.name} - reference`,
       url: itemElements[this.config.accessProperty].mdn_url,
@@ -106,7 +106,7 @@ class DataService {
     delete itemElements[this.config.accessProperty];
   }
 
-  private addElements(data: Array<Item>, itemElements: any, item: Item) {
+  private addElements(data: Array<Item>, itemElements: any, item: Item): void {
     for (let prop in itemElements) {
       let element = itemElements[prop];
 
@@ -138,7 +138,7 @@ class DataService {
     }
   }
 
-  private getItemType(item: any) {
+  private getItemType(item: any): ItemType {
     if (
       item.type === ItemType.Directory ||
       (item.type === ItemType.File && !item.content)
@@ -148,7 +148,7 @@ class DataService {
     return ItemType.File;
   }
 
-  private async fetch(url: string, callback: Function) {
+  private async fetch(url: string, callback: Function): Promise<any> {
     const config = vscode.workspace.getConfiguration();
     const token = config.get("goToMDN.githubPersonalAccessToken");
     const fetchConfig = {
@@ -165,7 +165,7 @@ class DataService {
     return await callback(response);
   }
 
-  private async getJson(response: Response) {
+  private async getJson(response: Response): Promise<any> {
     const statusCode = response.status;
     const json = await response.json();
     if (statusCode === 200) {
@@ -174,26 +174,26 @@ class DataService {
     throw new Error(json.message);
   }
 
-  private getContent = async (response: Response) => {
+  private getContent = async (response: Response): Promise<any> => {
     let json = await this.getJson(response);
     return json.encoding
       ? Buffer.from(json.content, json.encoding).toString("utf-8")
       : json;
   };
 
-  private normalizeItemName(name: string) {
+  private normalizeItemName(name: string): string {
     return name
       .replace(".json", "")
       .split(/(?=[A-Z][a-z])/)
       .join(" ");
   }
 
-  private normalizeUrl(url: string) {
+  private normalizeUrl(url: string): string {
     const splitPathName = this.getPathNameSplit(url);
     return `${this.config.urlNormalizer.to}repos/${splitPathName[0]}/${splitPathName[1]}/contents/${splitPathName[4]}${this.config.urlNormalizer.queryString}`;
   }
 
-  private getPathNameSplit(url: string) {
+  private getPathNameSplit(url: string): Array<string> {
     return url
       .replace(this.config.urlNormalizer.from, "")
       .replace(this.config.urlNormalizer.to, "")
@@ -201,7 +201,7 @@ class DataService {
       .split("/");
   }
 
-  private getNameFromUrl(url: string) {
+  private getNameFromUrl(url: string): string {
     const splitPathName = this.getPathNameSplit(url);
     return splitPathName[splitPathName.length - 1];
   }
