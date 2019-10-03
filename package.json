@@ -2,7 +2,7 @@
   "name": "vscode-go-to-mdn",
   "displayName": "Go to MDN",
   "description": "Browse MDN web docs directly from command palette",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "kbysiec",
   "author": {
     "name": "Kamil Bysiec",

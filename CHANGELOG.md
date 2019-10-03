@@ -6,5 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.0] - 2019-10-03
+- Fix for issue concerning getting data for Object. Property 'hasOwnProperty' was overriding the Object function
+
 ## [1.0.0] - 2019-09-13
 - Initial release

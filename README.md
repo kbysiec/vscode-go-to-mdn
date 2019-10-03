@@ -51,6 +51,10 @@ The source code is available on GitHub [here](https://github.com/AgilePlayers/vs
 
 ## Release Notes
 
+### 1.0.3
+
+Fix for issue concerning getting data for Object. Property 'hasOwnProperty' was overriding the Object function
+
 ### 1.0.2
 
 Refactoring and improvements
@@ -62,6 +66,9 @@ Polishing Readme
 ### 1.0.0
 
 Initial release
+
+## Roadmap
+* add cache auto clearing after interval defined in settings
 
 ## Author
 [Kamil Bysiec](https://github.com/kbysiec)
