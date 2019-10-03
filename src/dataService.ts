@@ -83,7 +83,9 @@ class DataService {
   }
 
   private getItemElementsAtFirstItemLevel(itemElements: any): any {
-    while (!itemElements.hasOwnProperty(this.config.accessProperty)) {
+    while (
+      !Object.hasOwnProperty.call(itemElements, this.config.accessProperty)
+    ) {
       const propertyName = Object.keys(itemElements)[0] || "";
       itemElements = itemElements[propertyName];
     }
