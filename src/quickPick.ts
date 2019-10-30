@@ -1,16 +1,23 @@
 import * as vscode from "vscode";
+const debounce = require("debounce");
 import QuickPickExtendedItem from "./interfaces/QuickPickExtendedItem";
 
 class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickExtendedItem>;
+  private items: QuickPickExtendedItem[] = [];
 
   constructor(callback: Function) {
     this.quickPick = vscode.window.createQuickPick<QuickPickExtendedItem>();
+    this.quickPick.matchOnDescription = true;
     this.quickPick.onDidHide(() => this.quickPick.dispose());
     this.quickPick.onDidAccept(() => {
       const selected = this.quickPick.selectedItems[0];
       this.submit(selected, callback);
     });
+    this.quickPick.onDidChangeValue((value: string) => {
+      this.quickPick.items = [];
+    });
+    this.quickPick.onDidChangeValue(debounce(this.onDidChangeValue, 350));
   }
 
   show(): void {
@@ -21,11 +28,12 @@ class QuickPick {
     this.quickPick.hide();
   }
 
-  loadItems(items: Array<QuickPickExtendedItem>): void {
+  loadItems(items: QuickPickExtendedItem[]): void {
     this.quickPick.items = items;
+    this.items = items;
   }
 
-  getItems(): Array<QuickPickExtendedItem> {
+  getItems(): QuickPickExtendedItem[] {
     return [...this.quickPick.items];
   }
 
@@ -51,6 +59,18 @@ class QuickPick {
     if (callback) {
       callback(value);
     }
+  }
+
+  private onDidChangeValue = (value: string) => {
+    this.quickPick.busy = true;
+    const items = this.filter(value);
+    this.quickPick.items = items;
+    this.quickPick.busy = false;
+  }
+
+  private filter(value: string): QuickPickExtendedItem[] {
+    return this.items.filter(item => item.label.toLowerCase().includes(value.toLowerCase()) ||
+      item.description!.toLowerCase().includes(value.toLowerCase()));
   }
 }
 

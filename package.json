@@ -31,6 +31,11 @@
           "type": "string",
           "default": null,
           "description": "Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour."
+        },
+        "goToMDN.shouldDisplayFlatList": {
+          "type": "boolean",
+          "default": true,
+          "description": "Should all anchors be displayed as flat list at one level. Requires provided github personal access token."
         }
       }
     },
@@ -65,6 +70,7 @@
     "vscode-test": "^1.2.0"
   },
   "dependencies": {
+    "debounce": "^1.2.0",
     "node-fetch": "^2.6.0",
     "open": "^6.4.0"
   },

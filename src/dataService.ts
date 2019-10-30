@@ -1,13 +1,13 @@
-import * as vscode from "vscode";
 import fetch, { Response } from "node-fetch";
 import Config from "./interfaces/config";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
+import { getConfiguration } from "./common";
 
 class DataService {
-  constructor(private config: Config) {}
+  constructor(private config: Config) { }
 
-  async downloadData(item?: Item): Promise<Array<Item>> {
+  async downloadData(item?: Item): Promise<Item[]> {
     if (!item) {
       item = {
         name: "root",
@@ -17,7 +17,7 @@ class DataService {
       };
     }
 
-    let items: Array<Item>;
+    let items: Item[];
     const content = await this.fetch(item.url, this.getContent);
 
     if (item.name === "root") {
@@ -31,9 +31,31 @@ class DataService {
     return items;
   }
 
-  private parseRootDirectories(content: any): Array<Item> {
+  async downloadFlatData(): Promise<Item[]> {
+    const json = await this.fetch(this.config.allFilesUrl, this.getJson);
+    const items: Item[] = this.parseFlatElements(json);
+    return items;
+  }
+
+  private parseFlatElements(data: any): Item[] {
+    let items: Item[] = [];
+
+    if (data.items) {
+      items = data.items.map((el: any) => ({
+        name: el.name,
+        url: el.url,
+        parent: el.parent,
+        type: ItemType.File,
+        breadcrumbs: [...el.breadcrumbs]
+      }));
+    }
+
+    return items;
+  }
+
+  private parseRootDirectories(content: any): Item[] {
     const results = content.match(this.config.regex) || [];
-    const data: Array<Item> = results.map((el: any) => {
+    const data: Item[] = results.map((el: any) => {
       const url = this.normalizeUrl(el);
       const type = ItemType.Directory;
       const name = this.getNameFromUrl(url);
@@ -48,8 +70,8 @@ class DataService {
     return data;
   }
 
-  private parseDirectories(content: any, item: Item): Array<Item> {
-    const data: Array<Item> = content.map((el: any) => {
+  private parseDirectories(content: any, item: Item): Item[] {
+    const data: Item[] = content.map((el: any) => {
       const url = el.url;
       const type = this.getItemType(el);
       let name = this.getNameFromUrl(url);
@@ -67,8 +89,8 @@ class DataService {
     return data;
   }
 
-  private parseElements(content: any, item: Item): Array<Item> {
-    const data: Array<Item> = [];
+  private parseElements(content: any, item: Item): Item[] {
+    const data: Item[] = [];
     let itemElements = JSON.parse(content);
 
     if (!item.parent || !item.rootParent) {
@@ -93,7 +115,7 @@ class DataService {
   }
 
   private addReferenceElement(
-    data: Array<Item>,
+    data: Item[],
     itemElements: any,
     item: Item
   ): void {
@@ -108,7 +130,7 @@ class DataService {
     delete itemElements[this.config.accessProperty];
   }
 
-  private addElements(data: Array<Item>, itemElements: any, item: Item): void {
+  private addElements(data: Item[], itemElements: any, item: Item): void {
     for (let prop in itemElements) {
       let element = itemElements[prop];
 
@@ -151,8 +173,10 @@ class DataService {
   }
 
   private async fetch(url: string, callback: Function): Promise<any> {
-    const config = vscode.workspace.getConfiguration();
-    const token = config.get("goToMDN.githubPersonalAccessToken");
+    const token = getConfiguration<string>(
+      "goToMDN.githubPersonalAccessToken",
+      ""
+    );
     const fetchConfig = {
       headers: {
         Authorization: token ? `token ${token}` : "",
@@ -195,7 +219,7 @@ class DataService {
     return `${this.config.urlNormalizer.to}repos/${splitPathName[0]}/${splitPathName[1]}/contents/${splitPathName[4]}${this.config.urlNormalizer.queryString}`;
   }
 
-  private getPathNameSplit(url: string): Array<string> {
+  private getPathNameSplit(url: string): string[] {
     return url
       .replace(this.config.urlNormalizer.from, "")
       .replace(this.config.urlNormalizer.to, "")

@@ -7,7 +7,7 @@ interface QuickPickExtendedItem extends QuickPickItem {
   type: ItemType;
   parent?: Item;
   rootParent?: Item;
-  breadcrumbs: Array<string>;
+  breadcrumbs: string[];
 }
 
 export default QuickPickExtendedItem;

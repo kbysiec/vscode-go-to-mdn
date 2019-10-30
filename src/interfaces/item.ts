@@ -6,7 +6,7 @@ interface Item {
   parent?: Item;
   rootParent?: Item;
   type: ItemType;
-  breadcrumbs: Array<string>;
+  breadcrumbs: string[];
 }
 
 export default Item;

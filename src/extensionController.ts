@@ -6,11 +6,12 @@ import QuickPick from "./quickPick";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
+import { getConfiguration } from "./common";
 
 class ExtensionController {
   private config: Config;
   private dataService: DataService;
-  private higherLevelData: Array<QuickPickExtendedItem[]>;
+  private higherLevelData: QuickPickExtendedItem[][];
   private quickPick: QuickPick;
 
   constructor(private extensionContext: vscode.ExtensionContext) {
@@ -19,6 +20,7 @@ class ExtensionController {
       searchUrl: "https://developer.mozilla.org/en-US/search",
       rootUrl:
         "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=master",
+      allFilesUrl: "http://api.agileplayers.com/api/mdn-data",
       urlNormalizer: {
         from: "https://github.com/",
         to: "https://api.github.com/",
@@ -26,7 +28,8 @@ class ExtensionController {
       },
       accessProperty: "__compat",
       higherLevelLabel: "..",
-      cacheKey: "cache"
+      cacheKey: "cache",
+      filesCacheKey: "filesCache"
     };
     this.dataService = new DataService(this.config);
     this.quickPick = new QuickPick(this.onQuickPickSubmit);
@@ -69,6 +72,59 @@ class ExtensionController {
     this.quickPick.hide();
   }
 
+  async getAllData(
+    progress: any
+  ): Promise<void> {
+    progress &&
+      progress.report({
+        increment: 30
+      });
+    const data = await this.downloadFlatData();
+
+    progress &&
+      progress.report({
+        increment: 70
+      });
+  }
+
+  async cacheAllDataWithProgress() {
+    const shouldDisplayFlatList = getConfiguration<boolean>(
+      "goToMDN.shouldDisplayFlatList",
+      false
+    );
+    const token = getConfiguration<string>(
+      "goToMDN.githubPersonalAccessToken",
+      ""
+    );
+
+    const dataFromCache = this.getFlatFromCache();
+    const areCached = dataFromCache ? dataFromCache.length > 0 : false;
+
+    if (shouldDisplayFlatList && token && !areCached) {
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "Downloading and indexing all links for MDN...",
+          cancellable: false
+        },
+        async (progress: any) => {
+          await this.cacheAllData(progress);
+          await new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+            }, 250);
+          });
+        }
+      );
+    }
+  }
+
+  async cacheAllData(progress: any) {
+    await this.getAllData(
+      progress
+    );
+  }
+
   private isValueStringType(value: QuickPickExtendedItem | string): boolean {
     return typeof value === "string";
   }
@@ -84,9 +140,17 @@ class ExtensionController {
   private async loadQuickPickData(
     value?: QuickPickExtendedItem
   ): Promise<void> {
+    const shouldDisplayFlatList = getConfiguration<boolean>(
+      "goToMDN.shouldDisplayFlatList",
+      false
+    );
+
     this.quickPick.showLoading(true);
-    let data: Array<QuickPickExtendedItem>;
-    if (value) {
+    let data: QuickPickExtendedItem[];
+
+    if (shouldDisplayFlatList) {
+      data = await this.getFlatQuickPickData();
+    } else if (value) {
       data = await this.getQuickPickData(value);
     } else {
       data = await this.getQuickPickRootData();
@@ -102,6 +166,19 @@ class ExtensionController {
     this.higherLevelData.length
       ? this.clearQuickPickPlaceholder()
       : this.setQuickPickPlaceholder();
+  }
+
+  private async getFlatQuickPickData(): Promise<QuickPickExtendedItem[]> {
+    let data = this.getFlatFromCache();
+    const areCached = data ? data.length > 0 : false;
+
+    if (!areCached) {
+      await this.cacheAllDataWithProgress();
+      data = this.getFlatFromCache();
+    }
+
+    const qpData = data ? this.prepareQpData(data) : [];
+    return qpData;
   }
 
   private async getQuickPickRootData(): Promise<QuickPickExtendedItem[]> {
@@ -186,6 +263,12 @@ class ExtensionController {
     return data;
   }
 
+  private async downloadFlatData(): Promise<Item[]> {
+    const data = await this.dataService.downloadFlatData();
+    this.updateFilesCache(data);
+    return data;
+  }
+
   private removeDataWithEmptyUrl(
     data: QuickPickExtendedItem[]
   ): QuickPickExtendedItem[] {
@@ -218,42 +301,74 @@ class ExtensionController {
     if (!cache) {
       cache = {};
     }
+
     const key = item ? item.url : this.config.rootUrl;
     cache[key] = data;
     this.extensionContext.globalState.update(this.config.cacheKey, cache);
   }
 
   clearCache(): void {
+    this.extensionContext.globalState.update(this.config.filesCacheKey, {});
     this.extensionContext.globalState.update(this.config.cacheKey, {});
   }
 
+  private getFlatFromCache(): Item[] | undefined {
+    const cache: any = this.extensionContext.globalState.get(
+      this.config.filesCacheKey
+    );
+    let cachedData = [];
+    if (cache) {
+      const key = "files";
+      cachedData = cache[key];
+    }
+    return cachedData;
+  }
+
+  private updateFilesCache(data: Item[]): void {
+    let cache: any = this.extensionContext.globalState.get(
+      this.config.filesCacheKey
+    );
+    if (!cache) {
+      cache = {};
+    }
+
+    cache["files"] = data;
+
+    this.extensionContext.globalState.update(this.config.filesCacheKey, cache);
+  }
+
   private prepareQpData(data: Item[]): QuickPickExtendedItem[] {
-    const qpData: QuickPickExtendedItem[] = this.mapDataToQpData(data);
-    this.addBackwardNavigationItem(data, qpData);
+    const shouldDisplayFlatList = getConfiguration<boolean>(
+      "goToMDN.shouldDisplayFlatList",
+      false
+    );
+    const qpData: QuickPickExtendedItem[] = this.mapDataToQpData(data, shouldDisplayFlatList);
+    !shouldDisplayFlatList && this.addBackwardNavigationItem(data, qpData);
     return qpData;
   }
 
-  private mapDataToQpData(data: Item[]): QuickPickExtendedItem[] {
+  private mapDataToQpData(data: Item[], isFlat: boolean = false): QuickPickExtendedItem[] {
     return data.map(el => {
       const icon =
         el.type === ItemType.Directory ? "$(file-directory)" : "$(link)";
+      const description = isFlat ? el.breadcrumbs.join(" ") : undefined;
       return {
         label: `${icon} ${el.name}`,
         url: el.url,
         parent: el.parent,
         rootParent: el.rootParent,
         type: el.type,
-        breadcrumbs: el.breadcrumbs
+        breadcrumbs: el.breadcrumbs,
+        description,
       };
     });
   }
 
   private addBackwardNavigationItem(
-    data: Array<Item>,
-    qpData: Array<QuickPickExtendedItem>
+    data: Item[],
+    qpData: QuickPickExtendedItem[]
   ): void {
     if (data.length) {
-      // tslint:disable-next-line: no-unused-expression
       data[0].parent &&
         qpData.unshift({
           label: `$(file-directory) ${this.config.higherLevelLabel}`,

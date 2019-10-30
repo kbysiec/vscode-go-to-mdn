@@ -15,8 +15,8 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Go to MDN extension: cache cleared"
       );
-    })
+    }),
   );
 }
 
-export function deactivate() {}
+export function deactivate() { }
