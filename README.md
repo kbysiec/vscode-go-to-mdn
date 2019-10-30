@@ -16,7 +16,15 @@ This approach allows to keep the extension responsive.
 The data provided in extension are limited to the ones with valid url in MDN github repository mentioned at the beginning.
 Once confirming the interested item, the default browser will be opened with direct url according your request.
 
+You have two ways to browse the results:
+
+* tree navigation:
+
 ![Preview of the browse feature](img/browse.gif)
+
+* flat navigation:
+
+![Preview of the browse feature](img/browse_flat.gif)
 
 If you do not find what you are looking for, you could just type the term you are looking, press Enter and you MDN web docs
 website will be opened with search results for your query.
@@ -37,7 +45,7 @@ website will be opened with search results for your query.
 
 * `goToMDN.githubPersonalAccessToken`
 
-  Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
+Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
 
 Github API has limits for requests number. For unauthenticated users it is 60 requests per hour.
 For authenticated it equals to 5000 requests per hour.
@@ -45,11 +53,21 @@ Most of users should not need more than 60, but in case anyone would like to bro
 provide a personal access token (in settings) generated in his/her github account to increase the available
 requests number.
 
+* `goToMDN.shouldDisplayFlatList`
+
+Flag to determine if the results should be displayed as flat list or as tree with navigation.
+Default value is `true`.
+
+
 ## Source Code
 
 The source code is available on GitHub [here](https://github.com/AgilePlayers/vscode-go-to-mdn).
 
 ## Release Notes
+
+### 1.1.0
+
+Added feature allowing browsing flat list instead navigation only through tree
 
 ### 1.0.3
 
