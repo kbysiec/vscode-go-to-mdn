@@ -1,22 +1,22 @@
 import fetch, { Response } from "node-fetch";
-import Config from "./interfaces/config";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import Parser from './parser';
-import { getConfiguration } from "./common";
+import { getConfiguration } from "./utils";
+import { config } from './config';
 
 class DataService {
   private parser: Parser;
 
-  constructor(private config: Config) {
+  constructor() {
     this.parser = new Parser();
   }
 
-  async downloadData(item?: Item): Promise<Item[]> {
+  async downloadTreeData(item?: Item): Promise<Item[]> {
     if (!item) {
       item = {
         name: "root",
-        url: this.config.rootUrl,
+        url: config.rootUrl,
         type: ItemType.Directory,
         breadcrumbs: []
       };
@@ -37,7 +37,7 @@ class DataService {
   }
 
   async downloadFlatData(): Promise<Item[]> {
-    const json = await this.fetch(this.config.allFilesUrl, this.getJson);
+    const json = await this.fetch(config.allFilesUrl, this.getJson);
     const items: Item[] = this.parser.parseFlatElements(json);
     return items;
   }
