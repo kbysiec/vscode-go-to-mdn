@@ -14,7 +14,7 @@
         "--extensionDevelopmentPath=${workspaceFolder}",
         "--disable-extensions"
       ],
-      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "preLaunchTask": "npm: watch"
     },
     {
@@ -24,10 +24,10 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
+        "--extensionTestsPath=${workspaceFolder}/dist/test/index",
         "--disable-extensions"
       ],
-      "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+      "outFiles": ["${workspaceFolder}/dist/test/**/*.js"],
       "preLaunchTask": "npm: watch"
     }
   ]

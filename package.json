@@ -53,19 +53,26 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": " rimraf ./dist/ && tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
     "test": "node ./dist/test/runTest.js"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.4",
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.5",
     "@types/node-fetch": "^2.5.0",
+    "@types/sinon": "^7.5.0",
     "@types/vscode": "^1.38.0",
+    "chai": "^4.2.0",
+    "decache": "^4.5.1",
     "glob": "^7.1.4",
+    "istanbul": "^0.4.5",
     "mocha": "^6.2.0",
+    "remap-istanbul": "^0.13.0",
+    "sinon": "^7.5.0",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3",
     "vscode-test": "^1.2.0"
