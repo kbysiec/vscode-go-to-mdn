@@ -260,7 +260,7 @@ describe("Utils", function () {
         items = [
           { name: "sub-label", url: "#", type: ItemType.File, breadcrumbs: ["api", "test-label", "sub-label"] },
           { name: "sub-label 2", url: "https://sub-label-2.com", type: ItemType.File, breadcrumbs: ["api", "test-label", "sub-label 2"] }
-        ]
+        ];
       });
 
       it("should function exist", function () {

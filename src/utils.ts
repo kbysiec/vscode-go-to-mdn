@@ -6,35 +6,35 @@ import { config } from "./config";
 
 export const isValueStringType = (value: QuickPickExtendedItem | string): boolean => {
   return typeof value === "string";
-}
+};
 
 export const isValueFileType = (value: QuickPickExtendedItem): boolean => {
   return value.type === ItemType.File;
-}
+};
 
 export const getSearchUrl = (value: string): string => {
   const queryString = value.split(" ").join("+");
   const url = `${config.searchUrl}?q=${queryString}`;
   return url;
-}
+};
 
 export const getNameFromQuickPickItem = (item: QuickPickExtendedItem): string => {
   return item.label
     .split(" ")
     .slice(1)
     .join(" ");
-}
+};
 
 export const removeDataWithEmptyUrl = (
   data: QuickPickExtendedItem[]
 ): QuickPickExtendedItem[] => {
   return data.filter(element => element.url);
-}
+};
 
 export const prepareBreadcrumbs = (item: Item | QuickPickExtendedItem, isFlat: boolean = false): string => {
   const breadcrumbs = isFlat ? item.breadcrumbs : [...item.breadcrumbs].slice(0, -1);
   return breadcrumbs.join(`${isFlat ? " " : " / "}`);
-}
+};
 
 export const mapDataToQpData = (data: Item[], isFlat: boolean = false): QuickPickExtendedItem[] => {
   return data.map(el => {
@@ -51,7 +51,7 @@ export const mapDataToQpData = (data: Item[], isFlat: boolean = false): QuickPic
       description,
     };
   });
-}
+};
 
 export const mapQpItemToItem = (qpItem: QuickPickExtendedItem): Item => {
   return {
@@ -62,7 +62,7 @@ export const mapQpItemToItem = (qpItem: QuickPickExtendedItem): Item => {
     rootParent: qpItem.rootParent,
     breadcrumbs: qpItem.breadcrumbs
   };
-}
+};
 
 export const addBackwardNavigationItem = (
   qpData: QuickPickExtendedItem[]
@@ -74,14 +74,14 @@ export const addBackwardNavigationItem = (
     url: "#",
     breadcrumbs: []
   });
-}
+};
 
 export const prepareQpData = (data: Item[]): QuickPickExtendedItem[] => {
   const shouldDisplayFlatListFlag = shouldDisplayFlatList();
   const qpData: QuickPickExtendedItem[] = mapDataToQpData(data, shouldDisplayFlatListFlag);
   !shouldDisplayFlatListFlag && addBackwardNavigationItem(qpData);
   return qpData;
-}
+};
 
 export const getConfiguration = <T>(section: string, defaultValue: T): T => {
   const config = vscode.workspace.getConfiguration("");
