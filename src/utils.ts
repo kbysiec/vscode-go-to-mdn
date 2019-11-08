@@ -2,45 +2,45 @@ import * as vscode from "vscode";
 import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
-import { config } from './config';
+import { config } from "./config";
 
-export function getConfiguration<T>(section: string, defaultValue: T): T {
-  const config = vscode.workspace.getConfiguration("");
-  return config.get<T>(section, defaultValue);
-}
-
-export function isValueStringType(value: QuickPickExtendedItem | string): boolean {
+export const isValueStringType = (value: QuickPickExtendedItem | string): boolean => {
   return typeof value === "string";
 }
 
-export function isValueFileType(value: QuickPickExtendedItem): boolean {
+export const isValueFileType = (value: QuickPickExtendedItem): boolean => {
   return value.type === ItemType.File;
 }
 
-export function getSearchUrl(value: string): string {
+export const getSearchUrl = (value: string): string => {
   const queryString = value.split(" ").join("+");
   const url = `${config.searchUrl}?q=${queryString}`;
   return url;
 }
 
-export function getNameFromQuickPickItem(item: QuickPickExtendedItem): string {
+export const getNameFromQuickPickItem = (item: QuickPickExtendedItem): string => {
   return item.label
     .split(" ")
     .slice(1)
     .join(" ");
 }
 
-export function removeDataWithEmptyUrl(
+export const removeDataWithEmptyUrl = (
   data: QuickPickExtendedItem[]
-): QuickPickExtendedItem[] {
+): QuickPickExtendedItem[] => {
   return data.filter(element => element.url);
 }
 
-export function mapDataToQpData(data: Item[], isFlat: boolean = false): QuickPickExtendedItem[] {
+export const prepareBreadcrumbs = (item: Item | QuickPickExtendedItem, isFlat: boolean = false): string => {
+  const breadcrumbs = isFlat ? item.breadcrumbs : [...item.breadcrumbs].slice(0, -1);
+  return breadcrumbs.join(`${isFlat ? " " : " / "}`);
+}
+
+export const mapDataToQpData = (data: Item[], isFlat: boolean = false): QuickPickExtendedItem[] => {
   return data.map(el => {
     const icon =
       el.type === ItemType.Directory ? "$(file-directory)" : "$(link)";
-    const description = isFlat ? el.breadcrumbs.join(" ") : undefined;
+    const description = isFlat ? prepareBreadcrumbs(el, isFlat) : undefined;
     return {
       label: `${icon} ${el.name}`,
       url: el.url,
@@ -53,7 +53,7 @@ export function mapDataToQpData(data: Item[], isFlat: boolean = false): QuickPic
   });
 }
 
-export function mapQpItemToItem(qpItem: QuickPickExtendedItem): Item {
+export const mapQpItemToItem = (qpItem: QuickPickExtendedItem): Item => {
   return {
     name: getNameFromQuickPickItem(qpItem),
     url: qpItem.url,
@@ -64,44 +64,40 @@ export function mapQpItemToItem(qpItem: QuickPickExtendedItem): Item {
   };
 }
 
-export function addBackwardNavigationItem(
-  data: Item[],
+export const addBackwardNavigationItem = (
   qpData: QuickPickExtendedItem[]
-): void {
-  if (data.length) {
-    data[0].parent &&
-      qpData.unshift({
-        label: `$(file-directory) ${config.higherLevelLabel}`,
-        description: data.length ? prepareBreadcrumbs(data[0]) : "",
-        type: ItemType.Directory,
-        url: "#",
-        breadcrumbs: []
-      });
-  }
+): void => {
+  qpData.unshift({
+    label: `$(file-directory) ${config.higherLevelLabel}`,
+    description: prepareBreadcrumbs(qpData[0]),
+    type: ItemType.Directory,
+    url: "#",
+    breadcrumbs: []
+  });
 }
 
-export function prepareBreadcrumbs(item: Item): string {
-  const breadcrumbs = [...item.breadcrumbs].slice(0, -1);
-  return breadcrumbs.join(" / ");
-}
-
-export function prepareQpData(data: Item[]): QuickPickExtendedItem[] {
+export const prepareQpData = (data: Item[]): QuickPickExtendedItem[] => {
   const shouldDisplayFlatListFlag = shouldDisplayFlatList();
   const qpData: QuickPickExtendedItem[] = mapDataToQpData(data, shouldDisplayFlatListFlag);
-  !shouldDisplayFlatListFlag && addBackwardNavigationItem(data, qpData);
+  !shouldDisplayFlatListFlag && addBackwardNavigationItem(qpData);
   return qpData;
 }
 
-export function shouldDisplayFlatList(): boolean {
+export const getConfiguration = <T>(section: string, defaultValue: T): T => {
+  const config = vscode.workspace.getConfiguration("");
+  return config.get<T>(section, defaultValue);
+};
+
+export const shouldDisplayFlatList = (): boolean => {
   return getConfiguration<boolean>(
     "goToMDN.shouldDisplayFlatList",
     false
   );
-}
+};
 
-export function getToken(): string {
+export const getToken = (): string => {
   return getConfiguration<string>(
     "goToMDN.githubPersonalAccessToken",
     ""
   );
-}
+};
