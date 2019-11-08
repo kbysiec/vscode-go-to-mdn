@@ -6,18 +6,25 @@ class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickExtendedItem>;
   private items: QuickPickExtendedItem[] = [];
 
-  constructor(callback: Function) {
+  constructor(onQuickPickSubmitCallback: Function, shouldDebounce: boolean = false) {
     this.quickPick = vscode.window.createQuickPick<QuickPickExtendedItem>();
     this.quickPick.matchOnDescription = true;
     this.quickPick.onDidHide(() => this.quickPick.dispose());
     this.quickPick.onDidAccept(() => {
       const selected = this.quickPick.selectedItems[0];
-      this.submit(selected, callback);
+      this.submit(selected, onQuickPickSubmitCallback);
     });
-    this.quickPick.onDidChangeValue((value: string) => {
-      this.quickPick.items = [];
-    });
-    this.quickPick.onDidChangeValue(debounce(this.onDidChangeValue, 350));
+
+    if (shouldDebounce) {
+      this.quickPick.onDidChangeValue((value: string) => {
+        this.quickPick.items = [];
+      });
+      this.quickPick.onDidChangeValue(debounce(this.onDidChangeValue, 350));
+    }
+    else {
+      this.quickPick.onDidChangeValue(this.onDidChangeValue);
+    }
+
   }
 
   show(): void {

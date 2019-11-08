@@ -16,7 +16,7 @@ class ExtensionController {
 
   constructor(private extensionContext: vscode.ExtensionContext) {
     this.dataService = new DataService();
-    this.quickPick = new QuickPick(this.onQuickPickSubmit);
+    this.quickPick = new QuickPick(this.onQuickPickSubmit, shouldDisplayFlatList());
     this.higherLevelData = [];
     this.cache = new Cache(this.extensionContext);
   }
