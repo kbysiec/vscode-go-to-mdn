@@ -40,7 +40,7 @@ class Parser {
     const data: Item[] = [];
     let itemElements = JSON.parse(content);
 
-    if (!item.parent || !item.rootParent) {
+    if (!item.parent) {
       return data;
     }
 
@@ -54,13 +54,12 @@ class Parser {
   parseDirectories(content: any, item: Item): Item[] {
     const data: Item[] = content.map((el: any) => {
       const url = el.url;
-      const type = this.getItemType(el);
       let name = this.getNameFromUrl(url);
       name = this.normalizeItemName(name);
       return {
         name,
         url,
-        type,
+        type: ItemType.Directory,
         parent: item,
         rootParent: item.parent || item,
         breadcrumbs: [...item.breadcrumbs, name]
@@ -90,7 +89,7 @@ class Parser {
 
   private getItemElementsAtFirstItemLevel(itemElements: any): any {
     while (
-      !Object.hasOwnProperty.call(itemElements, config.accessProperty)
+      itemElements && !Object.hasOwnProperty.call(itemElements, config.accessProperty)
     ) {
       const propertyName = Object.keys(itemElements)[0] || "";
       itemElements = itemElements[propertyName];
@@ -105,13 +104,13 @@ class Parser {
   ): void {
     data.push({
       name: `${item.name} - reference`,
-      url: itemElements[config.accessProperty].mdn_url,
+      url: (itemElements && itemElements[config.accessProperty]) && itemElements[config.accessProperty].mdn_url || "",
       parent: item,
       type: ItemType.File,
       breadcrumbs: [...item.breadcrumbs, item.name]
     });
 
-    delete itemElements[config.accessProperty];
+    itemElements && delete itemElements[config.accessProperty];
   }
 
   private addElements(data: Item[], itemElements: any, item: Item): void {
@@ -151,16 +150,6 @@ class Parser {
       .replace(".json", "")
       .split(/(?=[A-Z][a-z])/)
       .join(" ");
-  }
-
-  private getItemType(item: any): ItemType {
-    if (
-      item.type === ItemType.Directory ||
-      (item.type === ItemType.File && !item.content)
-    ) {
-      return ItemType.Directory;
-    }
-    return ItemType.File;
   }
 }
 
