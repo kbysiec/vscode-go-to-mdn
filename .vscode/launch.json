@@ -28,7 +28,8 @@
         "--disable-extensions"
       ],
       "outFiles": ["${workspaceFolder}/dist/test/**/*.js"],
-      "preLaunchTask": "npm: watch"
+      "preLaunchTask": "npm: watch",
+      "postDebugTask": "npm: cov:fixpaths"
     }
   ]
 }
