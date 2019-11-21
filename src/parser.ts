@@ -10,7 +10,7 @@ class Parser {
       items = data.items.map((el: any) => ({
         name: el.name,
         url: el.url,
-        parent: el.parent,
+        parent: el.parent ? el.parent : undefined,
         type: ItemType.File,
         breadcrumbs: [...el.breadcrumbs]
       }));
