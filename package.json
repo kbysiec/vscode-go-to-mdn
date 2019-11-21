@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.4",
+    "@types/chai-as-promised": "^7.1.2",
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.5",
@@ -68,7 +69,9 @@
     "@types/sinon": "^7.5.0",
     "@types/vscode": "^1.38.0",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "decache": "^4.5.1",
+    "fetch-mock": "^8.0.0",
     "glob": "^7.1.4",
     "gulp": "^4.0.2",
     "gulp-replace": "^1.0.0",
