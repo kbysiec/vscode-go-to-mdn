@@ -1,9 +1,9 @@
 import fetch, { Response } from "node-fetch";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
-import Parser from './parser';
+import Parser from "./parser";
 import { getConfiguration } from "./utils";
-import { config } from './config';
+import { config } from "./config";
 
 class DataService {
   private parser: Parser;
@@ -30,6 +30,7 @@ class DataService {
     } else if (typeof content === "string") {
       items = this.parser.parseElements(content, item);
     } else {
+      console.log("***", content);
       items = this.parser.parseDirectories(content, item);
     }
 
@@ -63,11 +64,11 @@ class DataService {
 
   private async getJson(response: Response): Promise<any> {
     const statusCode = response.status;
-    const json = await response.json();
-    if (statusCode === 200) {
-      return json;
+    const statusText = response.statusText;
+    if (statusCode !== 200) {
+      throw new Error(statusText);
     }
-    throw new Error(json.message);
+    return await response.json();
   }
 
   private getContent = async (response: Response): Promise<any> => {
