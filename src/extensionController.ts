@@ -4,9 +4,9 @@ import DataService from "./dataService";
 import QuickPick from "./quickPick";
 import Item from "./interfaces/item";
 import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
-import { getConfiguration, isValueStringType, isValueFileType, getSearchUrl, getNameFromQuickPickItem, mapDataToQpData, mapQpItemToItem, addBackwardNavigationItem, removeDataWithEmptyUrl, prepareQpData, shouldDisplayFlatList, getToken } from "./utils";
-import { config } from './config';
-import Cache from './cache';
+import * as utils from "./utils";
+import { config } from "./config";
+import Cache from "./cache";
 
 class ExtensionController {
   private dataService: DataService;
@@ -16,27 +16,39 @@ class ExtensionController {
 
   constructor(private extensionContext: vscode.ExtensionContext) {
     this.dataService = new DataService();
-    this.quickPick = new QuickPick(this.onQuickPickSubmit, shouldDisplayFlatList());
+    this.quickPick = new QuickPick(
+      this.onQuickPickSubmit,
+      utils.shouldDisplayFlatList()
+    );
     this.higherLevelData = [];
     this.cache = new Cache(this.extensionContext);
   }
 
-  onQuickPickSubmit = async (
+  async showQuickPick(): Promise<void> {
+    await this.loadQuickPickData();
+    this.quickPick.show();
+  }
+
+  clearCache(): void {
+    this.cache.clearCache();
+  }
+
+  private onQuickPickSubmit = async (
     value: QuickPickExtendedItem | string
   ): Promise<void> => {
     try {
       let url: string;
-      if (isValueStringType(value)) {
+      if (utils.isValueStringType(value)) {
         if (!this.isHigherLevelDataEmpty()) {
           return;
         }
         value = value as string;
-        url = getSearchUrl(value);
+        url = utils.getSearchUrl(value);
         url && (await this.openInBrowser(url));
       } else {
         value = value as QuickPickExtendedItem;
 
-        if (isValueFileType(value)) {
+        if (utils.isValueFileType(value)) {
           let url = value.url;
           url && (await this.openInBrowser(url));
         } else {
@@ -48,18 +60,7 @@ class ExtensionController {
     }
   };
 
-  async showQuickPick(): Promise<void> {
-    await this.loadQuickPickData();
-    this.quickPick.show();
-  }
-
-  hideQuickPick(): void {
-    this.quickPick.hide();
-  }
-
-  async getFlatFilesData(
-    progress: any
-  ): Promise<void> {
+  private async getFlatFilesData(progress: any): Promise<void> {
     progress &&
       progress.report({
         increment: 30
@@ -73,37 +74,33 @@ class ExtensionController {
       });
   }
 
-  async cacheFlatFilesWithProgress() {
+  private async cacheFlatFilesWithProgressTask(progress: any) {
+    await this.cacheFlatFilesData(progress);
+    await new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 250);
+    });
+  }
+
+  private async cacheFlatFilesWithProgress() {
     const dataFromCache = this.cache.getFlatFilesFromCache();
     const areCached = dataFromCache ? dataFromCache.length > 0 : false;
 
-    if (shouldDisplayFlatList() && getToken() && !areCached) {
+    if (utils.shouldDisplayFlatList() && utils.getToken() && !areCached) {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
           title: "Downloading and indexing data for MDN...",
           cancellable: false
         },
-        async (progress: any) => {
-          await this.cacheFlatFilesData(progress);
-          await new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-            }, 250);
-          });
-        }
+        this.cacheFlatFilesWithProgressTask.bind(this)
       );
     }
   }
 
-  async cacheFlatFilesData(progress: any) {
-    await this.getFlatFilesData(
-      progress
-    );
-  }
-
-  clearCache(): void {
-    this.cache.clearCache();
+  private async cacheFlatFilesData(progress: any) {
+    await this.getFlatFilesData(progress);
   }
 
   private isHigherLevelDataEmpty(): boolean {
@@ -116,7 +113,7 @@ class ExtensionController {
     this.quickPick.showLoading(true);
     let data: QuickPickExtendedItem[];
 
-    if (shouldDisplayFlatList()) {
+    if (utils.shouldDisplayFlatList()) {
       data = await this.getFlatQuickPickData();
     } else if (value) {
       data = await this.getQuickPickData(value);
@@ -145,7 +142,7 @@ class ExtensionController {
       data = this.cache.getFlatFilesFromCache();
     }
 
-    const qpData = data ? prepareQpData(data) : [];
+    const qpData = data ? utils.prepareQpData(data) : [];
     return qpData;
   }
 
@@ -157,7 +154,7 @@ class ExtensionController {
     value: QuickPickExtendedItem
   ): Promise<QuickPickExtendedItem[]> {
     let data: QuickPickExtendedItem[];
-    const name = getNameFromQuickPickItem(value);
+    const name = utils.getNameFromQuickPickItem(value);
     if (name === config.higherLevelLabel) {
       data = this.getHigherLevelQpData();
     } else {
@@ -181,13 +178,13 @@ class ExtensionController {
   ): Promise<QuickPickExtendedItem[]> {
     let data: QuickPickExtendedItem[];
     data = await this.getTreeData(value);
-    data = removeDataWithEmptyUrl(data);
+    data = utils.removeDataWithEmptyUrl(data);
     return data;
   }
 
   private setQuickPickPlaceholder(): void {
     this.quickPick.setPlaceholder(
-      "choose category from the list or type anything to search"
+      "choose item from the list or type anything to search"
     );
   }
 
@@ -201,10 +198,10 @@ class ExtensionController {
     let data = this.cache.getTreeItemsByUrlFromCache(qpItem);
 
     if (!data || !data.length) {
-      let item: Item | undefined = qpItem && mapQpItemToItem(qpItem);
+      let item: Item | undefined = qpItem && utils.mapQpItemToItem(qpItem);
       data = await this.downloadTreeData(item);
     }
-    const qpData = prepareQpData(data);
+    const qpData = utils.prepareQpData(data);
     return qpData;
   }
 
