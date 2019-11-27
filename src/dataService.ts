@@ -30,7 +30,6 @@ class DataService {
     } else if (typeof content === "string") {
       items = this.parser.parseElements(content, item);
     } else {
-      console.log("***", content);
       items = this.parser.parseDirectories(content, item);
     }
 
