@@ -16,8 +16,14 @@ export async function activate(context: vscode.ExtensionContext) {
   console.log('Extension "Go to MDN" has been activated.');
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("goToMDN.browse", browse),
-    vscode.commands.registerCommand("goToMDN.clearCache", clearCache)
+    vscode.commands.registerCommand(
+      "goToMDN.browse",
+      browse.bind(null, context)
+    ),
+    vscode.commands.registerCommand(
+      "goToMDN.clearCache",
+      clearCache.bind(null, context)
+    )
   );
 }
 
