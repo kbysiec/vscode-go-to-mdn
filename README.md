@@ -18,13 +18,13 @@ Once confirming the interested item, the default browser will be opened with dir
 
 You have two ways to browse the results:
 
-* tree navigation:
-
-![Preview of the browse feature](img/browse.gif)
-
 * flat navigation:
 
 ![Preview of the browse feature](img/browse_flat.gif)
+
+* tree navigation:
+
+![Preview of the browse feature](img/browse.gif)
 
 If you do not find what you are looking for, you could just type the term you are looking, press Enter and you MDN web docs
 website will be opened with search results for your query.
@@ -64,6 +64,10 @@ Default value is `true`.
 The source code is available on GitHub [here](https://github.com/AgilePlayers/vscode-go-to-mdn).
 
 ## Release Notes
+
+### 1.1.1
+
+Fixed bug with filtering results in tree view
 
 ### 1.1.0
 

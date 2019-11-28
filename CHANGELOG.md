@@ -4,6 +4,9 @@ All notable changes to the "vscode-go-to-mdn" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.1.1] - 2019-11-28
+- Fixed bug with filtering results in tree view
+
 ## [1.1.0] - 2019-10-30
 - Added feature allowing browsing flat list instead navigation only through tree
 
