@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { assert, expect } from "chai";
+import { assert } from "chai";
 import * as sinon from "sinon";
 import ExtensionController from "../../ExtensionController";
 import Item from "../../interfaces/item";
@@ -7,6 +7,8 @@ import ItemType from "../../enums/itemType";
 import QuickPickExtendedItem from "../../interfaces/quickPickExtendedItem";
 import * as utils from "../../utils";
 import { config } from "../../config";
+import * as mock from "../mocks/extensionController.mock";
+
 const open = require("open");
 const proxyquire = require("proxyquire");
 
@@ -55,13 +57,8 @@ describe("extensionController", function() {
         extensionControllerAny,
         "loadQuickPickData"
       );
-      // .returns(Promise.resolve());
-      // sinon.stub(extensionControllerAny, "quickPick").value({
-      //   show: showSpy
-      // });
 
       await extensionControllerAny.showQuickPick();
-
       assert.equal(showStub.calledOnce, true);
       assert.equal(loadQuickPickDataStub.calledOnce, true);
     });
@@ -76,12 +73,8 @@ describe("extensionController", function() {
 
     it("should invoke cache clearing function on cache object", async function() {
       const stub = sinon.stub(extensionControllerAny.cache, "clearCache");
-      // sinon.stub(extensionControllerAny, "cache").value({
-      //   clearCache: spy
-      // });
 
       await extensionControllerAny.clearCache();
-
       assert.equal(stub.calledOnce, true);
     });
   });
@@ -103,11 +96,11 @@ describe("extensionController", function() {
       const text = "test search text";
 
       await extensionControllerAny.onQuickPickSubmit(text);
+
       const actual = openInBrowserStub.withArgs(
         "https://developer.mozilla.org/search?q=test+search+text"
       ).calledOnce;
       const expected = true;
-
       assert.equal(actual, expected);
     });
 
@@ -124,7 +117,6 @@ describe("extensionController", function() {
       await extensionControllerAny.onQuickPickSubmit(text);
       const actual = openInBrowserStub.calledOnce;
       const expected = false;
-
       assert.equal(actual, expected);
     });
 
@@ -132,18 +124,11 @@ describe("extensionController", function() {
       const openInBrowserStub = sinon
         .stub(extensionControllerAny, "openInBrowser")
         .returns(Promise.resolve());
-
-      const qpItem: QuickPickExtendedItem = {
-        label: "api test-label sub-label 3",
-        url: "http://test.com",
-        type: ItemType.File,
-        breadcrumbs: ["api", "test-label", "sub-label 3"]
-      };
+      const qpItem: QuickPickExtendedItem = mock.qpItem;
 
       await extensionControllerAny.onQuickPickSubmit(qpItem);
       const actual = openInBrowserStub.withArgs("http://test.com").calledOnce;
       const expected = true;
-
       assert.equal(actual, expected);
     });
 
@@ -151,18 +136,12 @@ describe("extensionController", function() {
       const loadQuickPickDataStub = sinon
         .stub(extensionControllerAny, "loadQuickPickData")
         .returns(Promise.resolve());
-
-      const qpItem: QuickPickExtendedItem = {
-        label: "api test-label sub-label 3",
-        url: "#",
-        type: ItemType.Directory,
-        breadcrumbs: ["api", "test-label", "sub-label 3"]
-      };
+      const qpItem: QuickPickExtendedItem = mock.qpItemDirectoryType;
 
       await extensionControllerAny.onQuickPickSubmit(qpItem);
+
       const actual = loadQuickPickDataStub.withArgs(qpItem).calledOnce;
       const expected = true;
-
       assert.equal(actual, expected);
     });
 
@@ -171,9 +150,6 @@ describe("extensionController", function() {
         vscode.window,
         "showErrorMessage"
       );
-
-      const errorText = "test search text";
-
       sinon.stub(utils, "getSearchUrl").throws("test error message");
 
       await extensionControllerAny.onQuickPickSubmit("test search text");
@@ -237,15 +213,11 @@ describe("extensionController", function() {
       const stub = sinon
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
-
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-
       sinon.stub(utils, "getToken").returns("sample token");
-
       sinon
         .stub(extensionControllerAny.cache, "getFlatFilesFromCache")
         .returns(undefined);
-
       sinon
         .stub(extensionControllerAny, "cacheFlatFilesData")
         .returns(Promise.resolve());
@@ -261,25 +233,10 @@ describe("extensionController", function() {
       const stub = sinon
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
-
-      const data: Item[] = [
-        {
-          name: "sub-label",
-          url: "#",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label"]
-        },
-        {
-          name: "sub-label 2",
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label 2"]
-        }
-      ];
-
+      const items: Item[] = mock.items;
       sinon
         .stub(extensionControllerAny.cache, "getFlatFilesFromCache")
-        .returns(data);
+        .returns(items);
 
       await extensionControllerAny.cacheFlatFilesWithProgress();
 
@@ -318,9 +275,7 @@ describe("extensionController", function() {
     });
 
     it("should check if higherLevelData array is empty", function() {
-      const stub = sinon
-        .stub(extensionControllerAny, "higherLevelData")
-        .value([1]);
+      sinon.stub(extensionControllerAny, "higherLevelData").value([1]);
 
       const actual = extensionControllerAny.isHigherLevelDataEmpty();
       const expected = false;
@@ -337,116 +292,44 @@ describe("extensionController", function() {
 
     it("should load flat list of items", async function() {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(link) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(link) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getFlatQuickPickData")
-        .returns(Promise.resolve(data));
+        .returns(Promise.resolve(qpItems));
 
       await extensionControllerAny.loadQuickPickData();
 
       const actual = extensionControllerAny.quickPick.quickPick.items;
-      const expected = data;
-
+      const expected = qpItems;
       assert.deepEqual(actual, expected);
     });
 
     it("should load list of items", async function() {
       sinon.stub(utils, "shouldDisplayFlatList").returns(false);
-
-      const qpItem: QuickPickExtendedItem = {
-        label: "api test-label sub-label 3",
-        url: "#",
-        type: ItemType.Directory,
-        breadcrumbs: ["api", "test-label", "sub-label 3"]
-      };
-
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
+      const qpItem: QuickPickExtendedItem = mock.qpItemDirectoryType;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getQuickPickData")
-        .returns(Promise.resolve(data));
+        .returns(Promise.resolve(qpItems));
 
       await extensionControllerAny.loadQuickPickData(qpItem);
 
       const actual = extensionControllerAny.quickPick.quickPick.items;
-      const expected = data;
-
+      const expected = qpItems;
       assert.deepEqual(actual, expected);
     });
 
     it("should load list of root items", async function() {
       sinon.stub(utils, "shouldDisplayFlatList").returns(false);
-
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getQuickPickRootData")
-        .returns(Promise.resolve(data));
+        .returns(Promise.resolve(qpItems));
 
       await extensionControllerAny.loadQuickPickData();
 
       const actual = extensionControllerAny.quickPick.quickPick.items;
-      const expected = data;
-
+      const expected = qpItems;
       assert.deepEqual(actual, expected);
     });
   });
@@ -493,25 +376,10 @@ describe("extensionController", function() {
 
     it("should return flat quick pick data from cache", async function() {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-
-      const data: Item[] = [
-        {
-          name: "sub-label",
-          url: "#",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label"]
-        },
-        {
-          name: "sub-label 2",
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label 2"]
-        }
-      ];
-
+      const items: Item[] = mock.items;
       sinon
         .stub(extensionControllerAny.cache, "getFlatFilesFromCache")
-        .returns(data);
+        .returns(items);
 
       const actual = await extensionControllerAny.getFlatQuickPickData();
       const expected: QuickPickExtendedItem[] = [
@@ -540,30 +408,13 @@ describe("extensionController", function() {
 
     it("should return flat quick pick data if in cache is empty array", async function() {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-
-      const data: Item[] = [
-        {
-          name: "sub-label",
-          url: "#",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label"]
-        },
-        {
-          name: "sub-label 2",
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label 2"]
-        }
-      ];
-
+      const items: Item[] = mock.items;
       const getFlatFilesFromCacheStub = sinon.stub(
         extensionControllerAny.cache,
         "getFlatFilesFromCache"
       );
-
       getFlatFilesFromCacheStub.onFirstCall().returns([]);
-      getFlatFilesFromCacheStub.onSecondCall().returns(data);
-
+      getFlatFilesFromCacheStub.onSecondCall().returns(items);
       sinon
         .stub(extensionControllerAny, "cacheFlatFilesWithProgress")
         .returns(Promise.resolve());
@@ -589,42 +440,22 @@ describe("extensionController", function() {
           description: "api test-label sub-label 2"
         }
       ];
-
       assert.deepEqual(actual, expected);
     });
 
-    it("should return flat quick pick data if in cache is undefined", async function() {
+    it("should return empty array if cache value is undefined", async function() {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-
-      const data: Item[] = [
-        {
-          name: "sub-label",
-          url: "#",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label"]
-        },
-        {
-          name: "sub-label 2",
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label 2"]
-        }
-      ];
-
       const getFlatFilesFromCacheStub = sinon.stub(
         extensionControllerAny.cache,
         "getFlatFilesFromCache"
       );
-
       getFlatFilesFromCacheStub.returns(undefined);
-
       sinon
         .stub(extensionControllerAny, "cacheFlatFilesWithProgress")
         .returns(Promise.resolve());
 
       const actual = await extensionControllerAny.getFlatQuickPickData();
       const expected: QuickPickExtendedItem[] = [];
-
       assert.deepEqual(actual, expected);
     });
   });
@@ -637,34 +468,13 @@ describe("extensionController", function() {
     });
 
     it("should return tree root data", async function() {
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) category`,
-          url: "",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["category"],
-          description: ""
-        },
-        {
-          label: `$(file-directory) api`,
-          url: "",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api"],
-          description: "api"
-        }
-      ];
-
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getTreeData")
-        .returns(Promise.resolve(data));
+        .returns(Promise.resolve(qpItems));
 
       const actual = await extensionControllerAny.getQuickPickRootData();
-      const expected = data;
-
+      const expected = qpItems;
       assert.deepEqual(actual, expected);
     });
   });
@@ -677,37 +487,10 @@ describe("extensionController", function() {
     });
 
     it("should return higher level data", async function() {
-      sinon.stub(config, "higherLevelLabel").value("..");
-
-      const backwardNavigationQpItem: QuickPickExtendedItem = {
-        label: `$(file-directory) ${config.higherLevelLabel}`,
-        description: "",
-        type: ItemType.Directory,
-        url: "#",
-        breadcrumbs: []
-      };
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-      const higherLevelData: QuickPickExtendedItem[][] = [data];
-
+      const backwardNavigationQpItem: QuickPickExtendedItem =
+        mock.backwardNavigationQpItem;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const higherLevelData: QuickPickExtendedItem[][] = [qpItems];
       sinon
         .stub(extensionControllerAny, "higherLevelData")
         .value(higherLevelData);
@@ -715,46 +498,19 @@ describe("extensionController", function() {
       const actual = await extensionControllerAny.getQuickPickData(
         backwardNavigationQpItem
       );
-      const expected: QuickPickExtendedItem[] = data;
-
+      const expected: QuickPickExtendedItem[] = qpItems;
       assert.deepEqual(actual, expected);
     });
 
     it("should return lower level data", async function() {
-      const qpItem: QuickPickExtendedItem = {
-        label: "api test-label sub-label 3",
-        url: "#",
-        type: ItemType.Directory,
-        breadcrumbs: ["api", "test-label", "sub-label 3"]
-      };
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
+      const qpItem: QuickPickExtendedItem = mock.qpItem;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getLowerLevelQpData")
-        .returns(Promise.resolve(data));
+        .returns(Promise.resolve(qpItems));
 
       const actual = await extensionControllerAny.getQuickPickData(qpItem);
-      const expected: QuickPickExtendedItem[] = data;
-
+      const expected: QuickPickExtendedItem[] = qpItems;
       assert.deepEqual(actual, expected);
     });
   });
@@ -767,38 +523,17 @@ describe("extensionController", function() {
     });
 
     it("should remember higher level data", function() {
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       const higherLevelData: QuickPickExtendedItem[][] = [];
-      const data: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
       sinon
         .stub(extensionControllerAny, "higherLevelData")
         .value(higherLevelData);
-
-      sinon.stub(extensionControllerAny.quickPick, "getItems").returns(data);
+      sinon.stub(extensionControllerAny.quickPick, "getItems").returns(qpItems);
 
       extensionControllerAny.rememberHigherLevelQpData();
-      const actual = higherLevelData;
-      const expected: QuickPickExtendedItem[][] = [data];
 
+      const actual = higherLevelData;
+      const expected: QuickPickExtendedItem[][] = [qpItems];
       assert.deepEqual(actual, expected);
     });
   });
@@ -811,34 +546,11 @@ describe("extensionController", function() {
     });
 
     it("should return higher level data", function() {
-      const higherLevelData: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
-      sinon
-        .stub(extensionControllerAny, "higherLevelData")
-        .value([higherLevelData]);
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      sinon.stub(extensionControllerAny, "higherLevelData").value([qpItems]);
 
       const actual = extensionControllerAny.getHigherLevelQpData();
-      const expected: QuickPickExtendedItem[] = higherLevelData;
-
+      const expected: QuickPickExtendedItem[] = qpItems;
       assert.deepEqual(actual, expected);
     });
   });
@@ -851,52 +563,23 @@ describe("extensionController", function() {
     });
 
     it("should return lower level data without empty urls", async function() {
-      const qpItem: QuickPickExtendedItem = {
-        label: "api test-label sub-label 3",
-        url: "#",
-        type: ItemType.Directory,
-        breadcrumbs: ["api", "test-label", "sub-label 3"]
-      };
-
-      const lowerLevelData: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
+      const qpItem: QuickPickExtendedItem = mock.qpItem;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getTreeData")
-        .returns(Promise.resolve(lowerLevelData));
+        .returns(Promise.resolve(qpItems));
 
       const actual = await extensionControllerAny.getLowerLevelQpData(qpItem);
-      const expected: QuickPickExtendedItem[] = [
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-
-      assert.deepEqual(actual, expected);
+      const expectedSecondItem: QuickPickExtendedItem = {
+        label: `$(link) sub-label 2`,
+        url: "https://sub-label-2.com",
+        type: ItemType.File,
+        parent: undefined,
+        rootParent: undefined,
+        breadcrumbs: ["api", "test-label", "sub-label 2"],
+        description: "api test-label sub-label 2"
+      };
+      assert.deepEqual(actual[1], expectedSecondItem);
     });
   });
 
@@ -912,12 +595,12 @@ describe("extensionController", function() {
         extensionControllerAny.quickPick,
         "setPlaceholder"
       );
-
       const text = "choose item from the list or type anything to search";
+
       extensionControllerAny.setQuickPickPlaceholder();
+
       const actual = spy.withArgs(text).calledOnce;
       const expected = true;
-
       assert.equal(actual, expected);
     });
   });
@@ -930,60 +613,60 @@ describe("extensionController", function() {
     });
 
     it("should invoke quickPick.setPlaceholder function with undefined parameter", async function() {
-      const spy = sinon.stub(
+      const stub = sinon.stub(
         extensionControllerAny.quickPick,
         "setPlaceholder"
       );
 
       extensionControllerAny.clearQuickPickPlaceholder();
-      const actual = spy.withArgs(undefined).calledOnce;
-      const expected = true;
 
+      const actual = stub.withArgs(undefined).calledOnce;
+      const expected = true;
       assert.equal(actual, expected);
     });
   });
 
   describe("getTreeData", function() {
-    let items: Item[];
-    let qpItems: QuickPickExtendedItem[];
+    // let items: Item[];
+    // let qpItems: QuickPickExtendedItem[];
 
-    before(function() {
-      items = [
-        {
-          name: "sub-label",
-          url: "#",
-          type: ItemType.File,
-          breadcrumbs: ["api", "test-label", "sub-label"]
-        },
-        {
-          name: "sub-label 2",
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          breadcrumbs: ["api", "test-label", "sub-label 2"]
-        }
-      ];
+    // before(function() {
+    //   items = [
+    //     {
+    //       name: "sub-label",
+    //       url: "#",
+    //       type: ItemType.File,
+    //       breadcrumbs: ["api", "test-label", "sub-label"]
+    //     },
+    //     {
+    //       name: "sub-label 2",
+    //       url: "https://sub-label-2.com",
+    //       type: ItemType.Directory,
+    //       breadcrumbs: ["api", "test-label", "sub-label 2"]
+    //     }
+    //   ];
 
-      qpItems = [
-        {
-          label: `$(file-directory) sub-label`,
-          url: "",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label"
-        },
-        {
-          label: `$(file-directory) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2"
-        }
-      ];
-    });
+    //   qpItems = [
+    //     {
+    //       label: `$(file-directory) sub-label`,
+    //       url: "",
+    //       type: ItemType.File,
+    //       parent: undefined,
+    //       rootParent: undefined,
+    //       breadcrumbs: ["api", "test-label", "sub-label"],
+    //       description: "api test-label sub-label"
+    //     },
+    //     {
+    //       label: `$(file-directory) sub-label 2`,
+    //       url: "https://sub-label-2.com",
+    //       type: ItemType.Directory,
+    //       parent: undefined,
+    //       rootParent: undefined,
+    //       breadcrumbs: ["api", "test-label", "sub-label 2"],
+    //       description: "api test-label sub-label 2"
+    //     }
+    //   ];
+    // });
 
     it("should function exist", function() {
       const actual = typeof extensionControllerAny.getTreeData;
@@ -992,6 +675,8 @@ describe("extensionController", function() {
     });
 
     it("should return quick pick tree data if data is in cache", async function() {
+      const items: Item[] = mock.items;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny.cache, "getTreeItemsByUrlFromCache")
         .returns(items);
@@ -1003,6 +688,8 @@ describe("extensionController", function() {
     });
 
     it("should return quick pick tree data if data is not in cache and parent item is not provided", async function() {
+      const items: Item[] = mock.items;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny.cache, "getTreeItemsByUrlFromCache")
         .returns([]);
@@ -1015,13 +702,9 @@ describe("extensionController", function() {
     });
 
     it("should return quick pick tree data if data is not in cache and parent item is provided", async function() {
-      const qpItem: QuickPickExtendedItem = {
-        label: "api test-label sub-label 3",
-        url: "#",
-        type: ItemType.Directory,
-        breadcrumbs: ["api", "test-label", "sub-label 3"]
-      };
-
+      const items: Item[] = mock.items;
+      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItem: QuickPickExtendedItem = mock.qpItem;
       sinon
         .stub(extensionControllerAny.cache, "getTreeItemsByUrlFromCache")
         .returns([]);
@@ -1042,37 +725,19 @@ describe("extensionController", function() {
     });
 
     it("should return tree node data", async function() {
-      const data: Item[] = [
-        {
-          name: "label",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["label"]
-        },
-        {
-          name: "category",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["category"]
-        }
-      ];
-
+      const items: Item[] = mock.items;
       sinon
         .stub(extensionControllerAny.dataService, "downloadTreeData")
-        .returns(Promise.resolve(data));
-
+        .returns(Promise.resolve(items));
       const updateCacheStub = sinon.stub(
         extensionControllerAny.cache,
         "updateTreeItemsByUrlFromCache"
       );
 
       const actualData = await extensionControllerAny.downloadTreeData();
-      const expectedData = data;
+      const expectedData = items;
       const actualUpdateCacheCalled = updateCacheStub.calledOnce;
       const expectedUpdateCacheCalled = true;
-
       assert.equal(actualData, expectedData);
       assert.equal(actualUpdateCacheCalled, expectedUpdateCacheCalled);
     });
@@ -1086,36 +751,19 @@ describe("extensionController", function() {
     });
 
     it("should return flat data", async function() {
-      const data: Item[] = [
-        {
-          name: "label",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["label"]
-        },
-        {
-          name: "category",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["category"]
-        }
-      ];
+      const items: Item[] = mock.items;
       sinon
         .stub(extensionControllerAny.dataService, "downloadFlatData")
-        .returns(Promise.resolve(data));
-
+        .returns(Promise.resolve(items));
       const updateCacheStub = sinon.stub(
         extensionControllerAny.cache,
         "updateFlatFilesListCache"
       );
 
       const actualData = await extensionControllerAny.downloadFlatFilesData();
-      const expectedData = data;
+      const expectedData = items;
       const actualUpdateCacheCalled = updateCacheStub.calledOnce;
       const expectedUpdateCacheCalled = true;
-
       assert.equal(actualData, expectedData);
       assert.equal(actualUpdateCacheCalled, expectedUpdateCacheCalled);
     });
@@ -1136,14 +784,12 @@ describe("extensionController", function() {
           open: openStub
         }
       ).default;
-
       extensionControllerAny = new ProxiedExtensionController(context);
 
       await extensionControllerAny.openInBrowser("http://test.com");
 
       const actual = openStub.withArgs("http://test.com").calledOnce;
       const expected = true;
-
       assert.equal(actual, expected);
     });
   });
