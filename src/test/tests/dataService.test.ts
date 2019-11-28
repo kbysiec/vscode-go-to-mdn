@@ -6,6 +6,7 @@ import DataService from "../../dataService";
 import { config } from "../../config";
 import Item from "../../interfaces/item";
 import ItemType from "../../enums/itemType";
+import * as mock from "../mocks/dataService.mock";
 
 const fetch = require("node-fetch");
 const fetchMock = require("fetch-mock").sandbox();
@@ -33,12 +34,7 @@ describe("DataService", function() {
     });
 
     it("should return root directories items", async function() {
-      const content = `{
-        "name": "README.md",
-        "type": "file",
-        "content": "KlBsZWFzZSBub3RlIHRoYXQgd2UgaGF2ZSBub3QgKHlldCkgbWlncmF0ZWQgYWxsIGNvbXBhdGliaWxpdHkgZGF0YSBmcm9tIHRoZSBNRE4gd2lraSBwYWdlcyBpbnRvIHRoaXMgcmVwb3NpdG9yeS4qCiAgICAgIC0gW2xhYmVsL10oaHR0cHM6Ly9naXRodWIuY29tL21kbi9icm93c2VyLWNvbXBhdC1kYXRhL3RyZWUvbWFzdGVyL2xhYmVsKSBjb250YWlucyBkYXRhIGZvciBlYWNoIFdlYiBBUEkgaW50ZXJmYWNlLgogICAgICAtIFtjYXRlZ29yeS9dKGh0dHBzOi8vZ2l0aHViLmNvbS9tZG4vYnJvd3Nlci1jb21wYXQtZGF0YS90cmVlL21hc3Rlci9jYXRlZ29yeSkgY29udGFpbnMgZGF0YSBmb3IgQ1NTIHByb3BlcnRpZXMsIHNlbGVjdG9ycywgYW5kIGF0LXJ1bGVzLgogICAgICBbSFRNTF0oaHR0cHM6Ly9kZXZlbG9wZXIubW96aWxsYS5vcmcvZW4tVVMvZG9jcy9XZWIvSFRNTCkgZWxlbWVudHMsIGF0dHJpYnV0ZXMsIGFuZCBnbG9iYWwgYXR0cmlidXRlcy4KICAgICAgIyMgRm9ybWF0IG9mIHRoZSBicm93c2VyIGNvbXBhdCBqc29uIGZpbGVz",
-        "encoding": "base64"
-      }`;
+      const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         config.rootUrl,
         new Response(content, { status: 200 })
@@ -62,40 +58,17 @@ describe("DataService", function() {
           breadcrumbs: ["category"]
         }
       ];
-
       assert.deepEqual(actual, expected);
     });
 
     it("should return element items", async function() {
-      const content = `{
-        "name": "README.md",
-        "type": "file",
-        "content": "ewogICAgICAgICJ3ZWJkcml2ZXIiOiB7CiAgICAgICAgICAiY29tbWFuZHMiOiB7CiAgICAgICAgICAgICJBY2NlcHRBbGVydCI6IHsKICAgICAgICAgICAgICAiX19jb21wYXQiOiB7CiAgICAgICAgICAgICAgICAibWRuX3VybCI6ICJodHRwczovL2RldmVsb3Blci5tb3ppbGxhLm9yZy9kb2NzL1dlYi9XZWJEcml2ZXIvQ29tbWFuZHMvQWNjZXB0QWxlcnQiLAogICAgICAgICAgICAgICAgInN1cHBvcnQiOiB7CiAgICAgICAgICAgICAgICAgICJjaHJvbWUiOiB7CiAgICAgICAgICAgICAgICAgICAgInZlcnNpb25fYWRkZWQiOiAiNjUiCiAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICAic3RhdHVzIjogewogICAgICAgICAgICAgICAgICAiZXhwZXJpbWVudGFsIjogZmFsc2UKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJzY2hlbWUiOiB7CiAgICAgICAgICAgICAgICAid2lsZGNhcmQiOiB7CiAgICAgICAgICAgICAgICAgICJfX2NvbXBhdCI6IHsKICAgICAgICAgICAgICAgICAgICAiZGVzY3JpcHRpb24iOiAiV2lsZGNhcmQgPGNvZGU+KjwvY29kZT4gc2NoZW1lIgogICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgfQogICAgICB9",
-        "encoding": "base64"
-      }`;
+      const item: Item = mock.downloadTreeDataElementsItem;
+      const content: string = mock.downloadTreeDataElementsContent;
       const fetchStub = fetchMock.get(
         "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=master",
         new Response(content, { status: 200 })
       );
       fetch.default = fetchStub;
-
-      const item: Item = {
-        name: "Accept Alert",
-        url:
-          "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=master",
-        type: ItemType.Directory,
-        parent: {
-          name: "commands",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands?ref=master",
-          type: ItemType.Directory,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["webdriver", "commands"]
-        },
-        rootParent: undefined,
-        breadcrumbs: ["webdriver", "commands", "Accept Alert"]
-      };
 
       const actual = await dataService.downloadTreeData(item);
       const expected: Item[] = [
@@ -115,36 +88,17 @@ describe("DataService", function() {
           breadcrumbs: ["webdriver", "commands", "Accept Alert", "wildcard"]
         }
       ];
-
       assert.deepEqual(actual, expected);
     });
 
     it("should return directories items", async function() {
-      const content = `[
-          {
-            "name": "AbortController.json",
-            "url": "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
-            "type": "file"
-          },
-          {
-            "name": "AbortPaymentEvent.json",
-            "url": "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
-            "type": "file"
-          }
-        ]`;
+      const item: Item = mock.downloadTreeDataDirectoriesItem;
+      const content: string = mock.downloadTreeDataDirectoriesContent;
       const fetchStub = fetchMock.get(
         "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=master",
         new Response(content, { status: 200 })
       );
       fetch.default = fetchStub;
-
-      const item: Item = {
-        name: "api",
-        url:
-          "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=master",
-        type: ItemType.Directory,
-        breadcrumbs: ["api"]
-      };
 
       const actual = await dataService.downloadTreeData(item);
       const expected: Item[] = [
@@ -167,7 +121,6 @@ describe("DataService", function() {
           breadcrumbs: ["api", "Abort Payment Event"]
         }
       ];
-
       assert.deepEqual(actual, expected);
     });
 
@@ -191,12 +144,7 @@ describe("DataService", function() {
         update: () => Promise.resolve()
       });
 
-      const content = `{
-        "name": "README.md",
-        "type": "file",
-        "content": "KlBsZWFzZSBub3RlIHRoYXQgd2UgaGF2ZSBub3QgKHlldCkgbWlncmF0ZWQgYWxsIGNvbXBhdGliaWxpdHkgZGF0YSBmcm9tIHRoZSBNRE4gd2lraSBwYWdlcyBpbnRvIHRoaXMgcmVwb3NpdG9yeS4qCiAgICAgIC0gW2xhYmVsL10oaHR0cHM6Ly9naXRodWIuY29tL21kbi9icm93c2VyLWNvbXBhdC1kYXRhL3RyZWUvbWFzdGVyL2xhYmVsKSBjb250YWlucyBkYXRhIGZvciBlYWNoIFdlYiBBUEkgaW50ZXJmYWNlLgogICAgICAtIFtjYXRlZ29yeS9dKGh0dHBzOi8vZ2l0aHViLmNvbS9tZG4vYnJvd3Nlci1jb21wYXQtZGF0YS90cmVlL21hc3Rlci9jYXRlZ29yeSkgY29udGFpbnMgZGF0YSBmb3IgQ1NTIHByb3BlcnRpZXMsIHNlbGVjdG9ycywgYW5kIGF0LXJ1bGVzLgogICAgICBbSFRNTF0oaHR0cHM6Ly9kZXZlbG9wZXIubW96aWxsYS5vcmcvZW4tVVMvZG9jcy9XZWIvSFRNTCkgZWxlbWVudHMsIGF0dHJpYnV0ZXMsIGFuZCBnbG9iYWwgYXR0cmlidXRlcy4KICAgICAgIyMgRm9ybWF0IG9mIHRoZSBicm93c2VyIGNvbXBhdCBqc29uIGZpbGVz",
-        "encoding": "base64"
-      }`;
+      const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         config.rootUrl,
         new Response(content, { status: 200 })
@@ -226,12 +174,7 @@ describe("DataService", function() {
         update: () => Promise.resolve()
       });
 
-      const content = `{
-        "name": "README.md",
-        "type": "file",
-        "content": "KlBsZWFzZSBub3RlIHRoYXQgd2UgaGF2ZSBub3QgKHlldCkgbWlncmF0ZWQgYWxsIGNvbXBhdGliaWxpdHkgZGF0YSBmcm9tIHRoZSBNRE4gd2lraSBwYWdlcyBpbnRvIHRoaXMgcmVwb3NpdG9yeS4qCiAgICAgIC0gW2xhYmVsL10oaHR0cHM6Ly9naXRodWIuY29tL21kbi9icm93c2VyLWNvbXBhdC1kYXRhL3RyZWUvbWFzdGVyL2xhYmVsKSBjb250YWlucyBkYXRhIGZvciBlYWNoIFdlYiBBUEkgaW50ZXJmYWNlLgogICAgICAtIFtjYXRlZ29yeS9dKGh0dHBzOi8vZ2l0aHViLmNvbS9tZG4vYnJvd3Nlci1jb21wYXQtZGF0YS90cmVlL21hc3Rlci9jYXRlZ29yeSkgY29udGFpbnMgZGF0YSBmb3IgQ1NTIHByb3BlcnRpZXMsIHNlbGVjdG9ycywgYW5kIGF0LXJ1bGVzLgogICAgICBbSFRNTF0oaHR0cHM6Ly9kZXZlbG9wZXIubW96aWxsYS5vcmcvZW4tVVMvZG9jcy9XZWIvSFRNTCkgZWxlbWVudHMsIGF0dHJpYnV0ZXMsIGFuZCBnbG9iYWwgYXR0cmlidXRlcy4KICAgICAgIyMgRm9ybWF0IG9mIHRoZSBicm93c2VyIGNvbXBhdCBqc29uIGZpbGVz",
-        "encoding": "base64"
-      }`;
+      const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         config.rootUrl,
         new Response(content, { status: 200 })
