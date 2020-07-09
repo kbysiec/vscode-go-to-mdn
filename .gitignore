@@ -1,6 +1,7 @@
 dist
 node_modules
 coverage
-.vscode-test/
+.vscode-test
 *.vsix
 *.xd
+.history
