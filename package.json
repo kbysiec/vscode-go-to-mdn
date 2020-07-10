@@ -92,10 +92,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AgilePlayers/vscode-go-to-mdn"
+    "url": "https://github.com/kbysiec/vscode-go-to-mdn"
   },
   "bugs": {
-    "url": "https://github.com/AgilePlayers/vscode-go-to-mdn/issues"
+    "url": "https://github.com/kbysiec/vscode-go-to-mdn/issues"
   },
   "icon": "img/logo.png"
 }
