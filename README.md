@@ -58,39 +58,20 @@ requests number.
 Flag to determine if the results should be displayed as flat list or as tree with navigation.
 Default value is `true`.
 
-
 ## Source Code
 
 The source code is available on GitHub [here](https://github.com/AgilePlayers/vscode-go-to-mdn).
 
 ## Release Notes
 
-### 1.1.1
-
-Fixed bug with filtering results in tree view
-
-### 1.1.0
-
-Added feature allowing browsing flat list instead navigation only through tree
-
-### 1.0.3
-
-Fix for issue concerning getting data for Object. Property 'hasOwnProperty' was overriding the Object function
-
-### 1.0.2
-
-Refactoring and improvements
-
-### 1.0.1
-
-Polishing Readme
-
-### 1.0.0
-
-Initial release
-
-## Roadmap
-* add cache auto clearing after interval defined in settings
+Please check changelog for release details.
 
 ## Author
+
 [Kamil Bysiec](https://github.com/kbysiec)
+
+## Acknowledgment
+
+If you found it useful somehow, I would be grateful if you could leave a "Rating & Review" in Marketplace or/and leave a star in the project's GitHub repository.
+
+Thank you.
