@@ -5,19 +5,19 @@ import Cache from "../../cache";
 import QuickPickExtendedItem from "../../interfaces/QuickPickExtendedItem";
 import Item from "../../interfaces/Item";
 import ItemType from "../../enums/ItemType";
-import { config } from "../../config";
+import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/cache.mock";
 
-describe("Cache", function() {
+describe("Cache", function () {
   let cache: Cache;
   let context: vscode.ExtensionContext;
   let updateSpy: any;
 
-  before(function() {
-    sinon.stub(config, "filesCacheKey").value("filesCache");
-    sinon.stub(config, "cacheKey").value("cache");
+  before(function () {
+    sinon.stub(appConfig, "filesCacheKey").value("filesCache");
+    sinon.stub(appConfig, "cacheKey").value("cache");
     sinon
-      .stub(config, "rootUrl")
+      .stub(appConfig, "rootUrl")
       .value(
         "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=master"
       );
@@ -28,34 +28,34 @@ describe("Cache", function() {
       subscriptions: [],
       workspaceState: {
         get: () => {},
-        update: () => Promise.resolve()
+        update: () => Promise.resolve(),
       },
       globalState: {
         get: () => {},
-        update: updateSpy
+        update: updateSpy,
       },
       extensionPath: "",
       storagePath: "",
       globalStoragePath: "",
       logPath: "",
-      asAbsolutePath: (relativePath: string) => relativePath
+      asAbsolutePath: (relativePath: string) => relativePath,
     };
 
     cache = new Cache(context);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sinon.restore();
   });
 
-  describe("updateFlatFilesListCache", function() {
-    it("should function exist", function() {
+  describe("updateFlatFilesListCache", function () {
+    it("should function exist", function () {
       const actual = typeof cache.updateFlatFilesListCache;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should update cache value", function() {
+    it("should update cache value", function () {
       let getStub = sinon.stub(context.globalState, "get").returns({});
       const items: Item[] = mock.items;
       const get = context.globalState.get as any;
@@ -81,14 +81,14 @@ describe("Cache", function() {
     });
   });
 
-  describe("updateTreeItemsByUrlFromCache", function() {
-    it("should function exist", function() {
+  describe("updateTreeItemsByUrlFromCache", function () {
+    it("should function exist", function () {
       const actual = typeof cache.updateTreeItemsByUrlFromCache;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should update cache value if item is undefined", function() {
+    it("should update cache value if item is undefined", function () {
       const items: Item[] = mock.items;
 
       let getStub = sinon.stub(context.globalState, "get").returns({});
@@ -114,7 +114,7 @@ describe("Cache", function() {
       updateSpy.resetHistory();
     });
 
-    it("should update cache value if item is passed", function() {
+    it("should update cache value if item is passed", function () {
       const items: Item[] = mock.items;
       const item: Item = mock.item;
 
@@ -142,17 +142,17 @@ describe("Cache", function() {
     });
   });
 
-  describe("getFlatFilesFromCache", function() {
-    it("should function exist", function() {
+  describe("getFlatFilesFromCache", function () {
+    it("should function exist", function () {
       const actual = typeof cache.getFlatFilesFromCache;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should return value from cache", function() {
+    it("should return value from cache", function () {
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
-        files: items
+        files: items,
       });
 
       const expected = cache.getFlatFilesFromCache();
@@ -160,7 +160,7 @@ describe("Cache", function() {
       getStub.restore();
     });
 
-    it("should return empty array from cache", function() {
+    it("should return empty array from cache", function () {
       const items: Item[] = [];
       let getStub = sinon.stub(context.globalState, "get").returns(undefined);
 
@@ -170,17 +170,17 @@ describe("Cache", function() {
     });
   });
 
-  describe("getTreeItemsByUrlFromCache", function() {
-    it("should function exist", function() {
+  describe("getTreeItemsByUrlFromCache", function () {
+    it("should function exist", function () {
       const actual = typeof cache.getTreeItemsByUrlFromCache;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should return value from cache if item is undefined", function() {
+    it("should return value from cache if item is undefined", function () {
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
-        [config.rootUrl]: items
+        [appConfig.rootUrl]: items,
       });
 
       const expected = cache.getTreeItemsByUrlFromCache();
@@ -188,11 +188,11 @@ describe("Cache", function() {
       getStub.restore();
     });
 
-    it("should return value from cache if item is passed", function() {
+    it("should return value from cache if item is passed", function () {
       const qpItem: QuickPickExtendedItem = mock.qpItem;
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
-        [qpItem.url]: items
+        [qpItem.url]: items,
       });
 
       const expected = cache.getTreeItemsByUrlFromCache(qpItem);
@@ -200,7 +200,7 @@ describe("Cache", function() {
       getStub.restore();
     });
 
-    it("should return empty array from cache if key not found", function() {
+    it("should return empty array from cache if key not found", function () {
       const items: Item[] = [];
       let getStub = sinon.stub(context.globalState, "get").returns(undefined);
 
@@ -210,14 +210,14 @@ describe("Cache", function() {
     });
   });
 
-  describe("clearCache", function() {
-    it("should function exist", function() {
+  describe("clearCache", function () {
+    it("should function exist", function () {
       const actual = typeof cache.clearCache;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should clear cache", function() {
+    it("should clear cache", function () {
       const update = context.globalState.update as any;
       cache.clearCache();
 

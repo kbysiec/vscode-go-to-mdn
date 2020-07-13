@@ -2,9 +2,11 @@ import * as vscode from "vscode";
 import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
-import { config } from "./config";
+import { appConfig } from "./appConfig";
 
-export const isValueStringType = (value: QuickPickExtendedItem | string): boolean => {
+export const isValueStringType = (
+  value: QuickPickExtendedItem | string
+): boolean => {
   return typeof value === "string";
 };
 
@@ -14,30 +16,37 @@ export const isValueFileType = (value: QuickPickExtendedItem): boolean => {
 
 export const getSearchUrl = (value: string): string => {
   const queryString = value.split(" ").join("+");
-  const url = `${config.searchUrl}?q=${queryString}`;
+  const url = `${appConfig.searchUrl}?q=${queryString}`;
   return url;
 };
 
-export const getNameFromQuickPickItem = (item: QuickPickExtendedItem): string => {
-  return item.label
-    .split(" ")
-    .slice(1)
-    .join(" ");
+export const getNameFromQuickPickItem = (
+  item: QuickPickExtendedItem
+): string => {
+  return item.label.split(" ").slice(1).join(" ");
 };
 
 export const removeDataWithEmptyUrl = (
   data: QuickPickExtendedItem[]
 ): QuickPickExtendedItem[] => {
-  return data.filter(element => element.url);
+  return data.filter((element) => element.url);
 };
 
-export const prepareBreadcrumbs = (item: Item | QuickPickExtendedItem, isFlat: boolean = false): string => {
-  const breadcrumbs = isFlat ? item.breadcrumbs : [...item.breadcrumbs].slice(0, -1);
+export const prepareBreadcrumbs = (
+  item: Item | QuickPickExtendedItem,
+  isFlat: boolean = false
+): string => {
+  const breadcrumbs = isFlat
+    ? item.breadcrumbs
+    : [...item.breadcrumbs].slice(0, -1);
   return breadcrumbs.join(`${isFlat ? " " : " / "}`);
 };
 
-export const mapDataToQpData = (data: Item[], isFlat: boolean = false): QuickPickExtendedItem[] => {
-  return data.map(el => {
+export const mapDataToQpData = (
+  data: Item[],
+  isFlat: boolean = false
+): QuickPickExtendedItem[] => {
+  return data.map((el) => {
     const icon =
       el.type === ItemType.Directory ? "$(file-directory)" : "$(link)";
     const description = isFlat ? prepareBreadcrumbs(el, isFlat) : undefined;
@@ -60,7 +69,7 @@ export const mapQpItemToItem = (qpItem: QuickPickExtendedItem): Item => {
     type: qpItem.type,
     parent: qpItem.parent,
     rootParent: qpItem.rootParent,
-    breadcrumbs: qpItem.breadcrumbs
+    breadcrumbs: qpItem.breadcrumbs,
   };
 };
 
@@ -68,17 +77,20 @@ export const addBackwardNavigationItem = (
   qpData: QuickPickExtendedItem[]
 ): void => {
   qpData.unshift({
-    label: `$(file-directory) ${config.higherLevelLabel}`,
+    label: `$(file-directory) ${appConfig.higherLevelLabel}`,
     description: prepareBreadcrumbs(qpData[0]),
     type: ItemType.Directory,
     url: "#",
-    breadcrumbs: []
+    breadcrumbs: [],
   });
 };
 
 export const prepareQpData = (data: Item[]): QuickPickExtendedItem[] => {
   const shouldDisplayFlatListFlag = shouldDisplayFlatList();
-  const qpData: QuickPickExtendedItem[] = mapDataToQpData(data, shouldDisplayFlatListFlag);
+  const qpData: QuickPickExtendedItem[] = mapDataToQpData(
+    data,
+    shouldDisplayFlatListFlag
+  );
   !shouldDisplayFlatListFlag && addBackwardNavigationItem(qpData);
   return qpData;
 };
@@ -89,15 +101,9 @@ export const getConfiguration = <T>(section: string, defaultValue: T): T => {
 };
 
 export const shouldDisplayFlatList = (): boolean => {
-  return getConfiguration<boolean>(
-    "goToMDN.shouldDisplayFlatList",
-    false
-  );
+  return getConfiguration<boolean>("goToMDN.shouldDisplayFlatList", false);
 };
 
 export const getToken = (): string => {
-  return getConfiguration<string>(
-    "goToMDN.githubPersonalAccessToken",
-    ""
-  );
+  return getConfiguration<string>("goToMDN.githubPersonalAccessToken", "");
 };

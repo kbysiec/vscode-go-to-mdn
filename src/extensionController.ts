@@ -5,7 +5,7 @@ import QuickPick from "./quickPick";
 import Item from "./interfaces/item";
 import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
 import * as utils from "./utils";
-import { config } from "./config";
+import { appConfig } from "./appConfig";
 import Cache from "./cache";
 
 class ExtensionController {
@@ -63,20 +63,20 @@ class ExtensionController {
   private async getFlatFilesData(progress: any): Promise<void> {
     progress &&
       progress.report({
-        increment: 30
+        increment: 30,
       });
 
     await this.downloadFlatFilesData();
 
     progress &&
       progress.report({
-        increment: 70
+        increment: 70,
       });
   }
 
   private async cacheFlatFilesWithProgressTask(progress: any) {
     await this.cacheFlatFilesData(progress);
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, 250);
@@ -92,7 +92,7 @@ class ExtensionController {
         {
           location: vscode.ProgressLocation.Notification,
           title: "Downloading and indexing data for MDN...",
-          cancellable: false
+          cancellable: false,
         },
         this.cacheFlatFilesWithProgressTask.bind(this)
       );
@@ -155,7 +155,7 @@ class ExtensionController {
   ): Promise<QuickPickExtendedItem[]> {
     let data: QuickPickExtendedItem[];
     const name = utils.getNameFromQuickPickItem(value);
-    if (name === config.higherLevelLabel) {
+    if (name === appConfig.higherLevelLabel) {
       data = this.getHigherLevelQpData();
     } else {
       data = await this.getLowerLevelQpData(value);

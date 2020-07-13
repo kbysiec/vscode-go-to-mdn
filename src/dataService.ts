@@ -3,7 +3,7 @@ import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import Parser from "./parser";
 import { getConfiguration } from "./utils";
-import { config } from "./config";
+import { appConfig } from "./appConfig";
 
 class DataService {
   private parser: Parser;
@@ -16,9 +16,9 @@ class DataService {
     if (!item) {
       item = {
         name: "root",
-        url: config.rootUrl,
+        url: appConfig.rootUrl,
         type: ItemType.Directory,
-        breadcrumbs: []
+        breadcrumbs: [],
       };
     }
 
@@ -37,7 +37,7 @@ class DataService {
   }
 
   async downloadFlatData(): Promise<Item[]> {
-    const json = await this.fetch(config.allFilesUrl, this.getJson);
+    const json = await this.fetch(appConfig.allFilesUrl, this.getJson);
     const items: Item[] = this.parser.parseFlatElements(json);
     return items;
   }
@@ -50,8 +50,8 @@ class DataService {
     const fetchConfig = {
       headers: {
         Authorization: token ? `token ${token}` : "",
-        "Content-type": "application/json"
-      }
+        "Content-type": "application/json",
+      },
     };
     const response: Response = await fetch(url, fetchConfig).catch(
       (error: Error) => {

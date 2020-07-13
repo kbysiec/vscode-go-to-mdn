@@ -1,6 +1,6 @@
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
-import { config } from './config';
+import { appConfig } from "./appConfig";
 
 class Parser {
   parseFlatElements(data: any): Item[] {
@@ -12,7 +12,7 @@ class Parser {
         url: el.url,
         parent: el.parent ? el.parent : undefined,
         type: ItemType.File,
-        breadcrumbs: [...el.breadcrumbs]
+        breadcrumbs: [...el.breadcrumbs],
       }));
     }
 
@@ -20,7 +20,7 @@ class Parser {
   }
 
   parseRootDirectories(content: any): Item[] {
-    const results = content.match(config.regex) || [];
+    const results = content.match(appConfig.regex) || [];
     const data: Item[] = results.map((el: any) => {
       const url = this.normalizeUrl(el);
       const type = ItemType.Directory;
@@ -29,7 +29,7 @@ class Parser {
         name,
         url,
         type,
-        breadcrumbs: [name]
+        breadcrumbs: [name],
       };
     });
 
@@ -62,7 +62,7 @@ class Parser {
         type: ItemType.Directory,
         parent: item,
         rootParent: item.parent || item,
-        breadcrumbs: [...item.breadcrumbs, name]
+        breadcrumbs: [...item.breadcrumbs, name],
       };
     });
 
@@ -71,7 +71,7 @@ class Parser {
 
   private normalizeUrl(url: string): string {
     const splitPathName = this.getPathNameSplit(url);
-    return `${config.urlNormalizer.to}repos/${splitPathName[0]}/${splitPathName[1]}/contents/${splitPathName[4]}${config.urlNormalizer.queryString}`;
+    return `${appConfig.urlNormalizer.to}repos/${splitPathName[0]}/${splitPathName[1]}/contents/${splitPathName[4]}${appConfig.urlNormalizer.queryString}`;
   }
 
   private getNameFromUrl(url: string): string {
@@ -81,15 +81,16 @@ class Parser {
 
   private getPathNameSplit(url: string): string[] {
     return url
-      .replace(config.urlNormalizer.from, "")
-      .replace(config.urlNormalizer.to, "")
-      .replace(config.urlNormalizer.queryString, "")
+      .replace(appConfig.urlNormalizer.from, "")
+      .replace(appConfig.urlNormalizer.to, "")
+      .replace(appConfig.urlNormalizer.queryString, "")
       .split("/");
   }
 
   private getItemElementsAtFirstItemLevel(itemElements: any): any {
     while (
-      itemElements && !Object.hasOwnProperty.call(itemElements, config.accessProperty)
+      itemElements &&
+      !Object.hasOwnProperty.call(itemElements, appConfig.accessProperty)
     ) {
       const propertyName = Object.keys(itemElements)[0] || "";
       itemElements = itemElements[propertyName];
@@ -104,20 +105,24 @@ class Parser {
   ): void {
     data.push({
       name: `${item.name} - reference`,
-      url: (itemElements && itemElements[config.accessProperty]) && itemElements[config.accessProperty].mdn_url || "",
+      url:
+        (itemElements &&
+          itemElements[appConfig.accessProperty] &&
+          itemElements[appConfig.accessProperty].mdn_url) ||
+        "",
       parent: item,
       type: ItemType.File,
-      breadcrumbs: [...item.breadcrumbs, item.name]
+      breadcrumbs: [...item.breadcrumbs, item.name],
     });
 
-    itemElements && delete itemElements[config.accessProperty];
+    itemElements && delete itemElements[appConfig.accessProperty];
   }
 
   private addElements(data: Item[], itemElements: any, item: Item): void {
     for (let prop in itemElements) {
       let element = itemElements[prop];
 
-      if (!element.hasOwnProperty(config.accessProperty)) {
+      if (!element.hasOwnProperty(appConfig.accessProperty)) {
         for (let innerProp in element) {
           let innerElement = element[innerProp];
 
@@ -127,11 +132,11 @@ class Parser {
             url: innerElement.mdn_url || "",
             parent: item,
             type: ItemType.File,
-            breadcrumbs: [...item.breadcrumbs, name]
+            breadcrumbs: [...item.breadcrumbs, name],
           });
         }
       } else {
-        element = element[config.accessProperty];
+        element = element[appConfig.accessProperty];
 
         const name = this.normalizeItemName(prop);
         data.push({
@@ -139,7 +144,7 @@ class Parser {
           url: element.mdn_url || "",
           parent: item,
           type: ItemType.File,
-          breadcrumbs: [...item.breadcrumbs, name]
+          breadcrumbs: [...item.breadcrumbs, name],
         });
       }
     }
