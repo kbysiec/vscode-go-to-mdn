@@ -14,8 +14,8 @@ describe("Cache", function () {
   let updateSpy: any;
 
   before(function () {
-    sinon.stub(appConfig, "filesCacheKey").value("filesCache");
-    sinon.stub(appConfig, "cacheKey").value("cache");
+    sinon.stub(appConfig, "flatCacheKey").value("flatData");
+    sinon.stub(appConfig, "treeCacheKey").value("treeData");
     sinon
       .stub(appConfig, "rootUrl")
       .value(
@@ -48,9 +48,9 @@ describe("Cache", function () {
     sinon.restore();
   });
 
-  describe("updateFlatFilesListCache", function () {
+  describe("updateFlatData", function () {
     it("should function exist", function () {
-      const actual = typeof cache.updateFlatFilesListCache;
+      const actual = typeof cache.updateFlatData;
       const expected = "function";
       assert.equal(actual, expected);
     });
@@ -61,14 +61,14 @@ describe("Cache", function () {
       const get = context.globalState.get as any;
       const update = context.globalState.update as any;
 
-      cache.updateFlatFilesListCache(items);
+      cache.updateFlatData(items);
       let getCalled = get.called;
 
       assert.equal(getCalled, true);
       getStub.restore();
 
       getStub = sinon.stub(context.globalState, "get").returns(undefined);
-      cache.updateFlatFilesListCache(items);
+      cache.updateFlatData(items);
       getCalled = get.called;
 
       const updateCalled = update.calledTwice;
@@ -81,9 +81,9 @@ describe("Cache", function () {
     });
   });
 
-  describe("updateTreeItemsByUrlFromCache", function () {
+  describe("updateTreeDataByItem", function () {
     it("should function exist", function () {
-      const actual = typeof cache.updateTreeItemsByUrlFromCache;
+      const actual = typeof cache.updateTreeDataByItem;
       const expected = "function";
       assert.equal(actual, expected);
     });
@@ -95,14 +95,14 @@ describe("Cache", function () {
       const get = context.globalState.get as any;
       const update = context.globalState.update as any;
 
-      cache.updateTreeItemsByUrlFromCache(items);
+      cache.updateTreeDataByItem(items);
       let getCalled = get.called;
 
       assert.equal(getCalled, true);
       getStub.restore();
 
       getStub = sinon.stub(context.globalState, "get").returns(undefined);
-      cache.updateTreeItemsByUrlFromCache(items);
+      cache.updateTreeDataByItem(items);
       getCalled = get.called;
 
       const updateCalled = update.calledTwice;
@@ -122,14 +122,14 @@ describe("Cache", function () {
       const get = context.globalState.get as any;
       const update = context.globalState.update as any;
 
-      cache.updateTreeItemsByUrlFromCache(items, item);
+      cache.updateTreeDataByItem(items, item);
       let getCalled = get.called;
 
       assert.equal(getCalled, true);
       getStub.restore();
 
       getStub = sinon.stub(context.globalState, "get").returns(undefined);
-      cache.updateTreeItemsByUrlFromCache(items, item);
+      cache.updateTreeDataByItem(items, item);
       getCalled = get.called;
 
       const updateCalled = update.calledTwice;
@@ -142,20 +142,18 @@ describe("Cache", function () {
     });
   });
 
-  describe("getFlatFilesFromCache", function () {
+  describe("getFlatData", function () {
     it("should function exist", function () {
-      const actual = typeof cache.getFlatFilesFromCache;
+      const actual = typeof cache.getFlatData;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
     it("should return value from cache", function () {
       const items: Item[] = mock.items;
-      let getStub = sinon.stub(context.globalState, "get").returns({
-        files: items,
-      });
+      let getStub = sinon.stub(context.globalState, "get").returns(items);
 
-      const expected = cache.getFlatFilesFromCache();
+      const expected = cache.getFlatData();
       assert.deepEqual(expected, items);
       getStub.restore();
     });
@@ -164,15 +162,15 @@ describe("Cache", function () {
       const items: Item[] = [];
       let getStub = sinon.stub(context.globalState, "get").returns(undefined);
 
-      const expected = cache.getFlatFilesFromCache();
+      const expected = cache.getFlatData();
       assert.deepEqual(expected, items);
       getStub.restore();
     });
   });
 
-  describe("getTreeItemsByUrlFromCache", function () {
+  describe("getTreeDataByItem", function () {
     it("should function exist", function () {
-      const actual = typeof cache.getTreeItemsByUrlFromCache;
+      const actual = typeof cache.getTreeDataByItem;
       const expected = "function";
       assert.equal(actual, expected);
     });
@@ -183,7 +181,7 @@ describe("Cache", function () {
         [appConfig.rootUrl]: items,
       });
 
-      const expected = cache.getTreeItemsByUrlFromCache();
+      const expected = cache.getTreeDataByItem();
       assert.deepEqual(expected, items);
       getStub.restore();
     });
@@ -195,7 +193,7 @@ describe("Cache", function () {
         [qpItem.url]: items,
       });
 
-      const expected = cache.getTreeItemsByUrlFromCache(qpItem);
+      const expected = cache.getTreeDataByItem(qpItem);
       assert.deepEqual(expected, items);
       getStub.restore();
     });
@@ -204,7 +202,7 @@ describe("Cache", function () {
       const items: Item[] = [];
       let getStub = sinon.stub(context.globalState, "get").returns(undefined);
 
-      const expected = cache.getTreeItemsByUrlFromCache();
+      const expected = cache.getTreeDataByItem();
       assert.deepEqual(expected, items);
       getStub.restore();
     });

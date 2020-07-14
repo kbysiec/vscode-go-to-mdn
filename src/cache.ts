@@ -6,45 +6,45 @@ import { appConfig } from "./appConfig";
 class Cache {
   constructor(private extensionContext: vscode.ExtensionContext) {}
 
-  updateFlatFilesListCache(data: Item[]): void {
+  updateFlatData(data: Item[]): void {
     let cache: any = this.extensionContext.globalState.get(
-      appConfig.filesCacheKey
+      appConfig.flatCacheKey
     );
     if (!cache) {
       cache = {};
     }
 
-    cache["files"] = data;
+    cache = data;
 
-    this.extensionContext.globalState.update(appConfig.filesCacheKey, cache);
+    this.extensionContext.globalState.update(appConfig.flatCacheKey, cache);
   }
 
-  updateTreeItemsByUrlFromCache(data: Item[], item?: Item): void {
-    let cache: any = this.extensionContext.globalState.get(appConfig.cacheKey);
+  updateTreeDataByItem(data: Item[], item?: Item): void {
+    let cache: any = this.extensionContext.globalState.get(
+      appConfig.treeCacheKey
+    );
     if (!cache) {
       cache = {};
     }
 
     const key = item ? item.url : appConfig.rootUrl;
     cache[key] = data;
-    this.extensionContext.globalState.update(appConfig.cacheKey, cache);
+    this.extensionContext.globalState.update(appConfig.treeCacheKey, cache);
   }
 
-  getFlatFilesFromCache(): Item[] | undefined {
+  getFlatData(): Item[] | undefined {
     const cache: any = this.extensionContext.globalState.get(
-      appConfig.filesCacheKey
+      appConfig.flatCacheKey
     );
-    let cachedData = [];
-    if (cache) {
-      const key = "files";
-      cachedData = cache[key];
+    if (cache && cache.length) {
+      return cache;
     }
-    return cachedData;
+    return [];
   }
 
-  getTreeItemsByUrlFromCache(item?: QuickPickExtendedItem): Item[] | undefined {
+  getTreeDataByItem(item?: QuickPickExtendedItem): Item[] | undefined {
     const cache: any = this.extensionContext.globalState.get(
-      appConfig.cacheKey
+      appConfig.treeCacheKey
     );
     let cachedData = [];
     if (cache) {
@@ -55,8 +55,8 @@ class Cache {
   }
 
   clearCache(): void {
-    this.extensionContext.globalState.update(appConfig.filesCacheKey, {});
-    this.extensionContext.globalState.update(appConfig.cacheKey, {});
+    this.extensionContext.globalState.update(appConfig.flatCacheKey, []);
+    this.extensionContext.globalState.update(appConfig.treeCacheKey, {});
   }
 }
 

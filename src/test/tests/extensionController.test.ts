@@ -216,7 +216,7 @@ describe("extensionController", function () {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
       sinon.stub(utils, "getToken").returns("sample token");
       sinon
-        .stub(extensionControllerAny.cache, "getFlatFilesFromCache")
+        .stub(extensionControllerAny.cache, "getFlatData")
         .returns(undefined);
       sinon
         .stub(extensionControllerAny, "cacheFlatFilesData")
@@ -234,9 +234,7 @@ describe("extensionController", function () {
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
       const items: Item[] = mock.items;
-      sinon
-        .stub(extensionControllerAny.cache, "getFlatFilesFromCache")
-        .returns(items);
+      sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
 
       await extensionControllerAny.cacheFlatFilesWithProgress();
 
@@ -377,9 +375,7 @@ describe("extensionController", function () {
     it("should return flat quick pick data from cache", async function () {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
       const items: Item[] = mock.items;
-      sinon
-        .stub(extensionControllerAny.cache, "getFlatFilesFromCache")
-        .returns(items);
+      sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
 
       const actual = await extensionControllerAny.getFlatQuickPickData();
       const expected: QuickPickExtendedItem[] = [
@@ -409,12 +405,12 @@ describe("extensionController", function () {
     it("should return flat quick pick data if in cache is empty array", async function () {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
       const items: Item[] = mock.items;
-      const getFlatFilesFromCacheStub = sinon.stub(
+      const getFlatDataStub = sinon.stub(
         extensionControllerAny.cache,
-        "getFlatFilesFromCache"
+        "getFlatData"
       );
-      getFlatFilesFromCacheStub.onFirstCall().returns([]);
-      getFlatFilesFromCacheStub.onSecondCall().returns(items);
+      getFlatDataStub.onFirstCall().returns([]);
+      getFlatDataStub.onSecondCall().returns(items);
       sinon
         .stub(extensionControllerAny, "cacheFlatFilesWithProgress")
         .returns(Promise.resolve());
@@ -445,11 +441,11 @@ describe("extensionController", function () {
 
     it("should return empty array if cache value is undefined", async function () {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-      const getFlatFilesFromCacheStub = sinon.stub(
+      const getFlatDataStub = sinon.stub(
         extensionControllerAny.cache,
-        "getFlatFilesFromCache"
+        "getFlatData"
       );
-      getFlatFilesFromCacheStub.returns(undefined);
+      getFlatDataStub.returns(undefined);
       sinon
         .stub(extensionControllerAny, "cacheFlatFilesWithProgress")
         .returns(Promise.resolve());
@@ -678,7 +674,7 @@ describe("extensionController", function () {
       const items: Item[] = mock.items;
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
-        .stub(extensionControllerAny.cache, "getTreeItemsByUrlFromCache")
+        .stub(extensionControllerAny.cache, "getTreeDataByItem")
         .returns(items);
       sinon.stub(utils, "prepareQpData").returns(qpItems);
 
@@ -690,9 +686,7 @@ describe("extensionController", function () {
     it("should return quick pick tree data if data is not in cache and parent item is not provided", async function () {
       const items: Item[] = mock.items;
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
-      sinon
-        .stub(extensionControllerAny.cache, "getTreeItemsByUrlFromCache")
-        .returns([]);
+      sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
       sinon.stub(utils, "prepareQpData").returns(qpItems);
 
@@ -705,9 +699,7 @@ describe("extensionController", function () {
       const items: Item[] = mock.items;
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       const qpItem: QuickPickExtendedItem = mock.qpItem;
-      sinon
-        .stub(extensionControllerAny.cache, "getTreeItemsByUrlFromCache")
-        .returns([]);
+      sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
       sinon.stub(utils, "prepareQpData").returns(qpItems);
 
@@ -731,7 +723,7 @@ describe("extensionController", function () {
         .returns(Promise.resolve(items));
       const updateCacheStub = sinon.stub(
         extensionControllerAny.cache,
-        "updateTreeItemsByUrlFromCache"
+        "updateTreeDataByItem"
       );
 
       const actualData = await extensionControllerAny.downloadTreeData();
@@ -757,7 +749,7 @@ describe("extensionController", function () {
         .returns(Promise.resolve(items));
       const updateCacheStub = sinon.stub(
         extensionControllerAny.cache,
-        "updateFlatFilesListCache"
+        "updateFlatData"
       );
 
       const actualData = await extensionControllerAny.downloadFlatFilesData();

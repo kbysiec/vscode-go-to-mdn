@@ -84,7 +84,7 @@ class ExtensionController {
   }
 
   private async cacheFlatFilesWithProgress() {
-    const dataFromCache = this.cache.getFlatFilesFromCache();
+    const dataFromCache = this.cache.getFlatData();
     const areCached = dataFromCache ? dataFromCache.length > 0 : false;
 
     if (utils.shouldDisplayFlatList() && utils.getToken() && !areCached) {
@@ -134,12 +134,12 @@ class ExtensionController {
   }
 
   private async getFlatQuickPickData(): Promise<QuickPickExtendedItem[]> {
-    let data = this.cache.getFlatFilesFromCache();
+    let data = this.cache.getFlatData();
     const areCached = data ? data.length > 0 : false;
 
     if (!areCached) {
       await this.cacheFlatFilesWithProgress();
-      data = this.cache.getFlatFilesFromCache();
+      data = this.cache.getFlatData();
     }
 
     const qpData = data ? utils.prepareQpData(data) : [];
@@ -195,7 +195,7 @@ class ExtensionController {
   private async getTreeData(
     qpItem?: QuickPickExtendedItem
   ): Promise<QuickPickExtendedItem[]> {
-    let data = this.cache.getTreeItemsByUrlFromCache(qpItem);
+    let data = this.cache.getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
       let item: Item | undefined = qpItem && utils.mapQpItemToItem(qpItem);
@@ -207,13 +207,13 @@ class ExtensionController {
 
   private async downloadTreeData(item?: Item): Promise<Item[]> {
     const data = await this.dataService.downloadTreeData(item);
-    this.cache.updateTreeItemsByUrlFromCache(data, item);
+    this.cache.updateTreeDataByItem(data, item);
     return data;
   }
 
   private async downloadFlatFilesData(): Promise<Item[]> {
     const data = await this.dataService.downloadFlatData();
-    this.cache.updateFlatFilesListCache(data);
+    this.cache.updateFlatData(data);
     return data;
   }
 

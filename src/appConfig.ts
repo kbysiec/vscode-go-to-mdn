@@ -11,6 +11,6 @@ export const appConfig = {
   },
   accessProperty: "__compat",
   higherLevelLabel: "..",
-  cacheKey: "cache",
-  filesCacheKey: "filesCache",
+  treeCacheKey: "treeData",
+  flatCacheKey: "flatData",
 };
