@@ -45,12 +45,6 @@ describe("extensionController", function () {
     sinon.restore();
   });
   describe("showQuickPick", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionController.showQuickPick;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should load data and show quickPick", async function () {
       const showStub = sinon.stub(extensionControllerAny.quickPick, "show");
       const loadQuickPickDataStub = sinon.stub(
@@ -65,12 +59,6 @@ describe("extensionController", function () {
   });
 
   describe("clearCache", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionController.clearCache;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke cache clearing function on cache object", async function () {
       const stub = sinon.stub(extensionControllerAny.cache, "clearCache");
 
@@ -80,12 +68,6 @@ describe("extensionController", function () {
   });
 
   describe("onQuickPickSubmit", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.onQuickPickSubmit;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke openInBrowser function with search url if value is string", async function () {
       const openInBrowserStub = sinon
         .stub(extensionControllerAny, "openInBrowser")
@@ -161,12 +143,6 @@ describe("extensionController", function () {
   });
 
   describe("getFlatFilesData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getFlatFilesData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke downloadFlatFilesData function", async function () {
       const stub = sinon
         .stub(extensionControllerAny, "downloadFlatFilesData")
@@ -182,12 +158,6 @@ describe("extensionController", function () {
   });
 
   describe("cacheFlatFilesWithProgressTask", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.cacheFlatFilesWithProgressTask;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke cacheFlatFilesData function", async function () {
       const stub = sinon
         .stub(extensionControllerAny, "cacheFlatFilesData")
@@ -203,12 +173,6 @@ describe("extensionController", function () {
   });
 
   describe("cacheFlatFilesWithProgress", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.cacheFlatFilesWithProgress;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should download and cache data if cache returns undefined", async function () {
       const stub = sinon
         .stub(vscode.window, "withProgress")
@@ -245,12 +209,6 @@ describe("extensionController", function () {
   });
 
   describe("cacheFlatFilesData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.cacheFlatFilesData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke getFlatFilesData function", async function () {
       const stub = sinon
         .stub(extensionControllerAny, "getFlatFilesData")
@@ -266,12 +224,6 @@ describe("extensionController", function () {
   });
 
   describe("isHigherLevelDataEmpty", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.isHigherLevelDataEmpty;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should check if higherLevelData array is empty", function () {
       sinon.stub(extensionControllerAny, "higherLevelData").value([1]);
 
@@ -282,12 +234,6 @@ describe("extensionController", function () {
   });
 
   describe("loadQuickPickData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.loadQuickPickData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should load flat list of items", async function () {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
@@ -333,12 +279,6 @@ describe("extensionController", function () {
   });
 
   describe("prepareQuickPickPlaceholder", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.prepareQuickPickPlaceholder;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke clearQuickPickPlaceholder if higherLevelData is not empty", function () {
       sinon.stub(extensionControllerAny, "higherLevelData").value([1]);
       const spy = sinon.stub(
@@ -366,12 +306,6 @@ describe("extensionController", function () {
   });
 
   describe("getFlatQuickPickData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getFlatQuickPickData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return flat quick pick data from cache", async function () {
       sinon.stub(utils, "shouldDisplayFlatList").returns(true);
       const items: Item[] = mock.items;
@@ -457,12 +391,6 @@ describe("extensionController", function () {
   });
 
   describe("getQuickPickRootData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getQuickPickRootData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return tree root data", async function () {
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
@@ -476,12 +404,6 @@ describe("extensionController", function () {
   });
 
   describe("getQuickPickData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getQuickPickData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return higher level data", async function () {
       const backwardNavigationQpItem: QuickPickExtendedItem =
         mock.backwardNavigationQpItem;
@@ -512,12 +434,6 @@ describe("extensionController", function () {
   });
 
   describe("rememberHigherLevelQpData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.rememberHigherLevelQpData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should remember higher level data", function () {
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       const higherLevelData: QuickPickExtendedItem[][] = [];
@@ -535,12 +451,6 @@ describe("extensionController", function () {
   });
 
   describe("getHigherLevelQpData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getHigherLevelQpData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return higher level data", function () {
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon.stub(extensionControllerAny, "higherLevelData").value([qpItems]);
@@ -552,12 +462,6 @@ describe("extensionController", function () {
   });
 
   describe("getLowerLevelQpData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getLowerLevelQpData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return lower level data without empty urls", async function () {
       const qpItem: QuickPickExtendedItem = mock.qpItem;
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
@@ -580,12 +484,6 @@ describe("extensionController", function () {
   });
 
   describe("setQuickPickPlaceholder", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.setQuickPickPlaceholder;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke quickPick.setPlaceholder function", async function () {
       const spy = sinon.stub(
         extensionControllerAny.quickPick,
@@ -602,12 +500,6 @@ describe("extensionController", function () {
   });
 
   describe("clearQuickPickPlaceholder", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.clearQuickPickPlaceholder;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke quickPick.setPlaceholder function with undefined parameter", async function () {
       const stub = sinon.stub(
         extensionControllerAny.quickPick,
@@ -623,53 +515,6 @@ describe("extensionController", function () {
   });
 
   describe("getTreeData", function () {
-    // let items: Item[];
-    // let qpItems: QuickPickExtendedItem[];
-
-    // before(function() {
-    //   items = [
-    //     {
-    //       name: "sub-label",
-    //       url: "#",
-    //       type: ItemType.File,
-    //       breadcrumbs: ["api", "test-label", "sub-label"]
-    //     },
-    //     {
-    //       name: "sub-label 2",
-    //       url: "https://sub-label-2.com",
-    //       type: ItemType.Directory,
-    //       breadcrumbs: ["api", "test-label", "sub-label 2"]
-    //     }
-    //   ];
-
-    //   qpItems = [
-    //     {
-    //       label: `$(file-directory) sub-label`,
-    //       url: "",
-    //       type: ItemType.File,
-    //       parent: undefined,
-    //       rootParent: undefined,
-    //       breadcrumbs: ["api", "test-label", "sub-label"],
-    //       description: "api test-label sub-label"
-    //     },
-    //     {
-    //       label: `$(file-directory) sub-label 2`,
-    //       url: "https://sub-label-2.com",
-    //       type: ItemType.Directory,
-    //       parent: undefined,
-    //       rootParent: undefined,
-    //       breadcrumbs: ["api", "test-label", "sub-label 2"],
-    //       description: "api test-label sub-label 2"
-    //     }
-    //   ];
-    // });
-
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.getTreeData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return quick pick tree data if data is in cache", async function () {
       const items: Item[] = mock.items;
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
@@ -710,12 +555,6 @@ describe("extensionController", function () {
   });
 
   describe("downloadTreeData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.downloadTreeData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return tree node data", async function () {
       const items: Item[] = mock.items;
       sinon
@@ -736,12 +575,6 @@ describe("extensionController", function () {
   });
 
   describe("downloadFlatFilesData", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.downloadFlatFilesData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return flat data", async function () {
       const items: Item[] = mock.items;
       sinon
@@ -762,12 +595,6 @@ describe("extensionController", function () {
   });
 
   describe("openInBrowser", function () {
-    it("should function exist", function () {
-      const actual = typeof extensionControllerAny.openInBrowser;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should invoke open function", async function () {
       const openStub = sinon.stub().returns(Promise.resolve());
       const ProxiedExtensionController = proxyquire(

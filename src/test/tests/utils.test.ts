@@ -14,12 +14,6 @@ describe("Utils", function () {
   });
 
   describe("isValueStringType", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.isValueStringType;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return true if value is a string", function () {
       const actual = utils.isValueStringType("test");
       const expected = true;
@@ -36,12 +30,6 @@ describe("Utils", function () {
   });
 
   describe("isValueFileType", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.isValueFileType;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return true if value type is file", function () {
       const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
@@ -60,12 +48,6 @@ describe("Utils", function () {
   });
 
   describe("getSearchUrl", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.getSearchUrl;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return search url with query string", function () {
       const baseUrl = "https://developer.mozilla.org/en-US/search";
       sinon.stub(appConfig, "searchUrl").value(baseUrl);
@@ -86,12 +68,6 @@ describe("Utils", function () {
   });
 
   describe("getNameFromQuickPickItem", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.getNameFromQuickPickItem;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return name from label without first category", function () {
       const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
@@ -110,12 +86,6 @@ describe("Utils", function () {
   });
 
   describe("removeDataWithEmptyUrl", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.removeDataWithEmptyUrl;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return name from label without first category", function () {
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       const actual = utils.removeDataWithEmptyUrl(qpItems).length;
@@ -125,12 +95,6 @@ describe("Utils", function () {
   });
 
   describe("prepareBreadcrumbs", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.prepareBreadcrumbs;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return breadcrumbs string with dash if isFlat is falsy", function () {
       const item: Item = mock.item;
 
@@ -157,12 +121,6 @@ describe("Utils", function () {
   });
 
   describe("mapDataToQpData", function () {
-    it("should function exist", function () {
-      const actual = typeof utils.mapDataToQpData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
       const items: Item[] = mock.itemsMixedFileType;
 
@@ -200,12 +158,6 @@ describe("Utils", function () {
     });
 
     describe("mapQpItemToItem", function () {
-      it("should function exist", function () {
-        const actual = typeof utils.mapQpItemToItem;
-        const expected = "function";
-        assert.equal(actual, expected);
-      });
-
       it("should return Item object", function () {
         const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
@@ -224,12 +176,6 @@ describe("Utils", function () {
     });
 
     describe("addBackwardNavigationItem", function () {
-      it("should function exist", function () {
-        const actual = typeof utils.addBackwardNavigationItem;
-        const expected = "function";
-        assert.equal(actual, expected);
-      });
-
       it("should add backward navigation Item", function () {
         const qpItems: QuickPickExtendedItem[] = mock.qpItems;
         utils.addBackwardNavigationItem(qpItems);
@@ -248,13 +194,7 @@ describe("Utils", function () {
     });
 
     describe("prepareQpData", function () {
-      it("should function exist", function () {
-        const actual = typeof utils.prepareQpData;
-        const expected = "function";
-        assert.equal(actual, expected);
-      });
-
-      it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
+          it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
         sinon.stub(vscode.workspace, "getConfiguration").returns({
           get: (key: string) =>
             key === "goToMDN.shouldDisplayFlatList" ? false : undefined,
@@ -302,12 +242,6 @@ describe("Utils", function () {
     });
 
     describe("getConfiguration", function () {
-      it("should function exist", function () {
-        const actual = typeof utils.getConfiguration;
-        const expected = "function";
-        assert.equal(actual, expected);
-      });
-
       it("should return true for goToMDN.shouldDisplayFlatList key", function () {
         sinon.stub(vscode.workspace, "getConfiguration").returns({
           get: (key: string) =>
@@ -327,12 +261,6 @@ describe("Utils", function () {
     });
 
     describe("shouldDisplayFlatList", function () {
-      it("should function exist", function () {
-        const actual = typeof utils.shouldDisplayFlatList;
-        const expected = "function";
-        assert.equal(actual, expected);
-      });
-
       it("should return true", function () {
         sinon.stub(utils, "getConfiguration").returns(true);
 
@@ -343,12 +271,6 @@ describe("Utils", function () {
     });
 
     describe("getToken", function () {
-      it("should function exist", function () {
-        const actual = typeof utils.getToken;
-        const expected = "function";
-        assert.equal(actual, expected);
-      });
-
       it("should return sample token", function () {
         sinon.stub(utils, "getConfiguration").returns("sample token");
 

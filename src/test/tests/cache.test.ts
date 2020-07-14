@@ -49,12 +49,6 @@ describe("Cache", function () {
   });
 
   describe("updateFlatData", function () {
-    it("should function exist", function () {
-      const actual = typeof cache.updateFlatData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should update cache value", function () {
       let getStub = sinon.stub(context.globalState, "get").returns({});
       const items: Item[] = mock.items;
@@ -82,12 +76,6 @@ describe("Cache", function () {
   });
 
   describe("updateTreeDataByItem", function () {
-    it("should function exist", function () {
-      const actual = typeof cache.updateTreeDataByItem;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should update cache value if item is undefined", function () {
       const items: Item[] = mock.items;
 
@@ -143,12 +131,6 @@ describe("Cache", function () {
   });
 
   describe("getFlatData", function () {
-    it("should function exist", function () {
-      const actual = typeof cache.getFlatData;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return value from cache", function () {
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns(items);
@@ -169,12 +151,6 @@ describe("Cache", function () {
   });
 
   describe("getTreeDataByItem", function () {
-    it("should function exist", function () {
-      const actual = typeof cache.getTreeDataByItem;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return value from cache if item is undefined", function () {
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
@@ -209,12 +185,6 @@ describe("Cache", function () {
   });
 
   describe("clearCache", function () {
-    it("should function exist", function () {
-      const actual = typeof cache.clearCache;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should clear cache", function () {
       const update = context.globalState.update as any;
       cache.clearCache();
