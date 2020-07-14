@@ -8,7 +8,7 @@ import ItemType from "../../enums/ItemType";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/cache.mock";
 
-describe("Cache", function () {
+describe("Cache", () => {
   let cache: Cache;
   let context: vscode.ExtensionContext;
   let updateSpy: any;
@@ -48,8 +48,8 @@ describe("Cache", function () {
     sinon.restore();
   });
 
-  describe("updateFlatData", function () {
-    it("should update cache value", function () {
+  describe("updateFlatData", () => {
+    it("should update cache value", () => {
       let getStub = sinon.stub(context.globalState, "get").returns({});
       const items: Item[] = mock.items;
       const get = context.globalState.get as any;
@@ -75,8 +75,8 @@ describe("Cache", function () {
     });
   });
 
-  describe("updateTreeDataByItem", function () {
-    it("should update cache value if item is undefined", function () {
+  describe("updateTreeDataByItem", () => {
+    it("should update cache value if item is undefined", () => {
       const items: Item[] = mock.items;
 
       let getStub = sinon.stub(context.globalState, "get").returns({});
@@ -102,7 +102,7 @@ describe("Cache", function () {
       updateSpy.resetHistory();
     });
 
-    it("should update cache value if item is passed", function () {
+    it("should update cache value if item is passed", () => {
       const items: Item[] = mock.items;
       const item: Item = mock.item;
 
@@ -130,8 +130,8 @@ describe("Cache", function () {
     });
   });
 
-  describe("getFlatData", function () {
-    it("should return value from cache", function () {
+  describe("getFlatData", () => {
+    it("should return value from cache", () => {
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns(items);
 
@@ -140,7 +140,7 @@ describe("Cache", function () {
       getStub.restore();
     });
 
-    it("should return empty array from cache", function () {
+    it("should return empty array from cache", () => {
       const items: Item[] = [];
       let getStub = sinon.stub(context.globalState, "get").returns(undefined);
 
@@ -150,8 +150,8 @@ describe("Cache", function () {
     });
   });
 
-  describe("getTreeDataByItem", function () {
-    it("should return value from cache if item is undefined", function () {
+  describe("getTreeDataByItem", () => {
+    it("should return value from cache if item is undefined", () => {
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
         [appConfig.rootUrl]: items,
@@ -162,7 +162,7 @@ describe("Cache", function () {
       getStub.restore();
     });
 
-    it("should return value from cache if item is passed", function () {
+    it("should return value from cache if item is passed", () => {
       const qpItem: QuickPickExtendedItem = mock.qpItem;
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
@@ -174,7 +174,7 @@ describe("Cache", function () {
       getStub.restore();
     });
 
-    it("should return empty array from cache if key not found", function () {
+    it("should return empty array from cache if key not found", () => {
       const items: Item[] = [];
       let getStub = sinon.stub(context.globalState, "get").returns(undefined);
 
@@ -184,8 +184,8 @@ describe("Cache", function () {
     });
   });
 
-  describe("clearCache", function () {
-    it("should clear cache", function () {
+  describe("clearCache", () => {
+    it("should clear cache", () => {
       const update = context.globalState.update as any;
       cache.clearCache();
 

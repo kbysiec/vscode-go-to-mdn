@@ -16,7 +16,7 @@ const chaiAsPromised = require("chai-as-promised");
 
 use(chaiAsPromised);
 
-describe("DataService", function () {
+describe("DataService", () => {
   let utilsStub: Utils;
   let dataService: DataService;
 
@@ -25,13 +25,13 @@ describe("DataService", function () {
     dataService = new DataService(utilsStub);
   });
 
-  describe("downloadTreeData", function () {
-    this.beforeEach(function () {
+  describe("downloadTreeData", () => {
+    beforeEach(function () {
       fetch.cache = {};
       fetch.cache.default = fetch.default;
     });
 
-    this.afterEach(function () {
+    afterEach(function () {
       fetchMock.restore();
       fetch.default = fetch.cache.default;
       delete fetch.cache;
@@ -206,13 +206,13 @@ describe("DataService", function () {
     });
   });
 
-  describe("downloadFlatData", function () {
-    this.beforeEach(function () {
+  describe("downloadFlatData", () => {
+    beforeEach(function () {
       fetch.cache = {};
       fetch.cache.default = fetch.default;
     });
 
-    this.afterEach(function () {
+    afterEach(function () {
       fetchMock.restore();
       fetch.default = fetch.cache.default;
       delete fetch.cache;

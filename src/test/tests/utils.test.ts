@@ -8,7 +8,7 @@ import ItemType from "../../enums/ItemType";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/utils.mock";
 
-describe("Utils", function () {
+describe("Utils", () => {
   let utils: Utils;
   let utilsAny: any;
 
@@ -21,14 +21,14 @@ describe("Utils", function () {
     sinon.restore();
   });
 
-  describe("isValueStringType", function () {
-    it("should return true if value is a string", function () {
+  describe("isValueStringType", () => {
+    it("should return true if value is a string", () => {
       const actual = utils.isValueStringType("test");
       const expected = true;
       assert.equal(actual, expected);
     });
 
-    it("should return false if value is not a string", function () {
+    it("should return false if value is not a string", () => {
       const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
       const actual = utils.isValueStringType(qpItem);
@@ -37,8 +37,8 @@ describe("Utils", function () {
     });
   });
 
-  describe("isValueFileType", function () {
-    it("should return true if value type is file", function () {
+  describe("isValueFileType", () => {
+    it("should return true if value type is file", () => {
       const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
       const actual = utils.isValueFileType(qpItem);
@@ -46,7 +46,7 @@ describe("Utils", function () {
       assert.equal(actual, expected);
     });
 
-    it("should return false if value type is directory", function () {
+    it("should return false if value type is directory", () => {
       const qpItem: QuickPickExtendedItem = mock.qpItemDirectory;
 
       const actual = utils.isValueFileType(qpItem);
@@ -55,8 +55,8 @@ describe("Utils", function () {
     });
   });
 
-  describe("getSearchUrl", function () {
-    it("should return search url with query string", function () {
+  describe("getSearchUrl", () => {
+    it("should return search url with query string", () => {
       const baseUrl = "https://developer.mozilla.org/en-US/search";
       sinon.stub(appConfig, "searchUrl").value(baseUrl);
 
@@ -65,7 +65,7 @@ describe("Utils", function () {
       assert.equal(actual, expected);
     });
 
-    it("should return search url without query string", function () {
+    it("should return search url without query string", () => {
       const baseUrl = "https://developer.mozilla.org/en-US/search";
       sinon.stub(appConfig, "searchUrl").value(baseUrl);
 
@@ -75,8 +75,8 @@ describe("Utils", function () {
     });
   });
 
-  describe("getNameFromQuickPickItem", function () {
-    it("should return name from label without first category", function () {
+  describe("getNameFromQuickPickItem", () => {
+    it("should return name from label without first category", () => {
       const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
       const actual = utils.getNameFromQuickPickItem(qpItem);
@@ -84,7 +84,7 @@ describe("Utils", function () {
       assert.equal(actual, expected);
     });
 
-    it("should return empty name", function () {
+    it("should return empty name", () => {
       const qpItem: QuickPickExtendedItem = mock.qpItemEmptyLabel;
 
       const actual = utils.getNameFromQuickPickItem(qpItem);
@@ -93,8 +93,8 @@ describe("Utils", function () {
     });
   });
 
-  describe("removeDataWithEmptyUrl", function () {
-    it("should return name from label without first category", function () {
+  describe("removeDataWithEmptyUrl", () => {
+    it("should return name from label without first category", () => {
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       const actual = utils.removeDataWithEmptyUrl(qpItems).length;
       const expected = 2;
@@ -102,8 +102,8 @@ describe("Utils", function () {
     });
   });
 
-  describe("prepareBreadcrumbs", function () {
-    it("should return breadcrumbs string with dash if isFlat is falsy", function () {
+  describe("prepareBreadcrumbs", () => {
+    it("should return breadcrumbs string with dash if isFlat is falsy", () => {
       const item: Item = mock.item;
 
       const actual = utils.prepareBreadcrumbs(item);
@@ -111,7 +111,7 @@ describe("Utils", function () {
       assert.equal(actual, expected);
     });
 
-    it("should return empty breadcrumbs string with dash if isFlat is falsy", function () {
+    it("should return empty breadcrumbs string with dash if isFlat is falsy", () => {
       const item: Item = mock.itemEmptyName;
 
       const actual = utils.prepareBreadcrumbs(item);
@@ -119,7 +119,7 @@ describe("Utils", function () {
       assert.equal(actual, expected);
     });
 
-    it("should return breadcrumbs string without dash if isFlat is truthy", function () {
+    it("should return breadcrumbs string without dash if isFlat is truthy", () => {
       const item: Item = mock.item;
 
       const actual = utils.prepareBreadcrumbs(item, true);
@@ -128,8 +128,8 @@ describe("Utils", function () {
     });
   });
 
-  describe("mapDataToQpData", function () {
-    it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
+  describe("mapDataToQpData", () => {
+    it("should return array of QuickPickExtendedItem if isFlat is falsy", () => {
       const items: Item[] = mock.itemsMixedFileType;
 
       const actual = utils.mapDataToQpData(items);
@@ -147,7 +147,7 @@ describe("Utils", function () {
       assert.deepEqual(actual[1], expectedSecondItem);
     });
 
-    it("should return array of QuickPickExtendedItem if isFlat is truthy", function () {
+    it("should return array of QuickPickExtendedItem if isFlat is truthy", () => {
       const items: Item[] = mock.items;
 
       const actual = utils.mapDataToQpData(items, true);
@@ -165,8 +165,8 @@ describe("Utils", function () {
       assert.deepEqual(actual[1], expectedSecondItem);
     });
 
-    describe("mapQpItemToItem", function () {
-      it("should return Item object", function () {
+    describe("mapQpItemToItem", () => {
+      it("should return Item object", () => {
         const qpItem: QuickPickExtendedItem = mock.qpItemFile;
 
         const actual = utils.mapQpItemToItem(qpItem);
@@ -183,8 +183,8 @@ describe("Utils", function () {
       });
     });
 
-    describe("addBackwardNavigationItem", function () {
-      it("should add backward navigation Item", function () {
+    describe("addBackwardNavigationItem", () => {
+      it("should add backward navigation Item", () => {
         const qpItems: QuickPickExtendedItem[] = mock.qpItems;
         utils.addBackwardNavigationItem(qpItems);
         const expectedLength = 4;
@@ -201,8 +201,8 @@ describe("Utils", function () {
       });
     });
 
-    describe("prepareQpData", function () {
-      it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
+    describe("prepareQpData", () => {
+      it("should return array of QuickPickExtendedItem if isFlat is falsy", () => {
         sinon.stub(vscode.workspace, "getConfiguration").returns({
           get: (key: string) =>
             key === "goToMDN.shouldDisplayFlatList" ? false : undefined,
@@ -228,7 +228,7 @@ describe("Utils", function () {
         assert.deepEqual(actual[1], expectedSecondItem);
       });
 
-      it("should return array of QuickPickExtendedItem if isFlat is true", function () {
+      it("should return array of QuickPickExtendedItem if isFlat is true", () => {
         sinon.stub(utils, "shouldDisplayFlatList").returns(true);
         const items: Item[] = mock.items;
 
@@ -249,8 +249,8 @@ describe("Utils", function () {
       });
     });
 
-    describe("getConfiguration", function () {
-      it("should return true for goToMDN.shouldDisplayFlatList key", function () {
+    describe("getConfiguration", () => {
+      it("should return true for goToMDN.shouldDisplayFlatList key", () => {
         sinon.stub(vscode.workspace, "getConfiguration").returns({
           get: (key: string) =>
             key === "goToMDN.shouldDisplayFlatList" ? true : undefined,
@@ -268,8 +268,8 @@ describe("Utils", function () {
       });
     });
 
-    describe("shouldDisplayFlatList", function () {
-      it("should return true", function () {
+    describe("shouldDisplayFlatList", () => {
+      it("should return true", () => {
         sinon.stub(utils, "getConfiguration").returns(true);
 
         const actual = utils.shouldDisplayFlatList();
@@ -278,8 +278,8 @@ describe("Utils", function () {
       });
     });
 
-    describe("getToken", function () {
-      it("should return sample token", function () {
+    describe("getToken", () => {
+      it("should return sample token", () => {
         sinon.stub(utils, "getConfiguration").returns("sample token");
 
         const actual = utils.getToken();
