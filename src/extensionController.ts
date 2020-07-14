@@ -4,7 +4,7 @@ import DataService from "./dataService";
 import QuickPick from "./quickPick";
 import Item from "./interfaces/item";
 import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
-import * as utils from "./utils";
+import Utils from "./utils";
 import { appConfig } from "./appConfig";
 import Cache from "./cache";
 
@@ -13,12 +13,14 @@ class ExtensionController {
   private higherLevelData: QuickPickExtendedItem[][];
   private quickPick: QuickPick;
   private cache: Cache;
+  private utils: Utils;
 
   constructor(private extensionContext: vscode.ExtensionContext) {
-    this.dataService = new DataService();
+    this.utils = new Utils();
+    this.dataService = new DataService(this.utils);
     this.quickPick = new QuickPick(
       this.onQuickPickSubmit,
-      utils.shouldDisplayFlatList()
+      this.utils.shouldDisplayFlatList()
     );
     this.higherLevelData = [];
     this.cache = new Cache(this.extensionContext);
@@ -38,17 +40,17 @@ class ExtensionController {
   ): Promise<void> => {
     try {
       let url: string;
-      if (utils.isValueStringType(value)) {
+      if (this.utils.isValueStringType(value)) {
         if (!this.isHigherLevelDataEmpty()) {
           return;
         }
         value = value as string;
-        url = utils.getSearchUrl(value);
+        url = this.utils.getSearchUrl(value);
         url && (await this.openInBrowser(url));
       } else {
         value = value as QuickPickExtendedItem;
 
-        if (utils.isValueFileType(value)) {
+        if (this.utils.isValueFileType(value)) {
           let url = value.url;
           url && (await this.openInBrowser(url));
         } else {
@@ -87,7 +89,11 @@ class ExtensionController {
     const dataFromCache = this.cache.getFlatData();
     const areCached = dataFromCache ? dataFromCache.length > 0 : false;
 
-    if (utils.shouldDisplayFlatList() && utils.getToken() && !areCached) {
+    if (
+      this.utils.shouldDisplayFlatList() &&
+      this.utils.getToken() &&
+      !areCached
+    ) {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
@@ -113,7 +119,7 @@ class ExtensionController {
     this.quickPick.showLoading(true);
     let data: QuickPickExtendedItem[];
 
-    if (utils.shouldDisplayFlatList()) {
+    if (this.utils.shouldDisplayFlatList()) {
       data = await this.getFlatQuickPickData();
     } else if (value) {
       data = await this.getQuickPickData(value);
@@ -142,7 +148,7 @@ class ExtensionController {
       data = this.cache.getFlatData();
     }
 
-    const qpData = data ? utils.prepareQpData(data) : [];
+    const qpData = data ? this.utils.prepareQpData(data) : [];
     return qpData;
   }
 
@@ -154,7 +160,7 @@ class ExtensionController {
     value: QuickPickExtendedItem
   ): Promise<QuickPickExtendedItem[]> {
     let data: QuickPickExtendedItem[];
-    const name = utils.getNameFromQuickPickItem(value);
+    const name = this.utils.getNameFromQuickPickItem(value);
     if (name === appConfig.higherLevelLabel) {
       data = this.getHigherLevelQpData();
     } else {
@@ -178,7 +184,7 @@ class ExtensionController {
   ): Promise<QuickPickExtendedItem[]> {
     let data: QuickPickExtendedItem[];
     data = await this.getTreeData(value);
-    data = utils.removeDataWithEmptyUrl(data);
+    data = this.utils.removeDataWithEmptyUrl(data);
     return data;
   }
 
@@ -198,10 +204,10 @@ class ExtensionController {
     let data = this.cache.getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
-      let item: Item | undefined = qpItem && utils.mapQpItemToItem(qpItem);
+      let item: Item | undefined = qpItem && this.utils.mapQpItemToItem(qpItem);
       data = await this.downloadTreeData(item);
     }
-    const qpData = utils.prepareQpData(data);
+    const qpData = this.utils.prepareQpData(data);
     return qpData;
   }
 

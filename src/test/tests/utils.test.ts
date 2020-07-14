@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
-import * as utils from "../../utils";
+import Utils from "../../utils";
 import QuickPickExtendedItem from "../../interfaces/QuickPickExtendedItem";
 import Item from "../../interfaces/Item";
 import ItemType from "../../enums/ItemType";
@@ -9,7 +9,15 @@ import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/utils.mock";
 
 describe("Utils", function () {
-  afterEach(function () {
+  let utils: Utils;
+  let utilsAny: any;
+
+  before(() => {
+    utils = new Utils();
+    utilsAny = utils as any;
+  });
+
+  afterEach(() => {
     sinon.restore();
   });
 
@@ -194,7 +202,7 @@ describe("Utils", function () {
     });
 
     describe("prepareQpData", function () {
-          it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
+      it("should return array of QuickPickExtendedItem if isFlat is falsy", function () {
         sinon.stub(vscode.workspace, "getConfiguration").returns({
           get: (key: string) =>
             key === "goToMDN.shouldDisplayFlatList" ? false : undefined,

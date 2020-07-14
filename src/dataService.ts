@@ -2,13 +2,13 @@ import fetch, { Response } from "node-fetch";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import Parser from "./parser";
-import { getConfiguration } from "./utils";
 import { appConfig } from "./appConfig";
+import Utils from "./utils";
 
 class DataService {
   private parser: Parser;
 
-  constructor() {
+  constructor(private utils: Utils) {
     this.parser = new Parser();
   }
 
@@ -43,7 +43,7 @@ class DataService {
   }
 
   private async fetch(url: string, callback: Function): Promise<any> {
-    const token = getConfiguration<string>(
+    const token = this.utils.getConfiguration<string>(
       "goToMDN.githubPersonalAccessToken",
       ""
     );

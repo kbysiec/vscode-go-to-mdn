@@ -5,7 +5,7 @@ import ExtensionController from "../../ExtensionController";
 import Item from "../../interfaces/item";
 import ItemType from "../../enums/itemType";
 import QuickPickExtendedItem from "../../interfaces/quickPickExtendedItem";
-import * as utils from "../../utils";
+import Utils from "../../utils";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/extensionController.mock";
 
@@ -132,7 +132,9 @@ describe("extensionController", function () {
         vscode.window,
         "showErrorMessage"
       );
-      sinon.stub(utils, "getSearchUrl").throws("test error message");
+      sinon
+        .stub(extensionControllerAny.utils, "getSearchUrl")
+        .throws("test error message");
 
       await extensionControllerAny.onQuickPickSubmit("test search text");
 
@@ -177,8 +179,12 @@ describe("extensionController", function () {
       const stub = sinon
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
-      sinon.stub(utils, "shouldDisplayFlatList").returns(true);
-      sinon.stub(utils, "getToken").returns("sample token");
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(true);
+      sinon
+        .stub(extensionControllerAny.utils, "getToken")
+        .returns("sample token");
       sinon
         .stub(extensionControllerAny.cache, "getFlatData")
         .returns(undefined);
@@ -235,7 +241,9 @@ describe("extensionController", function () {
 
   describe("loadQuickPickData", function () {
     it("should load flat list of items", async function () {
-      sinon.stub(utils, "shouldDisplayFlatList").returns(true);
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(true);
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getFlatQuickPickData")
@@ -249,7 +257,9 @@ describe("extensionController", function () {
     });
 
     it("should load list of items", async function () {
-      sinon.stub(utils, "shouldDisplayFlatList").returns(false);
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(false);
       const qpItem: QuickPickExtendedItem = mock.qpItemDirectoryType;
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
@@ -264,7 +274,9 @@ describe("extensionController", function () {
     });
 
     it("should load list of root items", async function () {
-      sinon.stub(utils, "shouldDisplayFlatList").returns(false);
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(false);
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getQuickPickRootData")
@@ -307,7 +319,9 @@ describe("extensionController", function () {
 
   describe("getFlatQuickPickData", function () {
     it("should return flat quick pick data from cache", async function () {
-      sinon.stub(utils, "shouldDisplayFlatList").returns(true);
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(true);
       const items: Item[] = mock.items;
       sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
 
@@ -337,7 +351,9 @@ describe("extensionController", function () {
     });
 
     it("should return flat quick pick data if in cache is empty array", async function () {
-      sinon.stub(utils, "shouldDisplayFlatList").returns(true);
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(true);
       const items: Item[] = mock.items;
       const getFlatDataStub = sinon.stub(
         extensionControllerAny.cache,
@@ -374,7 +390,9 @@ describe("extensionController", function () {
     });
 
     it("should return empty array if cache value is undefined", async function () {
-      sinon.stub(utils, "shouldDisplayFlatList").returns(true);
+      sinon
+        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .returns(true);
       const getFlatDataStub = sinon.stub(
         extensionControllerAny.cache,
         "getFlatData"
@@ -521,7 +539,9 @@ describe("extensionController", function () {
       sinon
         .stub(extensionControllerAny.cache, "getTreeDataByItem")
         .returns(items);
-      sinon.stub(utils, "prepareQpData").returns(qpItems);
+      sinon
+        .stub(extensionControllerAny.utils, "prepareQpData")
+        .returns(qpItems);
 
       const actual = await extensionControllerAny.getTreeData();
       const expected = qpItems;
@@ -533,7 +553,9 @@ describe("extensionController", function () {
       const qpItems: QuickPickExtendedItem[] = mock.qpItems;
       sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
-      sinon.stub(utils, "prepareQpData").returns(qpItems);
+      sinon
+        .stub(extensionControllerAny.utils, "prepareQpData")
+        .returns(qpItems);
 
       const actual = await extensionControllerAny.getTreeData();
       const expected = qpItems;
@@ -546,7 +568,9 @@ describe("extensionController", function () {
       const qpItem: QuickPickExtendedItem = mock.qpItem;
       sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
-      sinon.stub(utils, "prepareQpData").returns(qpItems);
+      sinon
+        .stub(extensionControllerAny.utils, "prepareQpData")
+        .returns(qpItems);
 
       const actual = await extensionControllerAny.getTreeData(qpItem);
       const expected = qpItems;
