@@ -8,6 +8,7 @@ import Utils from "./utils";
 import { appConfig } from "./appConfig";
 import Cache from "./cache";
 import DataConverter from "./dataConverter";
+import Config from "./config";
 
 class ExtensionController {
   private dataService: DataService;
@@ -16,14 +17,16 @@ class ExtensionController {
   private quickPick: QuickPick;
   private cache: Cache;
   private utils: Utils;
+  private config: Config;
 
   constructor(private extensionContext: vscode.ExtensionContext) {
     this.utils = new Utils();
-    this.dataService = new DataService(this.utils);
-    this.dataConverter = new DataConverter(this.utils);
+    this.config = new Config();
+    this.dataService = new DataService(this.config);
+    this.dataConverter = new DataConverter(this.config, this.utils);
     this.quickPick = new QuickPick(
       this.onQuickPickSubmit,
-      this.utils.shouldDisplayFlatList()
+      this.config.shouldDisplayFlatList()
     );
     this.higherLevelData = [];
     this.cache = new Cache(this.extensionContext);
@@ -93,8 +96,8 @@ class ExtensionController {
     const areCached = dataFromCache ? dataFromCache.length > 0 : false;
 
     if (
-      this.utils.shouldDisplayFlatList() &&
-      this.utils.getToken() &&
+      this.config.shouldDisplayFlatList() &&
+      this.config.getGithubPersonalAccessToken() &&
       !areCached
     ) {
       await vscode.window.withProgress(
@@ -120,7 +123,7 @@ class ExtensionController {
     this.quickPick.showLoading(true);
     let data: QuickPickItem[];
 
-    if (this.utils.shouldDisplayFlatList()) {
+    if (this.config.shouldDisplayFlatList()) {
       data = await this.getFlatQuickPickData();
     } else if (value) {
       data = await this.getQuickPickData(value);

@@ -1,22 +1,25 @@
 import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
-import Utils from "../../utils";
+import Config from "../../config";
 import QuickPickItem from "../../interfaces/QuickPickItem";
 import Item from "../../interfaces/Item";
 import ItemType from "../../enums/ItemType";
 import * as mock from "../mocks/dataConverter.mock";
-import { getUtilsStub } from "../util/mockFactory";
+import { getConfigStub, getUtilsStub } from "../util/mockFactory";
 import DataConverter from "../../dataConverter";
+import Utils from "../../utils";
 
 describe("DataConverter", () => {
+  let configStub: Config;
   let utilsStub: Utils;
   let dataConverter: DataConverter;
   let dataConverterAny: any;
 
   before(() => {
+    configStub = getConfigStub();
     utilsStub = getUtilsStub();
-    dataConverter = new DataConverter(utilsStub);
+    dataConverter = new DataConverter(configStub, utilsStub);
     dataConverterAny = dataConverter as any;
   });
 
@@ -52,7 +55,9 @@ describe("DataConverter", () => {
     });
 
     it("should return array of QuickPickItem if isFlat is true", () => {
-      sinon.stub(dataConverterAny.utils, "shouldDisplayFlatList").returns(true);
+      sinon
+        .stub(dataConverterAny.config, "shouldDisplayFlatList")
+        .returns(true);
       const items: Item[] = mock.items;
 
       const actual = dataConverter.prepareQpData(items);

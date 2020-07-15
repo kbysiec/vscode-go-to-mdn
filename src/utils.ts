@@ -1,6 +1,4 @@
-import * as vscode from "vscode";
 import QuickPickItem from "./interfaces/quickPickItem";
-import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import { appConfig } from "./appConfig";
 
@@ -25,25 +23,6 @@ class Utils {
 
   removeDataWithEmptyUrl(data: QuickPickItem[]): QuickPickItem[] {
     return data.filter((element) => element.url);
-  }
-
-  getConfiguration<T>(section: string, defaultValue: T): T {
-    const config = vscode.workspace.getConfiguration("");
-    return config.get<T>(section, defaultValue);
-  }
-
-  getToken(): string {
-    return this.getConfiguration<string>(
-      "goToMDN.githubPersonalAccessToken",
-      ""
-    );
-  }
-
-  shouldDisplayFlatList(): boolean {
-    return this.getConfiguration<boolean>(
-      "goToMDN.shouldDisplayFlatList",
-      false
-    );
   }
 }
 

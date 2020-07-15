@@ -7,8 +7,8 @@ import { appConfig } from "../../appConfig";
 import Item from "../../interfaces/item";
 import ItemType from "../../enums/itemType";
 import * as mock from "../mocks/dataService.mock";
-import Utils from "src/utils";
-import { getUtilsStub } from "../util/mockFactory";
+import Config from "src/config";
+import { getConfigStub } from "../util/mockFactory";
 
 const fetch = require("node-fetch");
 const fetchMock = require("fetch-mock").sandbox();
@@ -17,12 +17,12 @@ const chaiAsPromised = require("chai-as-promised");
 use(chaiAsPromised);
 
 describe("DataService", () => {
-  let utilsStub: Utils;
+  let configStub: Config;
   let dataService: DataService;
 
   before(function () {
-    utilsStub = getUtilsStub();
-    dataService = new DataService(utilsStub);
+    configStub = getConfigStub();
+    dataService = new DataService(configStub);
   });
 
   describe("downloadTreeData", () => {

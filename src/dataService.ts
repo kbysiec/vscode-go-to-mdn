@@ -4,11 +4,12 @@ import ItemType from "./enums/itemType";
 import Parser from "./parser";
 import { appConfig } from "./appConfig";
 import Utils from "./utils";
+import Config from "./config";
 
 class DataService {
   private parser: Parser;
 
-  constructor(private utils: Utils) {
+  constructor(private config: Config) {
     this.parser = new Parser();
   }
 
@@ -43,10 +44,7 @@ class DataService {
   }
 
   private async fetch(url: string, callback: Function): Promise<any> {
-    const token = this.utils.getConfiguration<string>(
-      "goToMDN.githubPersonalAccessToken",
-      ""
-    );
+    const token = this.config.getGithubPersonalAccessToken();
     const fetchConfig = {
       headers: {
         Authorization: token ? `token ${token}` : "",

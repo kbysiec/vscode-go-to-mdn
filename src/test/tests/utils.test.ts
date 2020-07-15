@@ -99,43 +99,4 @@ describe("Utils", () => {
       assert.equal(actual, expected);
     });
   });
-
-  describe("getConfiguration", () => {
-    it("should return true for goToMDN.shouldDisplayFlatList key", () => {
-      sinon.stub(vscode.workspace, "getConfiguration").returns({
-        get: (key: string) =>
-          key === "goToMDN.shouldDisplayFlatList" ? true : undefined,
-        has: () => true,
-        inspect: () => undefined,
-        update: () => Promise.resolve(),
-      });
-
-      const actual = utils.getConfiguration(
-        "goToMDN.shouldDisplayFlatList",
-        false
-      );
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("shouldDisplayFlatList", () => {
-    it("should return true", () => {
-      sinon.stub(utils, "getConfiguration").returns(true);
-
-      const actual = utils.shouldDisplayFlatList();
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("getToken", () => {
-    it("should return sample token", () => {
-      sinon.stub(utils, "getConfiguration").returns("sample token");
-
-      const actual = utils.getToken();
-      const expected = "sample token";
-      assert.equal(actual, expected);
-    });
-  });
 });

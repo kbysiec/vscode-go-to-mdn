@@ -180,10 +180,10 @@ describe("extensionController", () => {
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(true);
       sinon
-        .stub(extensionControllerAny.utils, "getToken")
+        .stub(extensionControllerAny.config, "getGithubPersonalAccessToken")
         .returns("sample token");
       sinon
         .stub(extensionControllerAny.cache, "getFlatData")
@@ -242,7 +242,7 @@ describe("extensionController", () => {
   describe("loadQuickPickData", () => {
     it("should load flat list of items", async function () {
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(true);
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
@@ -258,7 +258,7 @@ describe("extensionController", () => {
 
     it("should load list of items", async function () {
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(false);
       const qpItem: QuickPickItem = mock.qpItemDirectoryType;
       const qpItems: QuickPickItem[] = mock.qpItems;
@@ -275,7 +275,7 @@ describe("extensionController", () => {
 
     it("should load list of root items", async function () {
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(false);
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
@@ -320,7 +320,7 @@ describe("extensionController", () => {
   describe("getFlatQuickPickData", () => {
     it("should return flat quick pick data from cache", async function () {
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(true);
       const items: Item[] = mock.items;
       sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
@@ -352,7 +352,7 @@ describe("extensionController", () => {
 
     it("should return flat quick pick data if in cache is empty array", async function () {
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(true);
       const items: Item[] = mock.items;
       const getFlatDataStub = sinon.stub(
@@ -391,7 +391,7 @@ describe("extensionController", () => {
 
     it("should return empty array if cache value is undefined", async function () {
       sinon
-        .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
+        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(true);
       const getFlatDataStub = sinon.stub(
         extensionControllerAny.cache,

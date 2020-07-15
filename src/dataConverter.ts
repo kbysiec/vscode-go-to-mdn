@@ -3,13 +3,14 @@ import Item from "./interfaces/item";
 import QuickPickItem from "./interfaces/quickPickItem";
 import ItemType from "./enums/itemType";
 import { appConfig } from "./appConfig";
+import Config from "./config";
 import Utils from "./utils";
 
 class DataConverter {
-  constructor(private utils: Utils) {}
+  constructor(private config: Config, private utils: Utils) {}
 
   prepareQpData(data: Item[]): QuickPickItem[] {
-    const shouldDisplayFlatListFlag = this.utils.shouldDisplayFlatList();
+    const shouldDisplayFlatListFlag = this.config.shouldDisplayFlatList();
     const qpData: QuickPickItem[] = this.mapDataToQpData(
       data,
       shouldDisplayFlatListFlag
