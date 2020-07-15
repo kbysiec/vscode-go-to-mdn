@@ -1,61 +1,61 @@
 import ItemType from "../../enums/itemType";
-import QuickPickExtendedItem from "../../interfaces/quickPickExtendedItem";
+import QuickPickItem from "../../interfaces/quickPickItem";
 import Item from "../../interfaces/item";
 
-export const qpItemDirectory: QuickPickExtendedItem = {
+export const qpItemDirectory: QuickPickItem = {
   label: "api test-label sub-label",
   url: "#",
   type: ItemType.Directory,
-  breadcrumbs: []
+  breadcrumbs: [],
 };
 
-export const qpItemFile: QuickPickExtendedItem = {
+export const qpItemFile: QuickPickItem = {
   label: "api test-label sub-label",
   url: "#",
   type: ItemType.File,
-  breadcrumbs: []
+  breadcrumbs: [],
 };
 
-export const qpItemEmptyLabel: QuickPickExtendedItem = {
+export const qpItemEmptyLabel: QuickPickItem = {
   label: "",
   url: "#",
   type: ItemType.File,
-  breadcrumbs: []
+  breadcrumbs: [],
 };
 
-export const qpItems: QuickPickExtendedItem[] = [
+export const qpItems: QuickPickItem[] = [
   {
     label: "api test-label sub-label",
     url: "#",
     type: ItemType.File,
-    breadcrumbs: ["api", "test-label", "sub-label"]
+    breadcrumbs: ["api", "test-label", "sub-label"],
   },
   {
     label: "api test-label sub-label 2",
     url: "",
     type: ItemType.File,
-    breadcrumbs: []
+    breadcrumbs: [],
   },
   {
     label: "api test-label sub-label 3",
     url: "#",
     type: ItemType.File,
-    breadcrumbs: []
-  }
+    breadcrumbs: [],
+  },
 ];
 
 export const item: Item = {
   name: "sub-label",
   url: "#",
   type: ItemType.File,
-  breadcrumbs: ["api", "test-label", "sub-label"]
+  breadcrumbs: ["api", "test-label", "sub-label"],
 };
 
 export const itemEmptyName: Item = {
   name: "",
   url: "#",
   type: ItemType.File,
-  breadcrumbs: [""]
+  breadcrumbs: [""],
 };
 
 export const items: Item[] = [
@@ -63,14 +63,14 @@ export const items: Item[] = [
     name: "sub-label",
     url: "#",
     type: ItemType.File,
-    breadcrumbs: ["api", "test-label", "sub-label"]
+    breadcrumbs: ["api", "test-label", "sub-label"],
   },
   {
     name: "sub-label 2",
     url: "https://sub-label-2.com",
     type: ItemType.File,
-    breadcrumbs: ["api", "test-label", "sub-label 2"]
-  }
+    breadcrumbs: ["api", "test-label", "sub-label 2"],
+  },
 ];
 
 export const itemsMixedFileType: Item[] = [
@@ -78,12 +78,12 @@ export const itemsMixedFileType: Item[] = [
     name: "sub-label",
     url: "#",
     type: ItemType.File,
-    breadcrumbs: ["api", "test-label", "sub-label"]
+    breadcrumbs: ["api", "test-label", "sub-label"],
   },
   {
     name: "sub-label 2",
     url: "https://sub-label-2.com",
     type: ItemType.Directory,
-    breadcrumbs: ["api", "test-label", "sub-label 2"]
-  }
+    breadcrumbs: ["api", "test-label", "sub-label 2"],
+  },
 ];

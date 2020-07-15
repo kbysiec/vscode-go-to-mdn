@@ -1,8 +1,8 @@
-import { QuickPickItem } from "vscode";
+import { QuickPickItem as QuickPickItemVscode } from "vscode";
 import Item from "./item";
 import ItemType from "src/enums/itemType";
 
-interface QuickPickExtendedItem extends QuickPickItem {
+interface QuickPickItem extends QuickPickItemVscode {
   url: string;
   type: ItemType;
   parent?: Item;
@@ -10,4 +10,4 @@ interface QuickPickExtendedItem extends QuickPickItem {
   breadcrumbs: string[];
 }
 
-export default QuickPickExtendedItem;
+export default QuickPickItem;

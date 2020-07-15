@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import Utils from "../../utils";
-import QuickPickExtendedItem from "../../interfaces/QuickPickExtendedItem";
+import QuickPickItem from "../../interfaces/QuickPickItem";
 import Item from "../../interfaces/Item";
 import ItemType from "../../enums/ItemType";
 import * as mock from "../mocks/dataConverter.mock";
@@ -25,7 +25,7 @@ describe("DataConverter", () => {
   });
 
   describe("prepareQpData", () => {
-    it("should return array of QuickPickExtendedItem if isFlat is falsy", () => {
+    it("should return array of QuickPickItem if isFlat is falsy", () => {
       sinon.stub(vscode.workspace, "getConfiguration").returns({
         get: (key: string) =>
           key === "goToMDN.shouldDisplayFlatList" ? false : undefined,
@@ -37,7 +37,7 @@ describe("DataConverter", () => {
 
       const actual = dataConverter.prepareQpData(items);
       const expectedLength = 3;
-      const expectedSecondItem: QuickPickExtendedItem = {
+      const expectedSecondItem: QuickPickItem = {
         label: `$(link) sub-label`,
         url: "#",
         type: ItemType.File,
@@ -51,13 +51,13 @@ describe("DataConverter", () => {
       assert.deepEqual(actual[1], expectedSecondItem);
     });
 
-    it("should return array of QuickPickExtendedItem if isFlat is true", () => {
+    it("should return array of QuickPickItem if isFlat is true", () => {
       sinon.stub(dataConverterAny.utils, "shouldDisplayFlatList").returns(true);
       const items: Item[] = mock.items;
 
       const actual = dataConverter.prepareQpData(items);
       const expectedLength = 2;
-      const expectedSecondItem: QuickPickExtendedItem = {
+      const expectedSecondItem: QuickPickItem = {
         label: `$(link) sub-label 2`,
         url: "https://sub-label-2.com",
         type: ItemType.File,
@@ -74,7 +74,7 @@ describe("DataConverter", () => {
 
   describe("mapQpItemToItem", () => {
     it("should return Item object", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItemFile;
+      const qpItem: QuickPickItem = mock.qpItemFile;
 
       const actual = dataConverter.mapQpItemToItem(qpItem);
       const expected: Item = {
@@ -91,12 +91,12 @@ describe("DataConverter", () => {
   });
 
   describe("mapDataToQpData", () => {
-    it("should return array of QuickPickExtendedItem if isFlat is falsy", () => {
+    it("should return array of QuickPickItem if isFlat is falsy", () => {
       const items: Item[] = mock.itemsMixedFileType;
 
       const actual = dataConverterAny.mapDataToQpData(items);
       const expectedLength = 2;
-      const expectedSecondItem: QuickPickExtendedItem = {
+      const expectedSecondItem: QuickPickItem = {
         label: `$(file-directory) sub-label 2`,
         url: "https://sub-label-2.com",
         type: ItemType.Directory,
@@ -109,12 +109,12 @@ describe("DataConverter", () => {
       assert.deepEqual(actual[1], expectedSecondItem);
     });
 
-    it("should return array of QuickPickExtendedItem if isFlat is truthy", () => {
+    it("should return array of QuickPickItem if isFlat is truthy", () => {
       const items: Item[] = mock.items;
 
       const actual = dataConverterAny.mapDataToQpData(items, true);
       const expectedLength = 2;
-      const expectedSecondItem: QuickPickExtendedItem = {
+      const expectedSecondItem: QuickPickItem = {
         label: `$(link) sub-label 2`,
         url: "https://sub-label-2.com",
         type: ItemType.File,
@@ -130,10 +130,10 @@ describe("DataConverter", () => {
 
   describe("addBackwardNavigationItem", () => {
     it("should add backward navigation Item", () => {
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       dataConverterAny.addBackwardNavigationItem(qpItems);
       const expectedLength = 4;
-      const expectedFirstItem: QuickPickExtendedItem = {
+      const expectedFirstItem: QuickPickItem = {
         label: "$(file-directory) ..",
         url: "#",
         type: ItemType.Directory,

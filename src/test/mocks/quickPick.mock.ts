@@ -1,33 +1,33 @@
-import QuickPickExtendedItem from "../../interfaces/quickPickExtendedItem";
+import QuickPickItem from "../../interfaces/quickPickItem";
 import ItemType from "../../enums/itemType";
 
-export const qpItem: QuickPickExtendedItem = {
+export const qpItem: QuickPickItem = {
   label: "api test-label sub-label",
   url: "#",
   type: ItemType.File,
-  breadcrumbs: []
+  breadcrumbs: [],
 };
 
-export const qpItems: QuickPickExtendedItem[] = [
+export const qpItems: QuickPickItem[] = [
   {
     label: "api test-label sub-label",
     description: "description",
     url: "#",
     type: ItemType.File,
-    breadcrumbs: []
+    breadcrumbs: [],
   },
   {
     label: "api foo-label sub-label 2",
     description: "description 2",
     url: "",
     type: ItemType.File,
-    breadcrumbs: []
+    breadcrumbs: [],
   },
   {
     label: "api bar-label sub-label 3",
     description: "description test 3",
     url: "#",
     type: ItemType.File,
-    breadcrumbs: []
-  }
+    breadcrumbs: [],
+  },
 ];

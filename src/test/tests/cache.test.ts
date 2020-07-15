@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import Cache from "../../cache";
-import QuickPickExtendedItem from "../../interfaces/QuickPickExtendedItem";
+import QuickPickItem from "../../interfaces/QuickPickItem";
 import Item from "../../interfaces/Item";
 import ItemType from "../../enums/ItemType";
 import { appConfig } from "../../appConfig";
@@ -163,7 +163,7 @@ describe("Cache", () => {
     });
 
     it("should return value from cache if item is passed", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItem;
+      const qpItem: QuickPickItem = mock.qpItem;
       const items: Item[] = mock.items;
       let getStub = sinon.stub(context.globalState, "get").returns({
         [qpItem.url]: items,

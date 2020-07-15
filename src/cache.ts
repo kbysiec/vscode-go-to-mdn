@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import Item from "./interfaces/item";
-import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
+import QuickPickItem from "./interfaces/quickPickItem";
 import { appConfig } from "./appConfig";
 
 class Cache {
@@ -42,7 +42,7 @@ class Cache {
     return [];
   }
 
-  getTreeDataByItem(item?: QuickPickExtendedItem): Item[] | undefined {
+  getTreeDataByItem(item?: QuickPickItem): Item[] | undefined {
     const cache: any = this.extensionContext.globalState.get(
       appConfig.treeCacheKey
     );

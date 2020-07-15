@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import Utils from "../../utils";
-import QuickPickExtendedItem from "../../interfaces/QuickPickExtendedItem";
+import QuickPickItem from "../../interfaces/QuickPickItem";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/utils.mock";
 
@@ -27,7 +27,7 @@ describe("Utils", () => {
     });
 
     it("should return false if value is not a string", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItemFile;
+      const qpItem: QuickPickItem = mock.qpItemFile;
 
       const actual = utils.isValueStringType(qpItem);
       const expected = false;
@@ -37,7 +37,7 @@ describe("Utils", () => {
 
   describe("isValueFileType", () => {
     it("should return true if value type is file", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItemFile;
+      const qpItem: QuickPickItem = mock.qpItemFile;
 
       const actual = utils.isValueFileType(qpItem);
       const expected = true;
@@ -45,7 +45,7 @@ describe("Utils", () => {
     });
 
     it("should return false if value type is directory", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItemDirectory;
+      const qpItem: QuickPickItem = mock.qpItemDirectory;
 
       const actual = utils.isValueFileType(qpItem);
       const expected = false;
@@ -75,7 +75,7 @@ describe("Utils", () => {
 
   describe("getNameFromQuickPickItem", () => {
     it("should return name from label without first category", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItemFile;
+      const qpItem: QuickPickItem = mock.qpItemFile;
 
       const actual = utils.getNameFromQuickPickItem(qpItem);
       const expected = "test-label sub-label";
@@ -83,7 +83,7 @@ describe("Utils", () => {
     });
 
     it("should return empty name", () => {
-      const qpItem: QuickPickExtendedItem = mock.qpItemEmptyLabel;
+      const qpItem: QuickPickItem = mock.qpItemEmptyLabel;
 
       const actual = utils.getNameFromQuickPickItem(qpItem);
       const expected = "";
@@ -93,7 +93,7 @@ describe("Utils", () => {
 
   describe("removeDataWithEmptyUrl", () => {
     it("should return name from label without first category", () => {
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       const actual = utils.removeDataWithEmptyUrl(qpItems).length;
       const expected = 2;
       assert.equal(actual, expected);

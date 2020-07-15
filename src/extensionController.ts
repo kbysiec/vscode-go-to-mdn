@@ -3,7 +3,7 @@ const open = require("open");
 import DataService from "./dataService";
 import QuickPick from "./quickPick";
 import Item from "./interfaces/item";
-import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
+import QuickPickItem from "./interfaces/quickPickItem";
 import Utils from "./utils";
 import { appConfig } from "./appConfig";
 import Cache from "./cache";
@@ -12,7 +12,7 @@ import DataConverter from "./dataConverter";
 class ExtensionController {
   private dataService: DataService;
   private dataConverter: DataConverter;
-  private higherLevelData: QuickPickExtendedItem[][];
+  private higherLevelData: QuickPickItem[][];
   private quickPick: QuickPick;
   private cache: Cache;
   private utils: Utils;
@@ -39,7 +39,7 @@ class ExtensionController {
   }
 
   private onQuickPickSubmit = async (
-    value: QuickPickExtendedItem | string
+    value: QuickPickItem | string
   ): Promise<void> => {
     try {
       let url: string;
@@ -51,7 +51,7 @@ class ExtensionController {
         url = this.utils.getSearchUrl(value);
         url && (await this.openInBrowser(url));
       } else {
-        value = value as QuickPickExtendedItem;
+        value = value as QuickPickItem;
 
         if (this.utils.isValueFileType(value)) {
           let url = value.url;
@@ -116,11 +116,9 @@ class ExtensionController {
     return !this.higherLevelData.length;
   }
 
-  private async loadQuickPickData(
-    value?: QuickPickExtendedItem
-  ): Promise<void> {
+  private async loadQuickPickData(value?: QuickPickItem): Promise<void> {
     this.quickPick.showLoading(true);
-    let data: QuickPickExtendedItem[];
+    let data: QuickPickItem[];
 
     if (this.utils.shouldDisplayFlatList()) {
       data = await this.getFlatQuickPickData();
@@ -142,7 +140,7 @@ class ExtensionController {
       : this.setQuickPickPlaceholder();
   }
 
-  private async getFlatQuickPickData(): Promise<QuickPickExtendedItem[]> {
+  private async getFlatQuickPickData(): Promise<QuickPickItem[]> {
     let data = this.cache.getFlatData();
     const areCached = data ? data.length > 0 : false;
 
@@ -155,14 +153,14 @@ class ExtensionController {
     return qpData;
   }
 
-  private async getQuickPickRootData(): Promise<QuickPickExtendedItem[]> {
+  private async getQuickPickRootData(): Promise<QuickPickItem[]> {
     return await this.getTreeData();
   }
 
   private async getQuickPickData(
-    value: QuickPickExtendedItem
-  ): Promise<QuickPickExtendedItem[]> {
-    let data: QuickPickExtendedItem[];
+    value: QuickPickItem
+  ): Promise<QuickPickItem[]> {
+    let data: QuickPickItem[];
     const name = this.utils.getNameFromQuickPickItem(value);
     if (name === appConfig.higherLevelLabel) {
       data = this.getHigherLevelQpData();
@@ -178,14 +176,14 @@ class ExtensionController {
     qpData.length && this.higherLevelData.push(qpData);
   }
 
-  private getHigherLevelQpData(): QuickPickExtendedItem[] {
-    return this.higherLevelData.pop() as QuickPickExtendedItem[];
+  private getHigherLevelQpData(): QuickPickItem[] {
+    return this.higherLevelData.pop() as QuickPickItem[];
   }
 
   private async getLowerLevelQpData(
-    value: QuickPickExtendedItem
-  ): Promise<QuickPickExtendedItem[]> {
-    let data: QuickPickExtendedItem[];
+    value: QuickPickItem
+  ): Promise<QuickPickItem[]> {
+    let data: QuickPickItem[];
     data = await this.getTreeData(value);
     data = this.utils.removeDataWithEmptyUrl(data);
     return data;
@@ -201,9 +199,7 @@ class ExtensionController {
     this.quickPick.setPlaceholder(undefined);
   }
 
-  private async getTreeData(
-    qpItem?: QuickPickExtendedItem
-  ): Promise<QuickPickExtendedItem[]> {
+  private async getTreeData(qpItem?: QuickPickItem): Promise<QuickPickItem[]> {
     let data = this.cache.getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {

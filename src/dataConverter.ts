@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import Item from "./interfaces/item";
-import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
+import QuickPickItem from "./interfaces/quickPickItem";
 import ItemType from "./enums/itemType";
 import { appConfig } from "./appConfig";
 import Utils from "./utils";
@@ -8,9 +8,9 @@ import Utils from "./utils";
 class DataConverter {
   constructor(private utils: Utils) {}
 
-  prepareQpData(data: Item[]): QuickPickExtendedItem[] {
+  prepareQpData(data: Item[]): QuickPickItem[] {
     const shouldDisplayFlatListFlag = this.utils.shouldDisplayFlatList();
-    const qpData: QuickPickExtendedItem[] = this.mapDataToQpData(
+    const qpData: QuickPickItem[] = this.mapDataToQpData(
       data,
       shouldDisplayFlatListFlag
     );
@@ -18,7 +18,7 @@ class DataConverter {
     return qpData;
   }
 
-  mapQpItemToItem(qpItem: QuickPickExtendedItem): Item {
+  mapQpItemToItem(qpItem: QuickPickItem): Item {
     return {
       name: this.utils.getNameFromQuickPickItem(qpItem),
       url: qpItem.url,
@@ -32,7 +32,7 @@ class DataConverter {
   private mapDataToQpData(
     data: Item[],
     isFlat: boolean = false
-  ): QuickPickExtendedItem[] {
+  ): QuickPickItem[] {
     return data.map((el) => {
       const icon =
         el.type === ItemType.Directory ? "$(file-directory)" : "$(link)";
@@ -51,7 +51,7 @@ class DataConverter {
     });
   }
 
-  private addBackwardNavigationItem(qpData: QuickPickExtendedItem[]): void {
+  private addBackwardNavigationItem(qpData: QuickPickItem[]): void {
     qpData.unshift({
       label: `$(file-directory) ${appConfig.higherLevelLabel}`,
       description: this.prepareBreadcrumbs(qpData[0]),
@@ -62,7 +62,7 @@ class DataConverter {
   }
 
   private prepareBreadcrumbs(
-    item: Item | QuickPickExtendedItem,
+    item: Item | QuickPickItem,
     isFlat: boolean = false
   ): string {
     const breadcrumbs = isFlat

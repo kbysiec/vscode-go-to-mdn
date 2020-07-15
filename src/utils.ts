@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
-import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
+import QuickPickItem from "./interfaces/quickPickItem";
 import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import { appConfig } from "./appConfig";
 
 class Utils {
-  isValueStringType(value: QuickPickExtendedItem | string): boolean {
+  isValueStringType(value: QuickPickItem | string): boolean {
     return typeof value === "string";
   }
 
-  isValueFileType(value: QuickPickExtendedItem): boolean {
+  isValueFileType(value: QuickPickItem): boolean {
     return value.type === ItemType.File;
   }
 
@@ -19,13 +19,11 @@ class Utils {
     return url;
   }
 
-  getNameFromQuickPickItem(item: QuickPickExtendedItem): string {
+  getNameFromQuickPickItem(item: QuickPickItem): string {
     return item.label.split(" ").slice(1).join(" ");
   }
 
-  removeDataWithEmptyUrl(
-    data: QuickPickExtendedItem[]
-  ): QuickPickExtendedItem[] {
+  removeDataWithEmptyUrl(data: QuickPickItem[]): QuickPickItem[] {
     return data.filter((element) => element.url);
   }
 

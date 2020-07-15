@@ -4,7 +4,7 @@ import * as sinon from "sinon";
 import ExtensionController from "../../ExtensionController";
 import Item from "../../interfaces/item";
 import ItemType from "../../enums/itemType";
-import QuickPickExtendedItem from "../../interfaces/quickPickExtendedItem";
+import QuickPickItem from "../../interfaces/quickPickItem";
 import Utils from "../../utils";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/extensionController.mock";
@@ -102,11 +102,11 @@ describe("extensionController", () => {
       assert.equal(actual, expected);
     });
 
-    it("should invoke openInBrowser function with item url if value is QuickPickExtendedItem with ItemType.File", async function () {
+    it("should invoke openInBrowser function with item url if value is QuickPickItem with ItemType.File", async function () {
       const openInBrowserStub = sinon
         .stub(extensionControllerAny, "openInBrowser")
         .returns(Promise.resolve());
-      const qpItem: QuickPickExtendedItem = mock.qpItem;
+      const qpItem: QuickPickItem = mock.qpItem;
 
       await extensionControllerAny.onQuickPickSubmit(qpItem);
       const actual = openInBrowserStub.withArgs("http://test.com").calledOnce;
@@ -114,11 +114,11 @@ describe("extensionController", () => {
       assert.equal(actual, expected);
     });
 
-    it("should invoke loadQuickPickData function with item url if value is QuickPickExtendedItem with ItemType.Directory", async function () {
+    it("should invoke loadQuickPickData function with item url if value is QuickPickItem with ItemType.Directory", async function () {
       const loadQuickPickDataStub = sinon
         .stub(extensionControllerAny, "loadQuickPickData")
         .returns(Promise.resolve());
-      const qpItem: QuickPickExtendedItem = mock.qpItemDirectoryType;
+      const qpItem: QuickPickItem = mock.qpItemDirectoryType;
 
       await extensionControllerAny.onQuickPickSubmit(qpItem);
 
@@ -244,7 +244,7 @@ describe("extensionController", () => {
       sinon
         .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
         .returns(true);
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getFlatQuickPickData")
         .returns(Promise.resolve(qpItems));
@@ -260,8 +260,8 @@ describe("extensionController", () => {
       sinon
         .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
         .returns(false);
-      const qpItem: QuickPickExtendedItem = mock.qpItemDirectoryType;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItem: QuickPickItem = mock.qpItemDirectoryType;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getQuickPickData")
         .returns(Promise.resolve(qpItems));
@@ -277,7 +277,7 @@ describe("extensionController", () => {
       sinon
         .stub(extensionControllerAny.utils, "shouldDisplayFlatList")
         .returns(false);
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getQuickPickRootData")
         .returns(Promise.resolve(qpItems));
@@ -326,7 +326,7 @@ describe("extensionController", () => {
       sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
 
       const actual = await extensionControllerAny.getFlatQuickPickData();
-      const expected: QuickPickExtendedItem[] = [
+      const expected: QuickPickItem[] = [
         {
           label: `$(link) sub-label`,
           url: "#",
@@ -366,7 +366,7 @@ describe("extensionController", () => {
         .returns(Promise.resolve());
 
       const actual = await extensionControllerAny.getFlatQuickPickData();
-      const expected: QuickPickExtendedItem[] = [
+      const expected: QuickPickItem[] = [
         {
           label: `$(link) sub-label`,
           url: "#",
@@ -403,14 +403,14 @@ describe("extensionController", () => {
         .returns(Promise.resolve());
 
       const actual = await extensionControllerAny.getFlatQuickPickData();
-      const expected: QuickPickExtendedItem[] = [];
+      const expected: QuickPickItem[] = [];
       assert.deepEqual(actual, expected);
     });
   });
 
   describe("getQuickPickRootData", () => {
     it("should return tree root data", async function () {
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getTreeData")
         .returns(Promise.resolve(qpItems));
@@ -423,10 +423,10 @@ describe("extensionController", () => {
 
   describe("getQuickPickData", () => {
     it("should return higher level data", async function () {
-      const backwardNavigationQpItem: QuickPickExtendedItem =
+      const backwardNavigationQpItem: QuickPickItem =
         mock.backwardNavigationQpItem;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
-      const higherLevelData: QuickPickExtendedItem[][] = [qpItems];
+      const qpItems: QuickPickItem[] = mock.qpItems;
+      const higherLevelData: QuickPickItem[][] = [qpItems];
       sinon
         .stub(extensionControllerAny, "higherLevelData")
         .value(higherLevelData);
@@ -434,27 +434,27 @@ describe("extensionController", () => {
       const actual = await extensionControllerAny.getQuickPickData(
         backwardNavigationQpItem
       );
-      const expected: QuickPickExtendedItem[] = qpItems;
+      const expected: QuickPickItem[] = qpItems;
       assert.deepEqual(actual, expected);
     });
 
     it("should return lower level data", async function () {
-      const qpItem: QuickPickExtendedItem = mock.qpItem;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItem: QuickPickItem = mock.qpItem;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getLowerLevelQpData")
         .returns(Promise.resolve(qpItems));
 
       const actual = await extensionControllerAny.getQuickPickData(qpItem);
-      const expected: QuickPickExtendedItem[] = qpItems;
+      const expected: QuickPickItem[] = qpItems;
       assert.deepEqual(actual, expected);
     });
   });
 
   describe("rememberHigherLevelQpData", () => {
     it("should remember higher level data", () => {
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
-      const higherLevelData: QuickPickExtendedItem[][] = [];
+      const qpItems: QuickPickItem[] = mock.qpItems;
+      const higherLevelData: QuickPickItem[][] = [];
       sinon
         .stub(extensionControllerAny, "higherLevelData")
         .value(higherLevelData);
@@ -463,32 +463,32 @@ describe("extensionController", () => {
       extensionControllerAny.rememberHigherLevelQpData();
 
       const actual = higherLevelData;
-      const expected: QuickPickExtendedItem[][] = [qpItems];
+      const expected: QuickPickItem[][] = [qpItems];
       assert.deepEqual(actual, expected);
     });
   });
 
   describe("getHigherLevelQpData", () => {
     it("should return higher level data", () => {
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon.stub(extensionControllerAny, "higherLevelData").value([qpItems]);
 
       const actual = extensionControllerAny.getHigherLevelQpData();
-      const expected: QuickPickExtendedItem[] = qpItems;
+      const expected: QuickPickItem[] = qpItems;
       assert.deepEqual(actual, expected);
     });
   });
 
   describe("getLowerLevelQpData", () => {
     it("should return lower level data without empty urls", async function () {
-      const qpItem: QuickPickExtendedItem = mock.qpItem;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItem: QuickPickItem = mock.qpItem;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny, "getTreeData")
         .returns(Promise.resolve(qpItems));
 
       const actual = await extensionControllerAny.getLowerLevelQpData(qpItem);
-      const expectedSecondItem: QuickPickExtendedItem = {
+      const expectedSecondItem: QuickPickItem = {
         label: `$(link) sub-label 2`,
         url: "https://sub-label-2.com",
         type: ItemType.File,
@@ -535,7 +535,7 @@ describe("extensionController", () => {
   describe("getTreeData", () => {
     it("should return quick pick tree data if data is in cache", async function () {
       const items: Item[] = mock.items;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(extensionControllerAny.cache, "getTreeDataByItem")
         .returns(items);
@@ -550,7 +550,7 @@ describe("extensionController", () => {
 
     it("should return quick pick tree data if data is not in cache and parent item is not provided", async function () {
       const items: Item[] = mock.items;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
+      const qpItems: QuickPickItem[] = mock.qpItems;
       sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
       sinon
@@ -564,8 +564,8 @@ describe("extensionController", () => {
 
     it("should return quick pick tree data if data is not in cache and parent item is provided", async function () {
       const items: Item[] = mock.items;
-      const qpItems: QuickPickExtendedItem[] = mock.qpItems;
-      const qpItem: QuickPickExtendedItem = mock.qpItem;
+      const qpItems: QuickPickItem[] = mock.qpItems;
+      const qpItem: QuickPickItem = mock.qpItem;
       sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
       sinon
