@@ -540,7 +540,7 @@ describe("extensionController", () => {
         .stub(extensionControllerAny.cache, "getTreeDataByItem")
         .returns(items);
       sinon
-        .stub(extensionControllerAny.utils, "prepareQpData")
+        .stub(extensionControllerAny.dataConverter, "prepareQpData")
         .returns(qpItems);
 
       const actual = await extensionControllerAny.getTreeData();
@@ -554,7 +554,7 @@ describe("extensionController", () => {
       sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
       sinon
-        .stub(extensionControllerAny.utils, "prepareQpData")
+        .stub(extensionControllerAny.dataConverter, "prepareQpData")
         .returns(qpItems);
 
       const actual = await extensionControllerAny.getTreeData();
@@ -569,7 +569,7 @@ describe("extensionController", () => {
       sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
       sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
       sinon
-        .stub(extensionControllerAny.utils, "prepareQpData")
+        .stub(extensionControllerAny.dataConverter, "prepareQpData")
         .returns(qpItems);
 
       const actual = await extensionControllerAny.getTreeData(qpItem);

@@ -7,9 +7,11 @@ import QuickPickExtendedItem from "./interfaces/quickPickExtendedItem";
 import Utils from "./utils";
 import { appConfig } from "./appConfig";
 import Cache from "./cache";
+import DataConverter from "./dataConverter";
 
 class ExtensionController {
   private dataService: DataService;
+  private dataConverter: DataConverter;
   private higherLevelData: QuickPickExtendedItem[][];
   private quickPick: QuickPick;
   private cache: Cache;
@@ -18,6 +20,7 @@ class ExtensionController {
   constructor(private extensionContext: vscode.ExtensionContext) {
     this.utils = new Utils();
     this.dataService = new DataService(this.utils);
+    this.dataConverter = new DataConverter(this.utils);
     this.quickPick = new QuickPick(
       this.onQuickPickSubmit,
       this.utils.shouldDisplayFlatList()
@@ -148,7 +151,7 @@ class ExtensionController {
       data = this.cache.getFlatData();
     }
 
-    const qpData = data ? this.utils.prepareQpData(data) : [];
+    const qpData = data ? this.dataConverter.prepareQpData(data) : [];
     return qpData;
   }
 
@@ -204,10 +207,11 @@ class ExtensionController {
     let data = this.cache.getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
-      let item: Item | undefined = qpItem && this.utils.mapQpItemToItem(qpItem);
+      let item: Item | undefined =
+        qpItem && this.dataConverter.mapQpItemToItem(qpItem);
       data = await this.downloadTreeData(item);
     }
-    const qpData = this.utils.prepareQpData(data);
+    const qpData = this.dataConverter.prepareQpData(data);
     return qpData;
   }
 
