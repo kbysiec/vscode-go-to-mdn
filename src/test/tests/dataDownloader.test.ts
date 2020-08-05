@@ -20,24 +20,24 @@ describe("DataDownloader", () => {
   let configStub: Config;
   let dataDownloader: DataDownloader;
 
-  before(function () {
+  before(() => {
     configStub = getConfigStub();
     dataDownloader = new DataDownloader(configStub);
   });
 
   describe("downloadTreeData", () => {
-    beforeEach(function () {
+    beforeEach(() => {
       fetch.cache = {};
       fetch.cache.default = fetch.default;
     });
 
-    afterEach(function () {
+    afterEach(() => {
       fetchMock.restore();
       fetch.default = fetch.cache.default;
       delete fetch.cache;
     });
 
-    it("should return root directories items", async function () {
+    it("should return root directories items", async () => {
       const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
@@ -65,7 +65,7 @@ describe("DataDownloader", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return element items", async function () {
+    it("should return element items", async () => {
       const item: Item = mock.downloadTreeDataElementsItem;
       const content: string = mock.downloadTreeDataElementsContent;
       const fetchStub = fetchMock.get(
@@ -100,7 +100,7 @@ describe("DataDownloader", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return directories items", async function () {
+    it("should return directories items", async () => {
       const item: Item = mock.downloadTreeDataDirectoriesItem;
       const content: string = mock.downloadTreeDataDirectoriesContent;
       const fetchStub = fetchMock.get(
@@ -133,7 +133,7 @@ describe("DataDownloader", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should reject once api response with inappropriate status code", async function () {
+    it("should reject once api response with inappropriate status code", async () => {
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
         new Response("", { status: 204 })
@@ -145,7 +145,7 @@ describe("DataDownloader", () => {
       );
     });
 
-    it("should request Authorization header has empty value if github personal token not passed", async function () {
+    it("should request Authorization header has empty value if github personal token not passed", async () => {
       sinon.stub(vscode.workspace, "getConfiguration").returns({
         get: () => undefined,
         has: () => true,
@@ -175,7 +175,7 @@ describe("DataDownloader", () => {
       sinon.restore();
     });
 
-    it("should request Authorization header has value of github personal token once passed", async function () {
+    it("should request Authorization header has value of github personal token once passed", async () => {
       sinon.stub(vscode.workspace, "getConfiguration").returns({
         get: () => "123456789",
         has: () => true,
@@ -207,18 +207,18 @@ describe("DataDownloader", () => {
   });
 
   describe("downloadFlatData", () => {
-    beforeEach(function () {
+    beforeEach(() => {
       fetch.cache = {};
       fetch.cache.default = fetch.default;
     });
 
-    afterEach(function () {
+    afterEach(() => {
       fetchMock.restore();
       fetch.default = fetch.cache.default;
       delete fetch.cache;
     });
 
-    it("should return array with one item", async function () {
+    it("should return array with one item", async () => {
       const fetchStub = fetchMock.get(
         appConfig.allFilesUrl,
         new Response(
@@ -245,7 +245,7 @@ describe("DataDownloader", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should reject once api response with inappropriate status code", async function () {
+    it("should reject once api response with inappropriate status code", async () => {
       const fetchStub = fetchMock.get(
         appConfig.allFilesUrl,
         new Response("", { status: 204 })
@@ -257,7 +257,7 @@ describe("DataDownloader", () => {
       );
     });
 
-    it("should reject once api returns error", async function () {
+    it("should reject once api returns error", async () => {
       const fetchStub = fetchMock.get(appConfig.allFilesUrl, {
         throws: new Error("test error message"),
       });

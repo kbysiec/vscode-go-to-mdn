@@ -18,23 +18,23 @@ describe("DataService", () => {
   let dataService: DataService;
   let dataServiceAny: any;
 
-  before(function () {
+  before(() => {
     cacheStub = getCacheStub();
     utilsStub = getUtilsStub();
     configStub = getConfigStub();
     dataService = new DataService(cacheStub, utilsStub, configStub);
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     dataServiceAny = dataService as any;
   });
 
-  afterEach(function () {
+  afterEach(() => {
     sinon.restore();
   });
 
   describe("getFlatFilesData", () => {
-    it("should invoke downloadFlatFilesData function", async function () {
+    it("should invoke downloadFlatFilesData function", async () => {
       const stub = sinon
         .stub(dataServiceAny, "downloadFlatFilesData")
         .returns(Promise.resolve());
@@ -49,7 +49,7 @@ describe("DataService", () => {
   });
 
   describe("cacheFlatFilesWithProgressTask", () => {
-    it("should invoke cacheFlatFilesData function", async function () {
+    it("should invoke cacheFlatFilesData function", async () => {
       const stub = sinon
         .stub(dataServiceAny, "cacheFlatFilesData")
         .returns(Promise.resolve());
@@ -64,7 +64,7 @@ describe("DataService", () => {
   });
 
   describe("cacheFlatFilesWithProgress", () => {
-    it("should download and cache data if cache returns undefined", async function () {
+    it("should download and cache data if cache returns undefined", async () => {
       const stub = sinon
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
@@ -84,7 +84,7 @@ describe("DataService", () => {
       assert.equal(actual, expected);
     });
 
-    it("should do nothing if data is in cache", async function () {
+    it("should do nothing if data is in cache", async () => {
       const stub = sinon
         .stub(vscode.window, "withProgress")
         .returns(Promise.resolve());
@@ -100,7 +100,7 @@ describe("DataService", () => {
   });
 
   describe("cacheFlatFilesData", () => {
-    it("should invoke getFlatFilesData function", async function () {
+    it("should invoke getFlatFilesData function", async () => {
       const stub = sinon
         .stub(dataServiceAny, "getFlatFilesData")
         .returns(Promise.resolve());
@@ -125,7 +125,7 @@ describe("DataService", () => {
   });
 
   describe("getFlatQuickPickData", () => {
-    it("should return flat quick pick data from cache", async function () {
+    it("should return flat quick pick data from cache", async () => {
       sinon.stub(dataServiceAny.config, "shouldDisplayFlatList").returns(true);
       const items: Item[] = mock.items;
       sinon.stub(dataServiceAny.cache, "getFlatData").returns(items);
@@ -155,7 +155,7 @@ describe("DataService", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return flat quick pick data if in cache is empty array", async function () {
+    it("should return flat quick pick data if in cache is empty array", async () => {
       sinon.stub(dataServiceAny.config, "shouldDisplayFlatList").returns(true);
       const items: Item[] = mock.items;
       const getFlatDataStub = sinon.stub(dataServiceAny.cache, "getFlatData");
@@ -189,7 +189,7 @@ describe("DataService", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return empty array if cache value is undefined", async function () {
+    it("should return empty array if cache value is undefined", async () => {
       sinon.stub(dataServiceAny.config, "shouldDisplayFlatList").returns(true);
       const getFlatDataStub = sinon.stub(dataServiceAny.cache, "getFlatData");
       getFlatDataStub.returns(undefined);
@@ -204,7 +204,7 @@ describe("DataService", () => {
   });
 
   describe("getQuickPickRootData", () => {
-    it("should return tree root data", async function () {
+    it("should return tree root data", async () => {
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
         .stub(dataServiceAny, "getTreeData")
@@ -217,7 +217,7 @@ describe("DataService", () => {
   });
 
   describe("getQuickPickData", () => {
-    it("should return higher level data", async function () {
+    it("should return higher level data", async () => {
       const backwardNavigationQpItem: QuickPickItem =
         mock.backwardNavigationQpItem;
       const qpItems: QuickPickItem[] = mock.qpItems;
@@ -231,7 +231,7 @@ describe("DataService", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return lower level data", async function () {
+    it("should return lower level data", async () => {
       const qpItem: QuickPickItem = mock.qpItem;
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
@@ -270,7 +270,7 @@ describe("DataService", () => {
   });
 
   describe("getLowerLevelQpData", () => {
-    it("should return lower level data without empty urls", async function () {
+    it("should return lower level data without empty urls", async () => {
       const qpItem: QuickPickItem = mock.qpItem;
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
@@ -292,7 +292,7 @@ describe("DataService", () => {
   });
 
   describe("getTreeData", () => {
-    it("should return quick pick tree data if data is in cache", async function () {
+    it("should return quick pick tree data if data is in cache", async () => {
       const items: Item[] = mock.items;
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon.stub(dataServiceAny.cache, "getTreeDataByItem").returns(items);
@@ -305,7 +305,7 @@ describe("DataService", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return quick pick tree data if data is not in cache and parent item is not provided", async function () {
+    it("should return quick pick tree data if data is not in cache and parent item is not provided", async () => {
       const items: Item[] = mock.items;
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon.stub(dataServiceAny.cache, "getTreeDataByItem").returns([]);
@@ -319,7 +319,7 @@ describe("DataService", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should return quick pick tree data if data is not in cache and parent item is provided", async function () {
+    it("should return quick pick tree data if data is not in cache and parent item is provided", async () => {
       const items: Item[] = mock.items;
       const qpItems: QuickPickItem[] = mock.qpItems;
       const qpItem: QuickPickItem = mock.qpItem;
@@ -336,7 +336,7 @@ describe("DataService", () => {
   });
 
   describe("downloadTreeData", () => {
-    it("should return tree node data", async function () {
+    it("should return tree node data", async () => {
       const items: Item[] = mock.items;
       sinon
         .stub(dataServiceAny.dataDownloader, "downloadTreeData")
@@ -356,7 +356,7 @@ describe("DataService", () => {
   });
 
   describe("downloadFlatFilesData", () => {
-    it("should return flat data", async function () {
+    it("should return flat data", async () => {
       const items: Item[] = mock.items;
       sinon
         .stub(dataServiceAny.dataDownloader, "downloadFlatData")

@@ -13,7 +13,7 @@ describe("extensionController", () => {
   let extensionController: ExtensionController;
   let extensionControllerAny: any;
 
-  before(function () {
+  before(() => {
     context = {
       subscriptions: [],
       workspaceState: {
@@ -33,15 +33,15 @@ describe("extensionController", () => {
     extensionController = new ExtensionController(context);
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     extensionControllerAny = extensionController as any;
   });
 
-  afterEach(function () {
+  afterEach(() => {
     sinon.restore();
   });
   describe("showQuickPick", () => {
-    it("should load data and show quickPick", async function () {
+    it("should load data and show quickPick", async () => {
       const showStub = sinon.stub(extensionControllerAny.quickPick, "show");
       const loadQuickPickDataStub = sinon.stub(
         extensionControllerAny,
@@ -55,7 +55,7 @@ describe("extensionController", () => {
   });
 
   describe("clearCache", () => {
-    it("should invoke cache clearing function on cache object", async function () {
+    it("should invoke cache clearing function on cache object", async () => {
       const stub = sinon.stub(extensionControllerAny.cache, "clearCache");
 
       await extensionControllerAny.clearCache();
@@ -64,7 +64,7 @@ describe("extensionController", () => {
   });
 
   describe("onQuickPickSubmit", () => {
-    it("should invoke openInBrowser function with search url if value is string", async function () {
+    it("should invoke openInBrowser function with search url if value is string", async () => {
       const openInBrowserStub = sinon
         .stub(extensionControllerAny, "openInBrowser")
         .returns(Promise.resolve());
@@ -85,7 +85,7 @@ describe("extensionController", () => {
       assert.equal(actual, expected);
     });
 
-    it("should do nothing if value is string but higherLevelData array is not empty", async function () {
+    it("should do nothing if value is string but higherLevelData array is not empty", async () => {
       const openInBrowserStub = sinon
         .stub(extensionControllerAny, "openInBrowser")
         .returns(Promise.resolve());
@@ -103,7 +103,7 @@ describe("extensionController", () => {
       assert.equal(actual, expected);
     });
 
-    it("should invoke openInBrowser function with item url if value is QuickPickItem with ItemType.File", async function () {
+    it("should invoke openInBrowser function with item url if value is QuickPickItem with ItemType.File", async () => {
       const openInBrowserStub = sinon
         .stub(extensionControllerAny, "openInBrowser")
         .returns(Promise.resolve());
@@ -115,7 +115,7 @@ describe("extensionController", () => {
       assert.equal(actual, expected);
     });
 
-    it("should invoke loadQuickPickData function with item url if value is QuickPickItem with ItemType.Directory", async function () {
+    it("should invoke loadQuickPickData function with item url if value is QuickPickItem with ItemType.Directory", async () => {
       const loadQuickPickDataStub = sinon
         .stub(extensionControllerAny, "loadQuickPickData")
         .returns(Promise.resolve());
@@ -128,7 +128,7 @@ describe("extensionController", () => {
       assert.equal(actual, expected);
     });
 
-    it("should catch error and invoke vscode.window.showErrorMessage", async function () {
+    it("should catch error and invoke vscode.window.showErrorMessage", async () => {
       const showErrorMessageStub = sinon.stub(
         vscode.window,
         "showErrorMessage"
@@ -146,7 +146,7 @@ describe("extensionController", () => {
   });
 
   describe("loadQuickPickData", () => {
-    it("should load flat list of items", async function () {
+    it("should load flat list of items", async () => {
       sinon
         .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(true);
@@ -162,7 +162,7 @@ describe("extensionController", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should load list of items", async function () {
+    it("should load list of items", async () => {
       sinon
         .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(false);
@@ -179,7 +179,7 @@ describe("extensionController", () => {
       assert.deepEqual(actual, expected);
     });
 
-    it("should load list of root items", async function () {
+    it("should load list of root items", async () => {
       sinon
         .stub(extensionControllerAny.config, "shouldDisplayFlatList")
         .returns(false);
@@ -224,7 +224,7 @@ describe("extensionController", () => {
   });
 
   describe("setQuickPickPlaceholder", () => {
-    it("should invoke quickPick.setPlaceholder function", async function () {
+    it("should invoke quickPick.setPlaceholder function", async () => {
       const spy = sinon.stub(
         extensionControllerAny.quickPick,
         "setPlaceholder"
@@ -240,7 +240,7 @@ describe("extensionController", () => {
   });
 
   describe("clearQuickPickPlaceholder", () => {
-    it("should invoke quickPick.setPlaceholder function with undefined parameter", async function () {
+    it("should invoke quickPick.setPlaceholder function with undefined parameter", async () => {
       const stub = sinon.stub(
         extensionControllerAny.quickPick,
         "setPlaceholder"
@@ -255,7 +255,7 @@ describe("extensionController", () => {
   });
 
   describe("openInBrowser", () => {
-    it("should invoke open function", async function () {
+    it("should invoke open function", async () => {
       const openStub = sinon.stub().returns(Promise.resolve());
       const ProxiedExtensionController = proxyquire(
         "../../ExtensionController",
@@ -274,7 +274,7 @@ describe("extensionController", () => {
   });
 
   describe("onWillGoLowerTreeLevel", () => {
-    it("should invoke dataService.rememberHigherLevelQpData method with qpItems as parameter", function () {
+    it("should invoke dataService.rememberHigherLevelQpData method with qpItems as parameter", () => {
       sinon
         .stub(extensionControllerAny.quickPick, "getItems")
         .returns(mock.qpItems);

@@ -6,57 +6,57 @@ const ExtensionController = require("../../extensionController");
 
 const proxyquire = require("proxyquire");
 
-describe("extension", function() {
+describe("extension", () => {
   let context: vscode.ExtensionContext;
 
-  before(function() {
+  before(() => {
     context = {
       subscriptions: [],
       workspaceState: {
         get: () => {},
-        update: () => Promise.resolve()
+        update: () => Promise.resolve(),
       },
       globalState: {
         get: () => {},
-        update: () => Promise.resolve()
+        update: () => Promise.resolve(),
       },
       extensionPath: "",
       storagePath: "",
       globalStoragePath: "",
       logPath: "",
-      asAbsolutePath: (relativePath: string) => relativePath
+      asAbsolutePath: (relativePath: string) => relativePath,
     };
   });
 
-  afterEach(function() {
+  afterEach(() => {
     sinon.restore();
   });
 
-  describe("activate", function() {
-    it("should function exist", function() {
+  describe("activate", () => {
+    it("should function exist", () => {
       const actual = typeof extension.activate;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should register two commands", async function() {
+    it("should register two commands", async () => {
       const stub = sinon.stub(vscode.commands, "registerCommand");
       // const spy = sinon.spy(stub);
       const context: vscode.ExtensionContext = {
         subscriptions: [],
         workspaceState: {
           get: () => {},
-          update: () => Promise.resolve()
+          update: () => Promise.resolve(),
         },
         globalState: {
           get: () => {},
-          update: () => Promise.resolve()
+          update: () => Promise.resolve(),
         },
         extensionPath: "",
         storagePath: "",
         globalStoragePath: "",
         logPath: "",
-        asAbsolutePath: (relativePath: string) => relativePath
+        asAbsolutePath: (relativePath: string) => relativePath,
       };
 
       await extension.activate(context);
@@ -67,8 +67,8 @@ describe("extension", function() {
     });
   });
 
-  describe("deactivate", function() {
-    it("should function exist", function() {
+  describe("deactivate", () => {
+    it("should function exist", () => {
       const spy = sinon.spy(console, "log");
       const actual = typeof extension.deactivate;
       const expected = "function";
@@ -80,21 +80,21 @@ describe("extension", function() {
     });
   });
 
-  describe("browse", function() {
-    it("should function exist", function() {
+  describe("browse", () => {
+    it("should function exist", () => {
       const actual = typeof extension.browse;
       const expected = "function";
 
       assert.equal(actual, expected);
     });
 
-    it("should function browse be fulfilled", async function() {
+    it("should function browse be fulfilled", async () => {
       const spy = sinon
         .stub(ExtensionController.default.prototype, "showQuickPick")
         .returns(Promise.resolve());
 
       const proxied = proxyquire("../../extension", {
-        "./ExtensionController": ExtensionController
+        "./ExtensionController": ExtensionController,
       });
 
       proxied.browse(context);
@@ -104,13 +104,13 @@ describe("extension", function() {
       assert.equal(actual, expected);
     });
 
-    it("should function clearCache be called", function() {
+    it("should function clearCache be called", () => {
       const spy = sinon.stub(
         ExtensionController.default.prototype,
         "clearCache"
       );
       const proxied = proxyquire("../../extension", {
-        "./ExtensionController": ExtensionController
+        "./ExtensionController": ExtensionController,
       });
 
       proxied.clearCache(context);

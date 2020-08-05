@@ -4,27 +4,27 @@ import QuickPick from "../../quickPick";
 import QuickPickItem from "../../interfaces/QuickPickItem";
 import * as mock from "../mocks/quickPick.mock";
 
-describe("Quick Pick", function () {
+describe("Quick Pick", () => {
   let quickPick: QuickPick;
   let quickPickAny: any;
   let onQuickPickSubmitCallback: sinon.SinonSpy<any, any>;
   const shouldDebounce = true;
 
-  before(function () {
+  before(() => {
     onQuickPickSubmitCallback = sinon.stub();
     quickPick = new QuickPick(onQuickPickSubmitCallback, shouldDebounce);
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     quickPickAny = quickPick as any;
   });
 
-  afterEach(function () {
+  afterEach(() => {
     sinon.restore();
   });
 
-  describe("constructor", function () {
-    it("should quick pick be initialized", function () {
+  describe("constructor", () => {
+    it("should quick pick be initialized", () => {
       quickPick = new QuickPick(onQuickPickSubmitCallback);
       assert.exists(quickPick);
       quickPick = new QuickPick(onQuickPickSubmitCallback, shouldDebounce);
@@ -32,14 +32,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("show", function () {
-    it("should function exist", function () {
+  describe("show", () => {
+    it("should function exist", () => {
       const actual = typeof quickPick.show;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should vscode.quickPick.show function be called", function () {
+    it("should vscode.quickPick.show function be called", () => {
       const showStub = sinon.spy(quickPickAny.quickPick, "show");
       quickPick.show();
 
@@ -49,14 +49,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("hide", function () {
-    it("should function exist", function () {
+  describe("hide", () => {
+    it("should function exist", () => {
       const actual = typeof quickPick.hide;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should vscode.quickPick.hide function be called", function () {
+    it("should vscode.quickPick.hide function be called", () => {
       const hideStub = sinon.spy(quickPickAny.quickPick, "hide");
       quickPick.hide();
 
@@ -66,8 +66,8 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("loadItems and getItems", function () {
-    it("should functions exist", function () {
+  describe("loadItems and getItems", () => {
+    it("should functions exist", () => {
       const expected = "function";
       let actual = typeof quickPick.loadItems;
       assert.equal(actual, expected);
@@ -75,7 +75,7 @@ describe("Quick Pick", function () {
       assert.equal(actual, expected);
     });
 
-    it("should items be loaded", function () {
+    it("should items be loaded", () => {
       const qpItems: QuickPickItem[] = mock.qpItems;
       quickPick.loadItems(qpItems);
 
@@ -85,14 +85,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("showLoading", function () {
-    it("should function exist", function () {
+  describe("showLoading", () => {
+    it("should function exist", () => {
       const actual = typeof quickPick.showLoading;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should vscode.quickPick.busy property be set", function () {
+    it("should vscode.quickPick.busy property be set", () => {
       quickPick.showLoading(true);
 
       const actual = quickPickAny.quickPick.busy;
@@ -101,14 +101,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("setPlaceholder", function () {
-    it("should function exist", function () {
+  describe("setPlaceholder", () => {
+    it("should function exist", () => {
       const actual = typeof quickPick.setPlaceholder;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should vscode.quickPick.placeholder property be set", function () {
+    it("should vscode.quickPick.placeholder property be set", () => {
       quickPick.setPlaceholder("test placeholder");
 
       const actual = quickPickAny.quickPick.placeholder;
@@ -117,14 +117,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("clearText", function () {
-    it("should function exist", function () {
+  describe("clearText", () => {
+    it("should function exist", () => {
       const actual = typeof quickPick.clearText;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should vscode.quickPick.value property be set to empty", function () {
+    it("should vscode.quickPick.value property be set to empty", () => {
       quickPick.clearText();
 
       const actual = quickPickAny.quickPick.value;
@@ -133,14 +133,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("submit", function () {
-    it("should function exist", function () {
+  describe("submit", () => {
+    it("should function exist", () => {
       const actual = typeof quickPickAny.submit;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should callback be called with quick pick argument if qpItem is defined", function () {
+    it("should callback be called with quick pick argument if qpItem is defined", () => {
       const qpItem: QuickPickItem = mock.qpItem;
       quickPickAny.submit(qpItem, onQuickPickSubmitCallback);
 
@@ -149,7 +149,7 @@ describe("Quick Pick", function () {
       assert.equal(actual, expected);
     });
 
-    it("should callback be called with string argument if qpItem is undefined", function () {
+    it("should callback be called with string argument if qpItem is undefined", () => {
       quickPickAny.quickPick.value = "test";
       quickPickAny.submit(undefined, onQuickPickSubmitCallback);
 
@@ -159,14 +159,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("onDidAccept", function () {
-    it("should function exist", function () {
+  describe("onDidAccept", () => {
+    it("should function exist", () => {
       const actual = typeof quickPickAny.onDidAccept;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should have selected item", function () {
+    it("should have selected item", () => {
       const submitStub = sinon.stub(quickPickAny, "submit");
       const qpItem: QuickPickItem = mock.qpItem;
       quickPickAny.quickPick.selectedItems[0] = qpItem;
@@ -178,14 +178,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("onDidChangeValueClearing", function () {
-    it("should function exist", function () {
+  describe("onDidChangeValueClearing", () => {
+    it("should function exist", () => {
       const actual = typeof quickPickAny.onDidChangeValueClearing;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should quick pick items be cleared", function () {
+    it("should quick pick items be cleared", () => {
       quickPickAny.onDidChangeValueClearing();
       const actual: QuickPickItem[] = quickPickAny.quickPick.items;
       const expected: QuickPickItem[] = [];
@@ -193,14 +193,14 @@ describe("Quick Pick", function () {
     });
   });
 
-  describe("onDidChangeValue", function () {
-    it("should function exist", function () {
+  describe("onDidChangeValue", () => {
+    it("should function exist", () => {
       const actual = typeof quickPickAny.onDidChangeValue;
       const expected = "function";
       assert.equal(actual, expected);
     });
 
-    it("should contain items matching the search query", function () {
+    it("should contain items matching the search query", () => {
       const searchQuery = "test";
       const qpItems: QuickPickItem[] = mock.qpItems;
       quickPickAny.items = qpItems;

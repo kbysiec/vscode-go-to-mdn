@@ -13,7 +13,7 @@ describe("Cache", () => {
   let context: vscode.ExtensionContext;
   let updateSpy: any;
 
-  before(function () {
+  before(() => {
     sinon.stub(appConfig, "flatCacheKey").value("flatData");
     sinon.stub(appConfig, "treeCacheKey").value("treeData");
     sinon
@@ -44,7 +44,7 @@ describe("Cache", () => {
     cache = new Cache(context);
   });
 
-  afterEach(function () {
+  afterEach(() => {
     sinon.restore();
   });
 
