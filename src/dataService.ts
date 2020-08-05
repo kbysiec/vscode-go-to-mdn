@@ -1,79 +1,157 @@
-import fetch, { Response } from "node-fetch";
-import Item from "./interfaces/item";
-import ItemType from "./enums/itemType";
-import Parser from "./parser";
-import { appConfig } from "./appConfig";
+import * as vscode from "vscode";
+import DataDownloader from "./dataDownloader";
+import DataConverter from "./dataConverter";
 import Utils from "./utils";
 import Config from "./config";
+import Cache from "./cache";
+import QuickPickItem from "./interfaces/quickPickItem";
+import { appConfig } from "./appConfig";
+import Item from "./interfaces/item";
 
 class DataService {
-  private parser: Parser;
+  private dataDownloader: DataDownloader;
+  private dataConverter: DataConverter;
 
-  constructor(private config: Config) {
-    this.parser = new Parser();
+  private higherLevelData: QuickPickItem[][];
+
+  onWillGoLowerTreeLevelEventEmitter: vscode.EventEmitter<
+    void
+  > = new vscode.EventEmitter();
+  readonly onWillGoLowerTreeLevel: vscode.Event<void> = this
+    .onWillGoLowerTreeLevelEventEmitter.event;
+
+  constructor(
+    private cache: Cache,
+    private utils: Utils,
+    private config: Config
+  ) {
+    this.dataDownloader = new DataDownloader(this.config);
+    this.dataConverter = new DataConverter(this.config, this.utils);
+
+    this.higherLevelData = [];
   }
 
-  async downloadTreeData(item?: Item): Promise<Item[]> {
-    if (!item) {
-      item = {
-        name: "root",
-        url: appConfig.rootUrl,
-        type: ItemType.Directory,
-        breadcrumbs: [],
-      };
+  async getFlatQuickPickData(): Promise<QuickPickItem[]> {
+    let data = this.cache.getFlatData();
+    const areCached = data ? data.length > 0 : false;
+
+    if (!areCached) {
+      await this.cacheFlatFilesWithProgress();
+      data = this.cache.getFlatData();
     }
 
-    let items: Item[];
-    const content = await this.fetch(item.url, this.getContent);
+    const qpData = data ? this.dataConverter.prepareQpData(data) : [];
+    return qpData;
+  }
 
-    if (item.name === "root") {
-      items = this.parser.parseRootDirectories(content);
-    } else if (typeof content === "string") {
-      items = this.parser.parseElements(content, item);
+  async getQuickPickRootData(): Promise<QuickPickItem[]> {
+    return await this.getTreeData();
+  }
+
+  async getQuickPickData(value: QuickPickItem): Promise<QuickPickItem[]> {
+    let data: QuickPickItem[];
+    const name = this.utils.getNameFromQuickPickItem(value);
+    if (name === appConfig.higherLevelLabel) {
+      data = this.getHigherLevelQpData();
     } else {
-      items = this.parser.parseDirectories(content, item);
+      data = await this.getLowerLevelQpData(value);
+      // this.rememberHigherLevelQpData();
+      this.onWillGoLowerTreeLevelEventEmitter.fire();
     }
-
-    return items;
+    return data;
   }
 
-  async downloadFlatData(): Promise<Item[]> {
-    const json = await this.fetch(appConfig.allFilesUrl, this.getJson);
-    const items: Item[] = this.parser.parseFlatElements(json);
-    return items;
+  rememberHigherLevelQpData(items: QuickPickItem[]): void {
+    items.length && this.higherLevelData.push(items);
   }
 
-  private async fetch(url: string, callback: Function): Promise<any> {
-    const token = this.config.getGithubPersonalAccessToken();
-    const fetchConfig = {
-      headers: {
-        Authorization: token ? `token ${token}` : "",
-        "Content-type": "application/json",
-      },
-    };
-    const response: Response = await fetch(url, fetchConfig).catch(
-      (error: Error) => {
-        throw new Error(error.message);
-      }
-    );
-    return await callback(response);
+  private getHigherLevelQpData(): QuickPickItem[] {
+    return this.higherLevelData.pop() as QuickPickItem[];
   }
 
-  private async getJson(response: Response): Promise<any> {
-    const statusCode = response.status;
-    const statusText = response.statusText;
-    if (statusCode !== 200) {
-      throw new Error(statusText);
+  private async getLowerLevelQpData(
+    value: QuickPickItem
+  ): Promise<QuickPickItem[]> {
+    let data: QuickPickItem[];
+    data = await this.getTreeData(value);
+    data = this.utils.removeDataWithEmptyUrl(data);
+    return data;
+  }
+
+  private async getTreeData(qpItem?: QuickPickItem): Promise<QuickPickItem[]> {
+    let data = this.cache.getTreeDataByItem(qpItem);
+
+    if (!data || !data.length) {
+      let item: Item | undefined =
+        qpItem && this.dataConverter.mapQpItemToItem(qpItem);
+      data = await this.downloadTreeData(item);
     }
-    return await response.json();
+    const qpData = this.dataConverter.prepareQpData(data);
+    return qpData;
   }
 
-  private getContent = async (response: Response): Promise<any> => {
-    let json = await this.getJson(response);
-    return json.encoding
-      ? Buffer.from(json.content, json.encoding).toString("utf-8")
-      : json;
-  };
+  private async downloadTreeData(item?: Item): Promise<Item[]> {
+    const data = await this.dataDownloader.downloadTreeData(item);
+    this.cache.updateTreeDataByItem(data, item);
+    return data;
+  }
+
+  private async downloadFlatFilesData(): Promise<Item[]> {
+    const data = await this.dataDownloader.downloadFlatData();
+    this.cache.updateFlatData(data);
+    return data;
+  }
+
+  private async getFlatFilesData(progress: any): Promise<void> {
+    progress &&
+      progress.report({
+        increment: 30,
+      });
+
+    await this.downloadFlatFilesData();
+
+    progress &&
+      progress.report({
+        increment: 70,
+      });
+  }
+
+  isHigherLevelDataEmpty(): boolean {
+    return !this.higherLevelData.length;
+  }
+
+  private async cacheFlatFilesData(progress: any) {
+    await this.getFlatFilesData(progress);
+  }
+
+  private async cacheFlatFilesWithProgress() {
+    const dataFromCache = this.cache.getFlatData();
+    const areCached = dataFromCache ? dataFromCache.length > 0 : false;
+
+    if (
+      this.config.shouldDisplayFlatList() &&
+      this.config.getGithubPersonalAccessToken() &&
+      !areCached
+    ) {
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "Downloading and indexing data for MDN...",
+          cancellable: false,
+        },
+        this.cacheFlatFilesWithProgressTask.bind(this)
+      );
+    }
+  }
+
+  private async cacheFlatFilesWithProgressTask(progress: any) {
+    await this.cacheFlatFilesData(progress);
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 250);
+    });
+  }
 }
 
 export default DataService;

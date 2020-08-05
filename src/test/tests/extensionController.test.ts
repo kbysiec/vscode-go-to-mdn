@@ -2,14 +2,10 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import ExtensionController from "../../ExtensionController";
-import Item from "../../interfaces/item";
-import ItemType from "../../enums/itemType";
 import QuickPickItem from "../../interfaces/quickPickItem";
-import Utils from "../../utils";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/extensionController.mock";
 
-const open = require("open");
 const proxyquire = require("proxyquire");
 
 describe("extensionController", () => {
@@ -75,6 +71,9 @@ describe("extensionController", () => {
       sinon
         .stub(appConfig, "searchUrl")
         .value("https://developer.mozilla.org/search");
+      sinon
+        .stub(extensionControllerAny.dataService, "isHigherLevelDataEmpty")
+        .returns(true);
       const text = "test search text";
 
       await extensionControllerAny.onQuickPickSubmit(text);
@@ -93,7 +92,9 @@ describe("extensionController", () => {
       sinon
         .stub(appConfig, "searchUrl")
         .value("https://developer.mozilla.org/search");
-      sinon.stub(extensionControllerAny, "higherLevelData").value([1]);
+      sinon
+        .stub(extensionControllerAny.dataService, "isHigherLevelDataEmpty")
+        .returns(false);
       const text = "test search text";
 
       await extensionControllerAny.onQuickPickSubmit(text);
@@ -144,101 +145,6 @@ describe("extensionController", () => {
     });
   });
 
-  describe("getFlatFilesData", () => {
-    it("should invoke downloadFlatFilesData function", async function () {
-      const stub = sinon
-        .stub(extensionControllerAny, "downloadFlatFilesData")
-        .returns(Promise.resolve());
-      const progress: any = { report: sinon.stub() };
-
-      await extensionControllerAny.getFlatFilesData(progress);
-
-      const actual = stub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("cacheFlatFilesWithProgressTask", () => {
-    it("should invoke cacheFlatFilesData function", async function () {
-      const stub = sinon
-        .stub(extensionControllerAny, "cacheFlatFilesData")
-        .returns(Promise.resolve());
-      const progress: any = { report: sinon.stub() };
-
-      await extensionControllerAny.cacheFlatFilesWithProgressTask(progress);
-
-      const actual = stub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("cacheFlatFilesWithProgress", () => {
-    it("should download and cache data if cache returns undefined", async function () {
-      const stub = sinon
-        .stub(vscode.window, "withProgress")
-        .returns(Promise.resolve());
-      sinon
-        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
-        .returns(true);
-      sinon
-        .stub(extensionControllerAny.config, "getGithubPersonalAccessToken")
-        .returns("sample token");
-      sinon
-        .stub(extensionControllerAny.cache, "getFlatData")
-        .returns(undefined);
-      sinon
-        .stub(extensionControllerAny, "cacheFlatFilesData")
-        .returns(Promise.resolve());
-
-      await extensionControllerAny.cacheFlatFilesWithProgress();
-
-      const actual = stub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-
-    it("should do nothing if data is in cache", async function () {
-      const stub = sinon
-        .stub(vscode.window, "withProgress")
-        .returns(Promise.resolve());
-      const items: Item[] = mock.items;
-      sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
-
-      await extensionControllerAny.cacheFlatFilesWithProgress();
-
-      const actual = stub.called;
-      const expected = false;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("cacheFlatFilesData", () => {
-    it("should invoke getFlatFilesData function", async function () {
-      const stub = sinon
-        .stub(extensionControllerAny, "getFlatFilesData")
-        .returns(Promise.resolve());
-      const progress: any = {};
-
-      await extensionControllerAny.cacheFlatFilesData(progress);
-
-      const actual = stub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("isHigherLevelDataEmpty", () => {
-    it("should check if higherLevelData array is empty", () => {
-      sinon.stub(extensionControllerAny, "higherLevelData").value([1]);
-
-      const actual = extensionControllerAny.isHigherLevelDataEmpty();
-      const expected = false;
-      assert.equal(actual, expected);
-    });
-  });
-
   describe("loadQuickPickData", () => {
     it("should load flat list of items", async function () {
       sinon
@@ -246,7 +152,7 @@ describe("extensionController", () => {
         .returns(true);
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
-        .stub(extensionControllerAny, "getFlatQuickPickData")
+        .stub(extensionControllerAny.dataService, "getFlatQuickPickData")
         .returns(Promise.resolve(qpItems));
 
       await extensionControllerAny.loadQuickPickData();
@@ -263,7 +169,7 @@ describe("extensionController", () => {
       const qpItem: QuickPickItem = mock.qpItemDirectoryType;
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
-        .stub(extensionControllerAny, "getQuickPickData")
+        .stub(extensionControllerAny.dataService, "getQuickPickData")
         .returns(Promise.resolve(qpItems));
 
       await extensionControllerAny.loadQuickPickData(qpItem);
@@ -279,7 +185,7 @@ describe("extensionController", () => {
         .returns(false);
       const qpItems: QuickPickItem[] = mock.qpItems;
       sinon
-        .stub(extensionControllerAny, "getQuickPickRootData")
+        .stub(extensionControllerAny.dataService, "getQuickPickRootData")
         .returns(Promise.resolve(qpItems));
 
       await extensionControllerAny.loadQuickPickData();
@@ -317,190 +223,6 @@ describe("extensionController", () => {
     });
   });
 
-  describe("getFlatQuickPickData", () => {
-    it("should return flat quick pick data from cache", async function () {
-      sinon
-        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
-        .returns(true);
-      const items: Item[] = mock.items;
-      sinon.stub(extensionControllerAny.cache, "getFlatData").returns(items);
-
-      const actual = await extensionControllerAny.getFlatQuickPickData();
-      const expected: QuickPickItem[] = [
-        {
-          label: `$(link) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label",
-        },
-        {
-          label: `$(link) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2",
-        },
-      ];
-
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should return flat quick pick data if in cache is empty array", async function () {
-      sinon
-        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
-        .returns(true);
-      const items: Item[] = mock.items;
-      const getFlatDataStub = sinon.stub(
-        extensionControllerAny.cache,
-        "getFlatData"
-      );
-      getFlatDataStub.onFirstCall().returns([]);
-      getFlatDataStub.onSecondCall().returns(items);
-      sinon
-        .stub(extensionControllerAny, "cacheFlatFilesWithProgress")
-        .returns(Promise.resolve());
-
-      const actual = await extensionControllerAny.getFlatQuickPickData();
-      const expected: QuickPickItem[] = [
-        {
-          label: `$(link) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label",
-        },
-        {
-          label: `$(link) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2",
-        },
-      ];
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should return empty array if cache value is undefined", async function () {
-      sinon
-        .stub(extensionControllerAny.config, "shouldDisplayFlatList")
-        .returns(true);
-      const getFlatDataStub = sinon.stub(
-        extensionControllerAny.cache,
-        "getFlatData"
-      );
-      getFlatDataStub.returns(undefined);
-      sinon
-        .stub(extensionControllerAny, "cacheFlatFilesWithProgress")
-        .returns(Promise.resolve());
-
-      const actual = await extensionControllerAny.getFlatQuickPickData();
-      const expected: QuickPickItem[] = [];
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("getQuickPickRootData", () => {
-    it("should return tree root data", async function () {
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(extensionControllerAny, "getTreeData")
-        .returns(Promise.resolve(qpItems));
-
-      const actual = await extensionControllerAny.getQuickPickRootData();
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("getQuickPickData", () => {
-    it("should return higher level data", async function () {
-      const backwardNavigationQpItem: QuickPickItem =
-        mock.backwardNavigationQpItem;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      const higherLevelData: QuickPickItem[][] = [qpItems];
-      sinon
-        .stub(extensionControllerAny, "higherLevelData")
-        .value(higherLevelData);
-
-      const actual = await extensionControllerAny.getQuickPickData(
-        backwardNavigationQpItem
-      );
-      const expected: QuickPickItem[] = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should return lower level data", async function () {
-      const qpItem: QuickPickItem = mock.qpItem;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(extensionControllerAny, "getLowerLevelQpData")
-        .returns(Promise.resolve(qpItems));
-
-      const actual = await extensionControllerAny.getQuickPickData(qpItem);
-      const expected: QuickPickItem[] = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("rememberHigherLevelQpData", () => {
-    it("should remember higher level data", () => {
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      const higherLevelData: QuickPickItem[][] = [];
-      sinon
-        .stub(extensionControllerAny, "higherLevelData")
-        .value(higherLevelData);
-      sinon.stub(extensionControllerAny.quickPick, "getItems").returns(qpItems);
-
-      extensionControllerAny.rememberHigherLevelQpData();
-
-      const actual = higherLevelData;
-      const expected: QuickPickItem[][] = [qpItems];
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("getHigherLevelQpData", () => {
-    it("should return higher level data", () => {
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon.stub(extensionControllerAny, "higherLevelData").value([qpItems]);
-
-      const actual = extensionControllerAny.getHigherLevelQpData();
-      const expected: QuickPickItem[] = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("getLowerLevelQpData", () => {
-    it("should return lower level data without empty urls", async function () {
-      const qpItem: QuickPickItem = mock.qpItem;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(extensionControllerAny, "getTreeData")
-        .returns(Promise.resolve(qpItems));
-
-      const actual = await extensionControllerAny.getLowerLevelQpData(qpItem);
-      const expectedSecondItem: QuickPickItem = {
-        label: `$(link) sub-label 2`,
-        url: "https://sub-label-2.com",
-        type: ItemType.File,
-        parent: undefined,
-        rootParent: undefined,
-        breadcrumbs: ["api", "test-label", "sub-label 2"],
-        description: "api test-label sub-label 2",
-      };
-      assert.deepEqual(actual[1], expectedSecondItem);
-    });
-  });
-
   describe("setQuickPickPlaceholder", () => {
     it("should invoke quickPick.setPlaceholder function", async function () {
       const spy = sinon.stub(
@@ -532,92 +254,6 @@ describe("extensionController", () => {
     });
   });
 
-  describe("getTreeData", () => {
-    it("should return quick pick tree data if data is in cache", async function () {
-      const items: Item[] = mock.items;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(extensionControllerAny.cache, "getTreeDataByItem")
-        .returns(items);
-      sinon
-        .stub(extensionControllerAny.dataConverter, "prepareQpData")
-        .returns(qpItems);
-
-      const actual = await extensionControllerAny.getTreeData();
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should return quick pick tree data if data is not in cache and parent item is not provided", async function () {
-      const items: Item[] = mock.items;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
-      sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
-      sinon
-        .stub(extensionControllerAny.dataConverter, "prepareQpData")
-        .returns(qpItems);
-
-      const actual = await extensionControllerAny.getTreeData();
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should return quick pick tree data if data is not in cache and parent item is provided", async function () {
-      const items: Item[] = mock.items;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      const qpItem: QuickPickItem = mock.qpItem;
-      sinon.stub(extensionControllerAny.cache, "getTreeDataByItem").returns([]);
-      sinon.stub(extensionControllerAny, "downloadTreeData").returns(items);
-      sinon
-        .stub(extensionControllerAny.dataConverter, "prepareQpData")
-        .returns(qpItems);
-
-      const actual = await extensionControllerAny.getTreeData(qpItem);
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("downloadTreeData", () => {
-    it("should return tree node data", async function () {
-      const items: Item[] = mock.items;
-      sinon
-        .stub(extensionControllerAny.dataService, "downloadTreeData")
-        .returns(Promise.resolve(items));
-      const updateCacheStub = sinon.stub(
-        extensionControllerAny.cache,
-        "updateTreeDataByItem"
-      );
-
-      const actualData = await extensionControllerAny.downloadTreeData();
-      const expectedData = items;
-      const actualUpdateCacheCalled = updateCacheStub.calledOnce;
-      const expectedUpdateCacheCalled = true;
-      assert.equal(actualData, expectedData);
-      assert.equal(actualUpdateCacheCalled, expectedUpdateCacheCalled);
-    });
-  });
-
-  describe("downloadFlatFilesData", () => {
-    it("should return flat data", async function () {
-      const items: Item[] = mock.items;
-      sinon
-        .stub(extensionControllerAny.dataService, "downloadFlatData")
-        .returns(Promise.resolve(items));
-      const updateCacheStub = sinon.stub(
-        extensionControllerAny.cache,
-        "updateFlatData"
-      );
-
-      const actualData = await extensionControllerAny.downloadFlatFilesData();
-      const expectedData = items;
-      const actualUpdateCacheCalled = updateCacheStub.calledOnce;
-      const expectedUpdateCacheCalled = true;
-      assert.equal(actualData, expectedData);
-      assert.equal(actualUpdateCacheCalled, expectedUpdateCacheCalled);
-    });
-  });
-
   describe("openInBrowser", () => {
     it("should invoke open function", async function () {
       const openStub = sinon.stub().returns(Promise.resolve());
@@ -632,6 +268,25 @@ describe("extensionController", () => {
       await extensionControllerAny.openInBrowser("http://test.com");
 
       const actual = openStub.withArgs("http://test.com").calledOnce;
+      const expected = true;
+      assert.equal(actual, expected);
+    });
+  });
+
+  describe("onWillGoLowerTreeLevel", () => {
+    it("should invoke dataService.rememberHigherLevelQpData method with qpItems as parameter", function () {
+      sinon
+        .stub(extensionControllerAny.quickPick, "getItems")
+        .returns(mock.qpItems);
+      const rememberHigherLevelQpDataStub = sinon.stub(
+        extensionControllerAny.dataService,
+        "rememberHigherLevelQpData"
+      );
+
+      extensionControllerAny.onWillGoLowerTreeLevel();
+
+      const actual = rememberHigherLevelQpDataStub.withArgs(mock.qpItems)
+        .calledOnce;
       const expected = true;
       assert.equal(actual, expected);
     });
