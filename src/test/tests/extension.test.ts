@@ -1,31 +1,17 @@
 import * as vscode from "vscode";
-import { assert, expect } from "chai";
+import { assert } from "chai";
 import * as sinon from "sinon";
 import * as extension from "../../extension";
-const ExtensionController = require("../../extensionController");
-
-const proxyquire = require("proxyquire");
+import ExtensionController from "../../ExtensionController";
+import { getExtensionContext } from "../util/mockFactory";
 
 describe("extension", () => {
   let context: vscode.ExtensionContext;
+  let extensionController: ExtensionController;
 
   before(() => {
-    context = {
-      subscriptions: [],
-      workspaceState: {
-        get: () => {},
-        update: () => Promise.resolve(),
-      },
-      globalState: {
-        get: () => {},
-        update: () => Promise.resolve(),
-      },
-      extensionPath: "",
-      storagePath: "",
-      globalStoragePath: "",
-      logPath: "",
-      asAbsolutePath: (relativePath: string) => relativePath,
-    };
+    context = getExtensionContext();
+    extensionController = new ExtensionController(context);
   });
 
   afterEach(() => {
@@ -34,30 +20,13 @@ describe("extension", () => {
 
   describe("activate", () => {
     it("should register two commands", async () => {
-      const stub = sinon.stub(vscode.commands, "registerCommand");
-      // const spy = sinon.spy(stub);
-      const context: vscode.ExtensionContext = {
-        subscriptions: [],
-        workspaceState: {
-          get: () => {},
-          update: () => Promise.resolve(),
-        },
-        globalState: {
-          get: () => {},
-          update: () => Promise.resolve(),
-        },
-        extensionPath: "",
-        storagePath: "",
-        globalStoragePath: "",
-        logPath: "",
-        asAbsolutePath: (relativePath: string) => relativePath,
-      };
-
+      const registerCommandStub = sinon.stub(
+        vscode.commands,
+        "registerCommand"
+      );
       await extension.activate(context);
 
-      const actual = stub.calledTwice;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(registerCommandStub.calledTwice, true);
     });
   });
 
@@ -75,36 +44,20 @@ describe("extension", () => {
   });
 
   describe("browse", () => {
-    it("should function browse be fulfilled", async () => {
-      const spy = sinon
-        .stub(ExtensionController.default.prototype, "showQuickPick")
-        .returns(Promise.resolve());
+    it("should extensionController.browse method be invoked", () => {
+      const searchStub = sinon.stub(extensionController, "browse");
+      extension.browse(extensionController);
 
-      const proxied = proxyquire("../../extension", {
-        "./ExtensionController": ExtensionController,
-      });
-
-      proxied.browse(context);
-      const actual = spy.calledOnce;
-      const expected = true;
-
-      assert.equal(actual, expected);
+      assert.equal(searchStub.calledOnce, true);
     });
+  });
 
-    it("should function clearCache be called", () => {
-      const spy = sinon.stub(
-        ExtensionController.default.prototype,
-        "clearCache"
-      );
-      const proxied = proxyquire("../../extension", {
-        "./ExtensionController": ExtensionController,
-      });
+  describe("clearCache", () => {
+    it("should extensionController.clearCache method be invoked", () => {
+      const clearCacheStub = sinon.stub(extensionController, "clearCache");
+      extension.clearCache(extensionController);
 
-      proxied.clearCache(context);
-      const actual = spy.calledOnce;
-      const expected = true;
-
-      assert.equal(actual, expected);
+      assert.equal(clearCacheStub.calledOnce, true);
     });
   });
 });

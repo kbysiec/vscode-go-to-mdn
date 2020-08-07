@@ -6,7 +6,7 @@ import Config from "../../config";
 import Cache from "../../cache";
 import DataService from "../../dataService";
 
-const getExtensionContext = (): vscode.ExtensionContext => {
+export const getExtensionContext = (): vscode.ExtensionContext => {
   return {
     subscriptions: [],
     workspaceState: {

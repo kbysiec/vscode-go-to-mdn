@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import ExtensionController from "../../ExtensionController";
+import { getExtensionContext } from "../util/mockFactory";
 
 describe("extensionController", () => {
   let context: vscode.ExtensionContext;
@@ -9,22 +10,7 @@ describe("extensionController", () => {
   let extensionControllerAny: any;
 
   before(() => {
-    context = {
-      subscriptions: [],
-      workspaceState: {
-        get: () => {},
-        update: () => Promise.resolve(),
-      },
-      globalState: {
-        get: () => {},
-        update: () => Promise.resolve(),
-      },
-      extensionPath: "",
-      storagePath: "",
-      globalStoragePath: "",
-      logPath: "",
-      asAbsolutePath: (relativePath: string) => relativePath,
-    };
+    context = getExtensionContext();
     extensionController = new ExtensionController(context);
   });
 
@@ -35,7 +21,7 @@ describe("extensionController", () => {
   afterEach(() => {
     sinon.restore();
   });
-  describe("showQuickPick", () => {
+  describe("browse", () => {
     it("should load data and show quickPick", async () => {
       const showStub = sinon.stub(extensionControllerAny.quickPick, "show");
       const loadQuickPickDataStub = sinon.stub(
@@ -43,7 +29,7 @@ describe("extensionController", () => {
         "loadQuickPickData"
       );
 
-      await extensionControllerAny.showQuickPick();
+      await extensionControllerAny.browse();
       assert.equal(showStub.calledOnce, true);
       assert.equal(loadQuickPickDataStub.calledOnce, true);
     });

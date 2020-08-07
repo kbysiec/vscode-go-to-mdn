@@ -13,7 +13,7 @@ class ExtensionController {
     this.quickPick.registerEventListeners();
   }
 
-  async showQuickPick(): Promise<void> {
+  async browse(): Promise<void> {
     await this.quickPick.loadQuickPickData();
     this.quickPick.show();
   }
