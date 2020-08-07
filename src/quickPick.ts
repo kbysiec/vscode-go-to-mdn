@@ -1,23 +1,37 @@
 import * as vscode from "vscode";
+const open = require("open");
 const debounce = require("debounce");
 import QuickPickItem from "./interfaces/QuickPickItem";
+import DataService from "./dataService";
+import Cache from "./cache";
+import Utils from "./utils";
+import Config from "./config";
 
 class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickItem>;
   private items: QuickPickItem[] = [];
 
-  constructor(
-    onQuickPickSubmitCallback: Function,
-    shouldDebounce: boolean = false
-  ) {
+  private utils: Utils;
+  private config: Config;
+  private dataService: DataService;
+
+  private open: any = open;
+
+  constructor(private cache: Cache) {
+    this.utils = new Utils();
+    this.config = new Config();
+    this.dataService = new DataService(this.cache, this.utils, this.config);
+    this.dataService.onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
+
     this.quickPick = vscode.window.createQuickPick<QuickPickItem>();
     this.quickPick.matchOnDescription = true;
-    this.quickPick.onDidHide(this.onDidHide);
-    this.quickPick.onDidAccept(
-      this.onDidAccept.bind(this, onQuickPickSubmitCallback)
-    );
+  }
 
-    if (shouldDebounce) {
+  registerEventListeners(): void {
+    this.quickPick.onDidHide(this.onDidHide);
+    this.quickPick.onDidAccept(this.onDidAccept);
+
+    if (this.config.shouldDisplayFlatList()) {
       this.quickPick.onDidChangeValue(this.onDidChangeValueClearing);
       this.quickPick.onDidChangeValue(debounce(this.onDidChangeValue, 350));
     } else {
@@ -54,10 +68,7 @@ class QuickPick {
     this.quickPick.value = "";
   }
 
-  private submit(
-    selected: QuickPickItem | undefined,
-    callback: Function
-  ): void {
+  private submit(selected: QuickPickItem | undefined): void {
     let value;
     if (selected === undefined) {
       value = this.quickPick.value;
@@ -65,12 +76,12 @@ class QuickPick {
       value = selected;
     }
 
-    callback(value);
+    this.onQuickPickSubmit(value);
   }
 
-  private onDidAccept = (onQuickPickSubmitCallback: Function) => {
+  private onDidAccept = () => {
     const selected = this.quickPick.selectedItems[0];
-    this.submit(selected, onQuickPickSubmitCallback);
+    this.submit(selected);
   };
 
   private onDidHide = () => {
@@ -95,6 +106,68 @@ class QuickPick {
         item.description!.toLowerCase().includes(value.toLowerCase())
     );
   }
+
+  private onQuickPickSubmit = async (
+    value: QuickPickItem | string
+  ): Promise<void> => {
+    try {
+      let url: string;
+      if (this.utils.isValueStringType(value)) {
+        if (!this.dataService.isHigherLevelDataEmpty()) {
+          return;
+        }
+        value = value as string;
+        url = this.utils.getSearchUrl(value);
+        url && (await this.openInBrowser(url));
+      } else {
+        value = value as QuickPickItem;
+
+        if (this.utils.isValueFileType(value)) {
+          let url = value.url;
+          url && (await this.openInBrowser(url));
+        } else {
+          this.loadQuickPickData(value);
+        }
+      }
+    } catch (error) {
+      vscode.window.showErrorMessage(error.message);
+    }
+  };
+
+  async loadQuickPickData(value?: QuickPickItem): Promise<void> {
+    this.showLoading(true);
+    let data: QuickPickItem[];
+
+    if (this.config.shouldDisplayFlatList()) {
+      data = await this.dataService.getFlatQuickPickData();
+    } else if (value) {
+      data = await this.dataService.getQuickPickData(value);
+    } else {
+      data = await this.dataService.getQuickPickRootData();
+    }
+    this.prepareQuickPickPlaceholder();
+
+    this.clearText();
+    this.loadItems(data);
+    this.showLoading(false);
+  }
+
+  private prepareQuickPickPlaceholder(): void {
+    this.dataService.isHigherLevelDataEmpty()
+      ? this.setPlaceholder(
+          "choose item from the list or type anything to search"
+        )
+      : this.setPlaceholder(undefined);
+  }
+
+  private async openInBrowser(url: string): Promise<void> {
+    await this.open(url);
+  }
+
+  private onWillGoLowerTreeLevel = () => {
+    const qpData = this.getItems();
+    this.dataService.rememberHigherLevelQpData(qpData);
+  };
 }
 
 export default QuickPick;

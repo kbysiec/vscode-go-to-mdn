@@ -3,7 +3,7 @@ import ItemType from "../../enums/itemType";
 
 export const qpItem: QuickPickItem = {
   label: "api test-label sub-label",
-  url: "#",
+  url: "http://test.com",
   type: ItemType.File,
   breadcrumbs: [],
 };
@@ -31,3 +31,10 @@ export const qpItems: QuickPickItem[] = [
     breadcrumbs: [],
   },
 ];
+
+export const qpItemDirectoryType: QuickPickItem = {
+  label: "api test-label sub-label 3",
+  url: "#",
+  type: ItemType.Directory,
+  breadcrumbs: ["api", "test-label", "sub-label 3"],
+};
