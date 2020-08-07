@@ -33,12 +33,6 @@ describe("extension", () => {
   });
 
   describe("activate", () => {
-    it("should function exist", () => {
-      const actual = typeof extension.activate;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should register two commands", async () => {
       const stub = sinon.stub(vscode.commands, "registerCommand");
       // const spy = sinon.spy(stub);
@@ -81,13 +75,6 @@ describe("extension", () => {
   });
 
   describe("browse", () => {
-    it("should function exist", () => {
-      const actual = typeof extension.browse;
-      const expected = "function";
-
-      assert.equal(actual, expected);
-    });
-
     it("should function browse be fulfilled", async () => {
       const spy = sinon
         .stub(ExtensionController.default.prototype, "showQuickPick")

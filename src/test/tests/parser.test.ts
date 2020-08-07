@@ -12,12 +12,6 @@ describe("Parser", () => {
   });
 
   describe("parseFlatElements", () => {
-    it("should function exist", () => {
-      const actual = typeof parser.parseFlatElements;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return array of Item elements", () => {
       const inputData: any = mock.flatElementsInput;
 
@@ -57,12 +51,6 @@ describe("Parser", () => {
   });
 
   describe("parseRootDirectories", () => {
-    it("should function exist", () => {
-      const actual = typeof parser.parseRootDirectories;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return array of Item elements once content contains has links", () => {
       const content: string = mock.rootDirectoriesWithLinks;
 
@@ -96,12 +84,6 @@ describe("Parser", () => {
   });
 
   describe("parseElements", () => {
-    it("should function exist", () => {
-      const actual = typeof parser.parseElements;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return array of Item elements if content is array of files without unnecessary nesting of keys", () => {
       const content: string = mock.parseElementsContent;
       const item: Item = mock.parseElementsItem;
@@ -217,12 +199,6 @@ describe("Parser", () => {
   });
 
   describe("parseDirectories", () => {
-    it("should function exist", () => {
-      const actual = typeof parser.parseDirectories;
-      const expected = "function";
-      assert.equal(actual, expected);
-    });
-
     it("should return array of Item elements if content is array of directories", () => {
       const item: Item = mock.parseDirectoriesItem;
       const content: Array<any> = mock.parseDirectoriesContent;
