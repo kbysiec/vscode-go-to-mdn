@@ -314,7 +314,7 @@ describe("DataService", () => {
         .stub(dataServiceAny.dataConverter, "prepareQpData")
         .returns(qpItems);
 
-      const actual = await dataServiceAny.getTreeData();
+      const actual = await dataServiceAny.getTreeData(true);
       const expected = qpItems;
       assert.deepEqual(actual, expected);
     });
@@ -329,7 +329,7 @@ describe("DataService", () => {
         .stub(dataServiceAny.dataConverter, "prepareQpData")
         .returns(qpItems);
 
-      const actual = await dataServiceAny.getTreeData(qpItem);
+      const actual = await dataServiceAny.getTreeData(false, qpItem);
       const expected = qpItems;
       assert.deepEqual(actual, expected);
     });

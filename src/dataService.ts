@@ -45,7 +45,7 @@ class DataService {
   }
 
   async getQuickPickRootData(): Promise<QuickPickItem[]> {
-    return await this.getTreeData();
+    return await this.getTreeData(true);
   }
 
   async getQuickPickData(value: QuickPickItem): Promise<QuickPickItem[]> {
@@ -55,7 +55,6 @@ class DataService {
       data = this.getHigherLevelQpData();
     } else {
       data = await this.getLowerLevelQpData(value);
-      // this.rememberHigherLevelQpData();
       this.onWillGoLowerTreeLevelEventEmitter.fire();
     }
     return data;
@@ -73,12 +72,15 @@ class DataService {
     value: QuickPickItem
   ): Promise<QuickPickItem[]> {
     let data: QuickPickItem[];
-    data = await this.getTreeData(value);
+    data = await this.getTreeData(false, value);
     data = this.utils.removeDataWithEmptyUrl(data);
     return data;
   }
 
-  private async getTreeData(qpItem?: QuickPickItem): Promise<QuickPickItem[]> {
+  private async getTreeData(
+    isRootLevel: boolean,
+    qpItem?: QuickPickItem
+  ): Promise<QuickPickItem[]> {
     let data = this.cache.getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
@@ -86,7 +88,7 @@ class DataService {
         qpItem && this.dataConverter.mapQpItemToItem(qpItem);
       data = await this.downloadTreeData(item);
     }
-    const qpData = this.dataConverter.prepareQpData(data);
+    const qpData = this.dataConverter.prepareQpData(data, isRootLevel);
     return qpData;
   }
 

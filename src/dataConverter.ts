@@ -9,13 +9,15 @@ import Utils from "./utils";
 class DataConverter {
   constructor(private config: Config, private utils: Utils) {}
 
-  prepareQpData(data: Item[]): QuickPickItem[] {
+  prepareQpData(data: Item[], isRootLevel: boolean = false): QuickPickItem[] {
     const shouldDisplayFlatListFlag = this.config.shouldDisplayFlatList();
     const qpData: QuickPickItem[] = this.mapDataToQpData(
       data,
       shouldDisplayFlatListFlag
     );
-    !shouldDisplayFlatListFlag && this.addBackwardNavigationItem(qpData);
+    !shouldDisplayFlatListFlag &&
+      !isRootLevel &&
+      this.addBackwardNavigationItem(qpData);
     return qpData;
   }
 
