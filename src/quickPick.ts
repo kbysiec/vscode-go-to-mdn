@@ -69,14 +69,20 @@ class QuickPick {
   }
 
   private submit(selected: QuickPickItem | undefined): void {
-    let value;
-    if (selected === undefined) {
-      value = this.quickPick.value;
-    } else {
-      value = selected;
-    }
+    const value = this.normalizeSubmittedValue(selected);
 
-    this.onQuickPickSubmit(value);
+    try {
+      if (this.utils.isValueStringType(value)) {
+        if (!this.dataService.isHigherLevelDataEmpty()) {
+          return;
+        }
+        this.processIfValueIsStringType(value as string);
+      } else {
+        this.processIfValueIsQuickPickItemType(value as QuickPickItem);
+      }
+    } catch (error) {
+      this.utils.printErrorMessage(error);
+    }
   }
 
   private onDidAccept = () => {
@@ -107,32 +113,29 @@ class QuickPick {
     );
   }
 
-  private onQuickPickSubmit = async (
-    value: QuickPickItem | string
-  ): Promise<void> => {
-    try {
-      let url: string;
-      if (this.utils.isValueStringType(value)) {
-        if (!this.dataService.isHigherLevelDataEmpty()) {
-          return;
-        }
-        value = value as string;
-        url = this.utils.getSearchUrl(value);
-        url && (await this.openInBrowser(url));
-      } else {
-        value = value as QuickPickItem;
+  private async processIfValueIsStringType(value: string) {
+    const url = this.utils.getSearchUrl(value);
+    url && (await this.openInBrowser(url));
+  }
 
-        if (this.utils.isValueFileType(value)) {
-          let url = value.url;
-          url && (await this.openInBrowser(url));
-        } else {
-          this.loadQuickPickData(value);
-        }
-      }
-    } catch (error) {
-      vscode.window.showErrorMessage(error.message);
+  private async processIfValueIsQuickPickItemType(value: QuickPickItem) {
+    if (this.utils.isValueFileType(value)) {
+      let url = value.url;
+      url && (await this.openInBrowser(url));
+    } else {
+      this.loadQuickPickData(value);
     }
-  };
+  }
+
+  private normalizeSubmittedValue(value: QuickPickItem | undefined) {
+    let normalizedValue: QuickPickItem | string;
+    if (value === undefined) {
+      normalizedValue = this.quickPick.value;
+    } else {
+      normalizedValue = value;
+    }
+    return normalizedValue;
+  }
 
   async loadQuickPickData(value?: QuickPickItem): Promise<void> {
     this.showLoading(true);
@@ -145,14 +148,14 @@ class QuickPick {
     } else {
       data = await this.dataService.getQuickPickRootData();
     }
-    this.prepareQuickPickPlaceholder();
+    this.preparePlaceholder();
 
     this.clearText();
     this.loadItems(data);
     this.showLoading(false);
   }
 
-  private prepareQuickPickPlaceholder(): void {
+  private preparePlaceholder(): void {
     this.dataService.isHigherLevelDataEmpty()
       ? this.setPlaceholder(
           "choose item from the list or type anything to search"

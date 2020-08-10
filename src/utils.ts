@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import QuickPickItem from "./interfaces/quickPickItem";
 import ItemType from "./enums/itemType";
 import { appConfig } from "./appConfig";
@@ -23,6 +24,12 @@ class Utils {
 
   removeDataWithEmptyUrl(data: QuickPickItem[]): QuickPickItem[] {
     return data.filter((element) => element.url);
+  }
+
+  printErrorMessage(error: Error): void {
+    vscode.window.showInformationMessage(
+      `Something went wrong... Extension encountered the following error: ${error.message}`
+    );
   }
 }
 

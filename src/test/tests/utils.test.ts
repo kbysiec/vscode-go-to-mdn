@@ -99,4 +99,16 @@ describe("Utils", () => {
       assert.equal(actual, expected);
     });
   });
+
+  describe("printErrorMessage", () => {
+    it("should display notification", async () => {
+      const showInformationMessageStub = sinon.stub(
+        vscode.window,
+        "showInformationMessage"
+      );
+      utils.printErrorMessage(new Error("test error message"));
+
+      assert.equal(showInformationMessageStub.calledOnce, true);
+    });
+  });
 });

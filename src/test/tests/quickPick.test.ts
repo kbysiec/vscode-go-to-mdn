@@ -141,28 +141,82 @@ describe("Quick Pick", () => {
   });
 
   describe("submit", () => {
-    it("should callback be called with quick pick argument if qpItem is defined", () => {
-      const onQuickPickSubmitStub = sinon.stub(
-        quickPickAny,
-        "onQuickPickSubmit"
-      );
-      const qpItem: QuickPickItem = mock.qpItem;
-      quickPickAny.submit(qpItem);
+    it("should invoke openInBrowser function with search url if value is string", async () => {
+      const openInBrowserStub = sinon
+        .stub(quickPickAny, "openInBrowser")
+        .returns(Promise.resolve());
+      sinon
+        .stub(appConfig, "searchUrl")
+        .value("https://developer.mozilla.org/search");
+      sinon
+        .stub(quickPickAny.dataService, "isHigherLevelDataEmpty")
+        .returns(true);
+      sinon.stub(quickPickAny.quickPick, "value").value("test search text");
 
-      const actual = onQuickPickSubmitStub.calledWith(qpItem);
+      await quickPickAny.submit(undefined);
+
+      const actual = openInBrowserStub.withArgs(
+        "https://developer.mozilla.org/search?q=test+search+text"
+      ).calledOnce;
       const expected = true;
       assert.equal(actual, expected);
     });
 
-    it("should callback be called with string argument if qpItem is undefined", () => {
-      const onQuickPickSubmitStub = sinon.stub(
-        quickPickAny,
-        "onQuickPickSubmit"
-      );
-      quickPickAny.quickPick.value = "test";
-      quickPickAny.submit(undefined);
+    it("should do nothing if value is string and higherLevelData array is not empty", async () => {
+      const openInBrowserStub = sinon
+        .stub(quickPickAny, "openInBrowser")
+        .returns(Promise.resolve());
+      sinon
+        .stub(appConfig, "searchUrl")
+        .value("https://developer.mozilla.org/search");
+      sinon
+        .stub(quickPickAny.dataService, "isHigherLevelDataEmpty")
+        .returns(false);
+      sinon.stub(quickPickAny.quickPick, "value").value("test search text");
 
-      const actual = onQuickPickSubmitStub.calledWith("test");
+      await quickPickAny.submit(undefined);
+      const actual = openInBrowserStub.calledOnce;
+      const expected = false;
+      assert.equal(actual, expected);
+    });
+
+    it("should invoke openInBrowser function with item url if value is QuickPickItem with ItemType.File", async () => {
+      const openInBrowserStub = sinon
+        .stub(quickPickAny, "openInBrowser")
+        .returns(Promise.resolve());
+      const qpItem: QuickPickItem = mock.qpItem;
+
+      await quickPickAny.submit(qpItem);
+      const actual = openInBrowserStub.withArgs("http://test.com").calledOnce;
+      const expected = true;
+      assert.equal(actual, expected);
+    });
+
+    it("should invoke loadQuickPickData function with item url if value is QuickPickItem with ItemType.Directory", async () => {
+      const loadQuickPickDataStub = sinon
+        .stub(quickPickAny, "loadQuickPickData")
+        .returns(Promise.resolve());
+      const qpItem: QuickPickItem = mock.qpItemDirectoryType;
+
+      await quickPickAny.submit(qpItem);
+
+      const actual = loadQuickPickDataStub.withArgs(qpItem).calledOnce;
+      const expected = true;
+      assert.equal(actual, expected);
+    });
+
+    it("should catch error and invoke utils.printErrorMessage", async () => {
+      const printErrorMessageStub = sinon.stub(
+        quickPickAny.utils,
+        "printErrorMessage"
+      );
+      sinon
+        .stub(quickPickAny, "processIfValueIsStringType")
+        .throws("test error message");
+
+      await quickPickAny.submit("test search text");
+
+      const actual = printErrorMessageStub.calledOnce;
       const expected = true;
       assert.equal(actual, expected);
     });
@@ -200,88 +254,6 @@ describe("Quick Pick", () => {
       const actual = quickPickAny.quickPick.items.length;
       const expected = 2;
       assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("onQuickPickSubmit", () => {
-    it("should invoke openInBrowser function with search url if value is string", async () => {
-      const openInBrowserStub = sinon
-        .stub(quickPickAny, "openInBrowser")
-        .returns(Promise.resolve());
-      sinon
-        .stub(appConfig, "searchUrl")
-        .value("https://developer.mozilla.org/search");
-      sinon
-        .stub(quickPickAny.dataService, "isHigherLevelDataEmpty")
-        .returns(true);
-      const text = "test search text";
-
-      await quickPickAny.onQuickPickSubmit(text);
-
-      const actual = openInBrowserStub.withArgs(
-        "https://developer.mozilla.org/search?q=test+search+text"
-      ).calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-
-    it("should do nothing if value is string but higherLevelData array is not empty", async () => {
-      const openInBrowserStub = sinon
-        .stub(quickPickAny, "openInBrowser")
-        .returns(Promise.resolve());
-      sinon
-        .stub(appConfig, "searchUrl")
-        .value("https://developer.mozilla.org/search");
-      sinon
-        .stub(quickPickAny.dataService, "isHigherLevelDataEmpty")
-        .returns(false);
-      const text = "test search text";
-
-      await quickPickAny.onQuickPickSubmit(text);
-      const actual = openInBrowserStub.calledOnce;
-      const expected = false;
-      assert.equal(actual, expected);
-    });
-
-    it("should invoke openInBrowser function with item url if value is QuickPickItem with ItemType.File", async () => {
-      const openInBrowserStub = sinon
-        .stub(quickPickAny, "openInBrowser")
-        .returns(Promise.resolve());
-      const qpItem: QuickPickItem = mock.qpItem;
-
-      await quickPickAny.onQuickPickSubmit(qpItem);
-      const actual = openInBrowserStub.withArgs("http://test.com").calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-
-    it("should invoke loadQuickPickData function with item url if value is QuickPickItem with ItemType.Directory", async () => {
-      const loadQuickPickDataStub = sinon
-        .stub(quickPickAny, "loadQuickPickData")
-        .returns(Promise.resolve());
-      const qpItem: QuickPickItem = mock.qpItemDirectoryType;
-
-      await quickPickAny.onQuickPickSubmit(qpItem);
-
-      const actual = loadQuickPickDataStub.withArgs(qpItem).calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-
-    it("should catch error and invoke vscode.window.showErrorMessage", async () => {
-      const showErrorMessageStub = sinon.stub(
-        vscode.window,
-        "showErrorMessage"
-      );
-      sinon
-        .stub(quickPickAny.utils, "getSearchUrl")
-        .throws("test error message");
-
-      await quickPickAny.onQuickPickSubmit("test search text");
-
-      const actual = showErrorMessageStub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
     });
   });
 
@@ -330,12 +302,12 @@ describe("Quick Pick", () => {
     });
   });
 
-  describe("prepareQuickPickPlaceholder", () => {
+  describe("preparePlaceholder", () => {
     it("should invoke setPlaceholder with undefined as parameter if higherLevelData is not empty", () => {
       sinon.stub(quickPickAny.dataService, "higherLevelData").value([1]);
       const setPlaceholderStub = sinon.stub(quickPickAny, "setPlaceholder");
 
-      quickPickAny.prepareQuickPickPlaceholder();
+      quickPickAny.preparePlaceholder();
 
       const actual = setPlaceholderStub.withArgs(undefined).calledOnce;
       const expected = true;
@@ -346,7 +318,7 @@ describe("Quick Pick", () => {
       sinon.stub(quickPickAny.dataService, "higherLevelData").value([]);
       const setPlaceholderStub = sinon.stub(quickPickAny, "setPlaceholder");
 
-      quickPickAny.prepareQuickPickPlaceholder();
+      quickPickAny.preparePlaceholder();
 
       const actual = setPlaceholderStub.withArgs(
         "choose item from the list or type anything to search"
