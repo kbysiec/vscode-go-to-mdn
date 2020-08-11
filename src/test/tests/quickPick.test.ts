@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import QuickPick from "../../quickPick";
@@ -16,21 +15,11 @@ describe("Quick Pick", () => {
   before(() => {
     cacheStub = getCacheStub();
     quickPick = new QuickPick(cacheStub);
-  });
-
-  beforeEach(() => {
     quickPickAny = quickPick as any;
   });
 
   afterEach(() => {
     sinon.restore();
-  });
-
-  describe("constructor", () => {
-    it("should quick pick be initialized", () => {
-      quickPick = new QuickPick(cacheStub);
-      assert.exists(quickPick);
-    });
   });
 
   describe("registerEventListeners", () => {
@@ -74,9 +63,7 @@ describe("Quick Pick", () => {
       const showStub = sinon.spy(quickPickAny.quickPick, "show");
       quickPick.show();
 
-      const actual = showStub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(showStub.calledOnce, true);
     });
   });
 
@@ -85,65 +72,98 @@ describe("Quick Pick", () => {
       const hideStub = sinon.spy(quickPickAny.quickPick, "hide");
       quickPick.hide();
 
-      const actual = hideStub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(hideStub.calledOnce, true);
     });
   });
 
-  describe("loadItems and getItems", () => {
-    it("should functions exist", () => {
-      const expected = "function";
-      let actual = typeof quickPick.loadItems;
-      assert.equal(actual, expected);
-      actual = typeof quickPick.getItems;
-      assert.equal(actual, expected);
-    });
-
-    it("should items be loaded", () => {
+  describe("loadQuickPickData", () => {
+    it("should load flat list of items", async () => {
+      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(true);
       const qpItems: QuickPickItem[] = mock.qpItems;
-      quickPick.loadItems(qpItems);
+      sinon
+        .stub(quickPickAny.dataService, "getFlatQuickPickData")
+        .returns(Promise.resolve(qpItems));
 
-      const actual = quickPick.getItems().length;
-      const expected = 3;
-      assert.equal(actual, expected);
+      await quickPickAny.loadQuickPickData();
+
+      assert.deepEqual(quickPickAny.quickPick.items, qpItems);
     });
-  });
 
-  describe("showLoading", () => {
-    it("should vscode.quickPick.busy property be set", () => {
-      quickPick.showLoading(true);
+    it("should load list of items", async () => {
+      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(false);
+      const qpItem: QuickPickItem = mock.qpItemDirectoryType;
+      const qpItems: QuickPickItem[] = mock.qpItems;
+      sinon
+        .stub(quickPickAny.dataService, "getQuickPickData")
+        .returns(Promise.resolve(qpItems));
 
-      const actual = quickPickAny.quickPick.busy;
-      const expected = true;
-      assert.equal(actual, expected);
+      await quickPickAny.loadQuickPickData(qpItem);
+
+      assert.deepEqual(quickPickAny.quickPick.items, qpItems);
     });
-  });
 
-  describe("setPlaceholder", () => {
-    it("should vscode.quickPick.placeholder property be set", () => {
-      quickPick.setPlaceholder("test placeholder");
+    it("should load list of root items", async () => {
+      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(false);
+      const qpItems: QuickPickItem[] = mock.qpItems;
+      sinon
+        .stub(quickPickAny.dataService, "getQuickPickRootData")
+        .returns(Promise.resolve(qpItems));
 
-      const actual = quickPickAny.quickPick.placeholder;
-      const expected = "test placeholder";
-      assert.equal(actual, expected);
+      await quickPickAny.loadQuickPickData();
+
+      assert.deepEqual(quickPickAny.quickPick.items, qpItems);
     });
-  });
 
-  describe("clearText", () => {
-    it("should vscode.quickPick.value property be set to empty", () => {
-      quickPick.clearText();
+    it(`should placeholder be set to undefined
+      if dataService.isHigherLevelDataEmpty method returns false`, async () => {
+      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(false);
+      sinon
+        .stub(quickPickAny.dataService, "isHigherLevelDataEmpty")
+        .returns(false);
+      sinon
+        .stub(quickPickAny.dataService, "getQuickPickRootData")
+        .returns(Promise.resolve(mock.qpItems));
 
-      const actual = quickPickAny.quickPick.value;
-      const expected = "";
-      assert.equal(actual, expected);
+      await quickPickAny.loadQuickPickData();
+
+      assert.equal(quickPickAny.quickPick.placeholder, undefined);
+    });
+
+    it(`should placeholder be set to 'choose item from the list or type anything to search'
+      if dataService.isHigherLevelDataEmpty method returns true`, async () => {
+      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(false);
+      sinon
+        .stub(quickPickAny.dataService, "isHigherLevelDataEmpty")
+        .returns(true);
+      sinon
+        .stub(quickPickAny.dataService, "getQuickPickRootData")
+        .returns(Promise.resolve(mock.qpItems));
+
+      await quickPickAny.loadQuickPickData();
+
+      assert.equal(
+        quickPickAny.quickPick.placeholder,
+        "choose item from the list or type anything to search"
+      );
     });
   });
 
   describe("submit", () => {
-    it("should invoke openInBrowser function with search url if value is string", async () => {
-      const openInBrowserStub = sinon
-        .stub(quickPickAny, "openInBrowser")
+    it("should invoke open function", async () => {
+      const openStub = sinon
+        .stub(quickPickAny, "open")
+        .returns(Promise.resolve());
+
+      await quickPickAny.openInBrowser("http://test.com");
+
+      const actual = openStub.withArgs("http://test.com").calledOnce;
+      const expected = true;
+      assert.equal(actual, expected);
+    });
+
+    it("should invoke open function with search url if value is string", async () => {
+      const openStub = sinon
+        .stub(quickPickAny, "open")
         .returns(Promise.resolve());
       sinon
         .stub(appConfig, "searchUrl")
@@ -155,10 +175,11 @@ describe("Quick Pick", () => {
 
       await quickPickAny.submit(undefined);
 
-      const actual = openInBrowserStub.withArgs(
+      const actual = openStub.withArgs(
         "https://developer.mozilla.org/search?q=test+search+text"
       ).calledOnce;
       const expected = true;
+
       assert.equal(actual, expected);
     });
 
@@ -175,9 +196,8 @@ describe("Quick Pick", () => {
       sinon.stub(quickPickAny.quickPick, "value").value("test search text");
 
       await quickPickAny.submit(undefined);
-      const actual = openInBrowserStub.calledOnce;
-      const expected = false;
-      assert.equal(actual, expected);
+
+      assert.equal(openInBrowserStub.calledOnce, false);
     });
 
     it("should invoke openInBrowser function with item url if value is QuickPickItem with ItemType.File", async () => {
@@ -187,8 +207,10 @@ describe("Quick Pick", () => {
       const qpItem: QuickPickItem = mock.qpItem;
 
       await quickPickAny.submit(qpItem);
+
       const actual = openInBrowserStub.withArgs("http://test.com").calledOnce;
       const expected = true;
+
       assert.equal(actual, expected);
     });
 
@@ -200,9 +222,7 @@ describe("Quick Pick", () => {
 
       await quickPickAny.submit(qpItem);
 
-      const actual = loadQuickPickDataStub.withArgs(qpItem).calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(loadQuickPickDataStub.withArgs(qpItem).calledOnce, true);
     });
 
     it("should catch error and invoke utils.printErrorMessage", async () => {
@@ -216,9 +236,7 @@ describe("Quick Pick", () => {
 
       await quickPickAny.submit("test search text");
 
-      const actual = printErrorMessageStub.calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(printErrorMessageStub.calledOnce, true);
     });
   });
 
@@ -229,9 +247,7 @@ describe("Quick Pick", () => {
       quickPickAny.quickPick.selectedItems[0] = qpItem;
       quickPickAny.onDidAccept();
 
-      const actual = submitStub.calledWith(qpItem);
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(submitStub.calledWith(qpItem), true);
     });
   });
 
@@ -240,6 +256,7 @@ describe("Quick Pick", () => {
       quickPickAny.onDidChangeValueClearing();
       const actual: QuickPickItem[] = quickPickAny.quickPick.items;
       const expected: QuickPickItem[] = [];
+
       assert.deepEqual(actual, expected);
     });
   });
@@ -251,100 +268,13 @@ describe("Quick Pick", () => {
       quickPickAny.items = qpItems;
       quickPickAny.onDidChangeValue(searchQuery);
 
-      const actual = quickPickAny.quickPick.items.length;
-      const expected = 2;
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("loadQuickPickData", () => {
-    it("should load flat list of items", async () => {
-      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(true);
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(quickPickAny.dataService, "getFlatQuickPickData")
-        .returns(Promise.resolve(qpItems));
-
-      await quickPickAny.loadQuickPickData();
-
-      const actual = quickPickAny.quickPick.items;
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should load list of items", async () => {
-      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(false);
-      const qpItem: QuickPickItem = mock.qpItemDirectoryType;
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(quickPickAny.dataService, "getQuickPickData")
-        .returns(Promise.resolve(qpItems));
-
-      await quickPickAny.loadQuickPickData(qpItem);
-
-      const actual = quickPickAny.quickPick.items;
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-
-    it("should load list of root items", async () => {
-      sinon.stub(quickPickAny.config, "shouldDisplayFlatList").returns(false);
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      sinon
-        .stub(quickPickAny.dataService, "getQuickPickRootData")
-        .returns(Promise.resolve(qpItems));
-
-      await quickPickAny.loadQuickPickData();
-
-      const actual = quickPickAny.quickPick.items;
-      const expected = qpItems;
-      assert.deepEqual(actual, expected);
-    });
-  });
-
-  describe("preparePlaceholder", () => {
-    it("should invoke setPlaceholder with undefined as parameter if higherLevelData is not empty", () => {
-      sinon.stub(quickPickAny.dataService, "higherLevelData").value([1]);
-      const setPlaceholderStub = sinon.stub(quickPickAny, "setPlaceholder");
-
-      quickPickAny.preparePlaceholder();
-
-      const actual = setPlaceholderStub.withArgs(undefined).calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-
-    it("should invoke setQuickPickPlaceholder if higherLevelData is empty", () => {
-      sinon.stub(quickPickAny.dataService, "higherLevelData").value([]);
-      const setPlaceholderStub = sinon.stub(quickPickAny, "setPlaceholder");
-
-      quickPickAny.preparePlaceholder();
-
-      const actual = setPlaceholderStub.withArgs(
-        "choose item from the list or type anything to search"
-      ).calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
-    });
-  });
-
-  describe("openInBrowser", () => {
-    it("should invoke open function", async () => {
-      const openStub = sinon
-        .stub(quickPickAny, "open")
-        .returns(Promise.resolve());
-
-      await quickPickAny.openInBrowser("http://test.com");
-
-      const actual = openStub.withArgs("http://test.com").calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.deepEqual(quickPickAny.quickPick.items.length, 2);
     });
   });
 
   describe("onWillGoLowerTreeLevel", () => {
     it("should invoke dataService.rememberHigherLevelQpData method with qpItems as parameter", () => {
-      sinon.stub(quickPickAny, "getItems").returns(mock.qpItems);
+      sinon.stub(quickPickAny.quickPick, "items").value(mock.qpItems);
       const rememberHigherLevelQpDataStub = sinon.stub(
         quickPickAny.dataService,
         "rememberHigherLevelQpData"
@@ -352,10 +282,10 @@ describe("Quick Pick", () => {
 
       quickPickAny.onWillGoLowerTreeLevel();
 
-      const actual = rememberHigherLevelQpDataStub.withArgs(mock.qpItems)
-        .calledOnce;
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(
+        rememberHigherLevelQpDataStub.withArgs(mock.qpItems).calledOnce,
+        true
+      );
     });
   });
 });

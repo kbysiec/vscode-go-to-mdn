@@ -47,25 +47,22 @@ class QuickPick {
     this.quickPick.hide();
   }
 
-  loadItems(items: QuickPickItem[]): void {
-    this.quickPick.items = items;
-    this.items = items;
-  }
+  async loadQuickPickData(value?: QuickPickItem): Promise<void> {
+    this.showLoading(true);
+    let data: QuickPickItem[];
 
-  getItems(): QuickPickItem[] {
-    return [...this.quickPick.items];
-  }
+    if (this.config.shouldDisplayFlatList()) {
+      data = await this.dataService.getFlatQuickPickData();
+    } else if (value) {
+      data = await this.dataService.getQuickPickData(value);
+    } else {
+      data = await this.dataService.getQuickPickRootData();
+    }
+    this.preparePlaceholder();
 
-  showLoading(flag: boolean): void {
-    this.quickPick.busy = flag;
-  }
-
-  setPlaceholder(text: string | undefined): void {
-    this.quickPick.placeholder = text;
-  }
-
-  clearText(): void {
-    this.quickPick.value = "";
+    this.clearText();
+    this.loadItems(data);
+    this.showLoading(false);
   }
 
   private submit(selected: QuickPickItem | undefined): void {
@@ -105,6 +102,40 @@ class QuickPick {
     this.quickPick.busy = false;
   };
 
+  private onWillGoLowerTreeLevel = () => {
+    const qpData = this.getItems();
+    this.dataService.rememberHigherLevelQpData(qpData);
+  };
+
+  private loadItems(items: QuickPickItem[]): void {
+    this.quickPick.items = items;
+    this.items = items;
+  }
+
+  private getItems(): QuickPickItem[] {
+    return [...this.quickPick.items];
+  }
+
+  private showLoading(flag: boolean): void {
+    this.quickPick.busy = flag;
+  }
+
+  private setPlaceholder(text: string | undefined): void {
+    this.quickPick.placeholder = text;
+  }
+
+  private preparePlaceholder(): void {
+    this.dataService.isHigherLevelDataEmpty()
+      ? this.setPlaceholder(
+          "choose item from the list or type anything to search"
+        )
+      : this.setPlaceholder(undefined);
+  }
+
+  private clearText(): void {
+    this.quickPick.value = "";
+  }
+
   private filter(value: string): QuickPickItem[] {
     return this.items.filter(
       (item) =>
@@ -137,40 +168,9 @@ class QuickPick {
     return normalizedValue;
   }
 
-  async loadQuickPickData(value?: QuickPickItem): Promise<void> {
-    this.showLoading(true);
-    let data: QuickPickItem[];
-
-    if (this.config.shouldDisplayFlatList()) {
-      data = await this.dataService.getFlatQuickPickData();
-    } else if (value) {
-      data = await this.dataService.getQuickPickData(value);
-    } else {
-      data = await this.dataService.getQuickPickRootData();
-    }
-    this.preparePlaceholder();
-
-    this.clearText();
-    this.loadItems(data);
-    this.showLoading(false);
-  }
-
-  private preparePlaceholder(): void {
-    this.dataService.isHigherLevelDataEmpty()
-      ? this.setPlaceholder(
-          "choose item from the list or type anything to search"
-        )
-      : this.setPlaceholder(undefined);
-  }
-
   private async openInBrowser(url: string): Promise<void> {
     await this.open(url);
   }
-
-  private onWillGoLowerTreeLevel = () => {
-    const qpData = this.getItems();
-    this.dataService.rememberHigherLevelQpData(qpData);
-  };
 }
 
 export default QuickPick;
