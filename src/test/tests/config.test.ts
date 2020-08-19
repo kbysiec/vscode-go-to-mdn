@@ -52,25 +52,4 @@ describe("Config", () => {
       assert.equal(config.shouldDisplayFlatList(), configuration[section][key]);
     });
   });
-
-  describe("get", () => {
-    it("should return boolean for shouldDisplayFlatList", () => {
-      const section = "goToMDN";
-      const key = "shouldDisplayFlatList";
-
-      assert.equal(configAny.get(key, false), configuration[section][key]);
-    });
-  });
-
-  describe("getConfiguration", () => {
-    it("should return boolean for shouldDisplayFlatList", () => {
-      const section = "goToMDN";
-      const key = "shouldDisplayFlatList";
-
-      assert.equal(
-        configAny.getConfiguration(`${section}.${key}`, []),
-        configuration[section][key]
-      );
-    });
-  });
 });
