@@ -64,6 +64,10 @@ class DataService {
     items.length && this.higherLevelData.push(items);
   }
 
+  isHigherLevelDataEmpty(): boolean {
+    return !this.higherLevelData.length;
+  }
+
   private getHigherLevelQpData(): QuickPickItem[] {
     return this.higherLevelData.pop() as QuickPickItem[];
   }
@@ -118,22 +122,14 @@ class DataService {
       });
   }
 
-  isHigherLevelDataEmpty(): boolean {
-    return !this.higherLevelData.length;
-  }
-
   private async cacheFlatFilesData(progress: any) {
     await this.getFlatFilesData(progress);
   }
 
   private async cacheFlatFilesWithProgress() {
-    const dataFromCache = this.cache.getFlatData();
-    const areCached = dataFromCache ? dataFromCache.length > 0 : false;
-
     if (
       this.config.shouldDisplayFlatList() &&
-      this.config.getGithubPersonalAccessToken() &&
-      !areCached
+      this.config.getGithubPersonalAccessToken()
     ) {
       await vscode.window.withProgress(
         {
