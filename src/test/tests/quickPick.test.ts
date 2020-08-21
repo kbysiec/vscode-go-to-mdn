@@ -4,17 +4,20 @@ import QuickPick from "../../quickPick";
 import QuickPickItem from "../../interfaces/QuickPickItem";
 import * as mock from "../mocks/quickPick.mock";
 import Cache from "../../cache";
-import { getCacheStub } from "../util/mockFactory";
+import { getCacheStub, getUtilsStub } from "../util/mockFactory";
 import { appConfig } from "../../appConfig";
+import Utils from "../../utils";
 
 describe("Quick Pick", () => {
   let quickPick: QuickPick;
   let quickPickAny: any;
+  let utilsStub: Utils;
   let cacheStub: Cache;
 
   before(() => {
+    utilsStub = getUtilsStub();
     cacheStub = getCacheStub();
-    quickPick = new QuickPick(cacheStub);
+    quickPick = new QuickPick(cacheStub, utilsStub);
     quickPickAny = quickPick as any;
   });
 

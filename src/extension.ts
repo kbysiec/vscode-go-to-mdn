@@ -7,7 +7,6 @@ export async function browse(extensionController: ExtensionController) {
 
 export function clearCache(extensionController: ExtensionController) {
   extensionController.clearCache();
-  vscode.window.showInformationMessage("Go to MDN extension: cache cleared");
 }
 
 export async function activate(context: vscode.ExtensionContext) {

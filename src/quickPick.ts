@@ -11,14 +11,12 @@ class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickItem>;
   private items: QuickPickItem[] = [];
 
-  private utils: Utils;
   private config: Config;
   private dataService: DataService;
 
   private open: any = open;
 
-  constructor(private cache: Cache) {
-    this.utils = new Utils();
+  constructor(private cache: Cache, private utils: Utils) {
     this.config = new Config();
     this.dataService = new DataService(this.cache, this.utils, this.config);
     this.dataService.onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);

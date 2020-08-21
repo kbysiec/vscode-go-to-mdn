@@ -111,4 +111,15 @@ describe("Utils", () => {
       assert.equal(showInformationMessageStub.calledOnce, true);
     });
   });
+
+  describe("printClearCacheMessage", () => {
+    it("should display notification", async () => {
+      const showInformationMessageStub = sinon.stub(
+        vscode.window,
+        "showInformationMessage"
+      );
+      utils.printClearCacheMessage();
+      assert.equal(showInformationMessageStub.calledOnce, true);
+    });
+  });
 });

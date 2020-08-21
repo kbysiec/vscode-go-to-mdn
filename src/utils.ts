@@ -31,6 +31,10 @@ class Utils {
       `Something went wrong... Extension encountered the following error: ${error.message}`
     );
   }
+
+  printClearCacheMessage(): void {
+    vscode.window.showInformationMessage("Go to MDN extension: cache cleared");
+  }
 }
 
 export default Utils;
