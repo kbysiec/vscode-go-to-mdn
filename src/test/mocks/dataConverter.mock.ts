@@ -62,7 +62,7 @@ export const items: Item[] = [
   {
     name: "sub-label",
     url: "#",
-    type: ItemType.File,
+    type: ItemType.Directory,
     breadcrumbs: ["api", "test-label", "sub-label"],
   },
   {
