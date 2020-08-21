@@ -88,7 +88,7 @@ class QuickPick {
   };
 
   private onDidHide = () => {
-    this.quickPick.dispose();
+    this.clearText();
   };
 
   private onDidChangeValueClearing = () => {

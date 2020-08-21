@@ -12,7 +12,10 @@ export function clearCache(extensionController: ExtensionController) {
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Extension "Go to MDN" has been activated.');
-  const extensionController = new ExtensionController(context);
+
+  const extensionController: ExtensionController = new ExtensionController(
+    context
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
