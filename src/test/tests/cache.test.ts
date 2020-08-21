@@ -1,197 +1,171 @@
 import * as vscode from "vscode";
-import { assert } from "chai";
 import * as sinon from "sinon";
+import { assert } from "chai";
 import Cache from "../../cache";
-import QuickPickItem from "../../interfaces/QuickPickItem";
-import Item from "../../interfaces/Item";
-import ItemType from "../../enums/ItemType";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/cache.mock";
+import { getExtensionContext } from "../util/mockFactory";
+import { stubMultiple } from "../util/stubUtils";
 
 describe("Cache", () => {
   let cache: Cache;
   let context: vscode.ExtensionContext;
-  let updateSpy: any;
+  let updateStub: sinon.SinonStub;
 
-  before(() => {
-    sinon.stub(appConfig, "flatCacheKey").value("flatData");
-    sinon.stub(appConfig, "treeCacheKey").value("treeData");
-    sinon
-      .stub(appConfig, "rootUrl")
-      .value(
-        "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=master"
-      );
-
-    updateSpy = sinon.spy();
-
-    context = {
-      subscriptions: [],
-      workspaceState: {
-        get: () => {},
-        update: () => Promise.resolve(),
+  beforeEach(() => {
+    stubMultiple([
+      {
+        object: appConfig,
+        method: "flatCacheKey",
+        returns: "flatData",
+        isNotMethod: true,
       },
-      globalState: {
-        get: () => {},
-        update: updateSpy,
+      {
+        object: appConfig,
+        method: "treeCacheKey",
+        returns: "treeData",
+        isNotMethod: true,
       },
-      extensionPath: "",
-      storagePath: "",
-      globalStoragePath: "",
-      logPath: "",
-      asAbsolutePath: (relativePath: string) => relativePath,
-    };
+      {
+        object: appConfig,
+        method: "rootUrl",
+        returns:
+          "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=master",
+        isNotMethod: true,
+      },
+    ]);
+
+    context = getExtensionContext();
+    updateStub = sinon.stub();
+    context.globalState.update = updateStub;
 
     cache = new Cache(context);
   });
 
-  afterEach(() => {
-    sinon.restore();
-  });
-
   describe("updateFlatData", () => {
     it("should update cache value", () => {
-      let getStub = sinon.stub(context.globalState, "get").returns({});
-      const items: Item[] = mock.items;
-      const get = context.globalState.get as any;
-      const update = context.globalState.update as any;
+      cache.updateFlatData(mock.items);
 
-      cache.updateFlatData(items);
-      let getCalled = get.called;
-
-      assert.equal(getCalled, true);
-      getStub.restore();
-
-      getStub = sinon.stub(context.globalState, "get").returns(undefined);
-      cache.updateFlatData(items);
-      getCalled = get.called;
-
-      const updateCalled = update.calledTwice;
-
-      assert.equal(getCalled, true);
-      assert.equal(updateCalled, true);
-
-      getStub.restore();
-      updateSpy.resetHistory();
+      assert.equal(
+        updateStub.calledWith(appConfig.flatCacheKey, mock.items),
+        true
+      );
     });
   });
 
   describe("updateTreeDataByItem", () => {
     it("should update cache value if item is undefined", () => {
-      const items: Item[] = mock.items;
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: undefined,
+        },
+      ]);
 
-      let getStub = sinon.stub(context.globalState, "get").returns({});
-      const get = context.globalState.get as any;
-      const update = context.globalState.update as any;
+      cache.updateTreeDataByItem(mock.items);
 
-      cache.updateTreeDataByItem(items);
-      let getCalled = get.called;
-
-      assert.equal(getCalled, true);
-      getStub.restore();
-
-      getStub = sinon.stub(context.globalState, "get").returns(undefined);
-      cache.updateTreeDataByItem(items);
-      getCalled = get.called;
-
-      const updateCalled = update.calledTwice;
-
-      assert.equal(getCalled, true);
-      assert.equal(updateCalled, true);
-
-      getStub.restore();
-      updateSpy.resetHistory();
+      assert.equal(
+        updateStub.calledWith(appConfig.treeCacheKey, {
+          [appConfig.rootUrl]: mock.items,
+        }),
+        true
+      );
     });
 
     it("should update cache value if item is passed", () => {
-      const items: Item[] = mock.items;
-      const item: Item = mock.item;
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: {},
+        },
+      ]);
 
-      let getStub = sinon.stub(context.globalState, "get").returns({});
-      const get = context.globalState.get as any;
-      const update = context.globalState.update as any;
+      cache.updateTreeDataByItem(mock.items, mock.item);
 
-      cache.updateTreeDataByItem(items, item);
-      let getCalled = get.called;
-
-      assert.equal(getCalled, true);
-      getStub.restore();
-
-      getStub = sinon.stub(context.globalState, "get").returns(undefined);
-      cache.updateTreeDataByItem(items, item);
-      getCalled = get.called;
-
-      const updateCalled = update.calledTwice;
-
-      assert.equal(getCalled, true);
-      assert.equal(updateCalled, true);
-
-      getStub.restore();
-      updateSpy.resetHistory();
+      assert.equal(
+        updateStub.calledWith(appConfig.treeCacheKey, {
+          [mock.item.url]: mock.items,
+        }),
+        true
+      );
     });
   });
 
   describe("getFlatData", () => {
     it("should return value from cache", () => {
-      const items: Item[] = mock.items;
-      let getStub = sinon.stub(context.globalState, "get").returns(items);
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: mock.items,
+        },
+      ]);
 
-      const expected = cache.getFlatData();
-      assert.deepEqual(expected, items);
-      getStub.restore();
+      assert.deepEqual(cache.getFlatData(), mock.items);
     });
 
     it("should return empty array from cache", () => {
-      const items: Item[] = [];
-      let getStub = sinon.stub(context.globalState, "get").returns(undefined);
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: undefined,
+        },
+      ]);
 
-      const expected = cache.getFlatData();
-      assert.deepEqual(expected, items);
-      getStub.restore();
+      assert.deepEqual(cache.getFlatData(), []);
     });
   });
 
   describe("getTreeDataByItem", () => {
     it("should return value from cache if item is undefined", () => {
-      const items: Item[] = mock.items;
-      let getStub = sinon.stub(context.globalState, "get").returns({
-        [appConfig.rootUrl]: items,
-      });
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: {
+            [appConfig.rootUrl]: mock.items,
+          },
+        },
+      ]);
 
-      const expected = cache.getTreeDataByItem();
-      assert.deepEqual(expected, items);
-      getStub.restore();
+      assert.deepEqual(cache.getTreeDataByItem(), mock.items);
     });
 
     it("should return value from cache if item is passed", () => {
-      const qpItem: QuickPickItem = mock.qpItem;
-      const items: Item[] = mock.items;
-      let getStub = sinon.stub(context.globalState, "get").returns({
-        [qpItem.url]: items,
-      });
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: {
+            [mock.qpItem.url]: mock.items,
+          },
+        },
+      ]);
 
-      const expected = cache.getTreeDataByItem(qpItem);
-      assert.deepEqual(expected, items);
-      getStub.restore();
+      assert.deepEqual(cache.getTreeDataByItem(mock.qpItem), mock.items);
     });
 
     it("should return empty array from cache if key not found", () => {
-      const items: Item[] = [];
-      let getStub = sinon.stub(context.globalState, "get").returns(undefined);
+      stubMultiple([
+        {
+          object: context.globalState,
+          method: "get",
+          returns: undefined,
+        },
+      ]);
 
-      const expected = cache.getTreeDataByItem();
-      assert.deepEqual(expected, items);
-      getStub.restore();
+      assert.deepEqual(cache.getTreeDataByItem(), []);
     });
   });
 
   describe("clearCache", () => {
     it("should clear cache", () => {
-      const update = context.globalState.update as any;
       cache.clearCache();
 
-      const updateCalled = update.calledTwice;
-      assert.equal(updateCalled, true);
-      updateSpy.resetHistory();
+      assert.equal(updateStub.calledTwice, true);
     });
   });
 });
