@@ -7,16 +7,7 @@ class Cache {
   constructor(private extensionContext: vscode.ExtensionContext) {}
 
   updateFlatData(data: Item[]): void {
-    let cache: any = this.extensionContext.globalState.get(
-      appConfig.flatCacheKey
-    );
-    if (!cache) {
-      cache = {};
-    }
-
-    cache = data;
-
-    this.extensionContext.globalState.update(appConfig.flatCacheKey, cache);
+    this.extensionContext.globalState.update(appConfig.flatCacheKey, data);
   }
 
   updateTreeDataByItem(data: Item[], item?: Item): void {
