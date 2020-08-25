@@ -3,7 +3,6 @@ import Item from "./interfaces/item";
 import ItemType from "./enums/itemType";
 import Parser from "./parser";
 import { appConfig } from "./appConfig";
-import Utils from "./utils";
 import Config from "./config";
 
 class DataDownloader {

@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { assert, expect, use } from "chai";
 import * as sinon from "sinon";
 import { Response } from "node-fetch";
@@ -9,6 +8,7 @@ import ItemType from "../../enums/itemType";
 import * as mock from "../mocks/dataDownloader.mock";
 import Config from "src/config";
 import { getConfigStub } from "../util/mockFactory";
+import { restoreStubbedMultiple, stubMultiple } from "../util/stubUtils";
 
 const fetch = require("node-fetch");
 const fetchMock = require("fetch-mock").sandbox();
@@ -19,10 +19,12 @@ use(chaiAsPromised);
 describe("DataDownloader", () => {
   let configStub: Config;
   let dataDownloader: DataDownloader;
+  let dataDownloaderAny: any;
 
-  before(() => {
+  beforeEach(() => {
     configStub = getConfigStub();
     dataDownloader = new DataDownloader(configStub);
+    dataDownloaderAny = dataDownloader as any;
   });
 
   describe("downloadTreeData", () => {
@@ -146,12 +148,20 @@ describe("DataDownloader", () => {
     });
 
     it("should request Authorization header has empty value if github personal token not passed", async () => {
-      sinon.stub(vscode.workspace, "getConfiguration").returns({
-        get: () => undefined,
-        has: () => true,
-        inspect: () => undefined,
-        update: () => Promise.resolve(),
-      });
+      restoreStubbedMultiple([
+        {
+          object: dataDownloaderAny.config,
+          method: "getGithubPersonalAccessToken",
+        },
+      ]);
+
+      stubMultiple([
+        {
+          object: dataDownloaderAny.config,
+          method: "getGithubPersonalAccessToken",
+          returns: undefined,
+        },
+      ]);
 
       const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
@@ -176,12 +186,20 @@ describe("DataDownloader", () => {
     });
 
     it("should request Authorization header has value of github personal token once passed", async () => {
-      sinon.stub(vscode.workspace, "getConfiguration").returns({
-        get: () => "123456789",
-        has: () => true,
-        inspect: () => undefined,
-        update: () => Promise.resolve(),
-      });
+      restoreStubbedMultiple([
+        {
+          object: dataDownloaderAny.config,
+          method: "getGithubPersonalAccessToken",
+        },
+      ]);
+
+      stubMultiple([
+        {
+          object: dataDownloaderAny.config,
+          method: "getGithubPersonalAccessToken",
+          returns: "123456789",
+        },
+      ]);
 
       const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
