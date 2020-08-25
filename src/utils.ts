@@ -14,8 +14,7 @@ class Utils {
 
   getSearchUrl(value: string): string {
     const queryString = value.split(" ").join("+");
-    const url = `${appConfig.searchUrl}?q=${queryString}`;
-    return url;
+    return `${appConfig.searchUrl}?q=${queryString}`;
   }
 
   getNameFromQuickPickItem(item: QuickPickItem): string {

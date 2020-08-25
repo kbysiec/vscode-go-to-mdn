@@ -1,111 +1,98 @@
 import * as vscode from "vscode";
 import { assert } from "chai";
-import * as sinon from "sinon";
 import Utils from "../../utils";
-import QuickPickItem from "../../interfaces/QuickPickItem";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mocks/utils.mock";
+import { stubMultiple, restoreStubbedMultiple } from "../util/stubUtils";
 
 describe("Utils", () => {
   let utils: Utils;
-  let utilsAny: any;
 
-  before(() => {
+  beforeEach(() => {
     utils = new Utils();
-    utilsAny = utils as any;
-  });
-
-  afterEach(() => {
-    sinon.restore();
   });
 
   describe("isValueStringType", () => {
     it("should return true if value is a string", () => {
-      const actual = utils.isValueStringType("test");
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(utils.isValueStringType("test"), true);
     });
 
     it("should return false if value is not a string", () => {
-      const qpItem: QuickPickItem = mock.qpItemFile;
-
-      const actual = utils.isValueStringType(qpItem);
-      const expected = false;
-      assert.equal(actual, expected);
+      assert.equal(utils.isValueStringType(mock.qpItemFile), false);
     });
   });
 
   describe("isValueFileType", () => {
     it("should return true if value type is file", () => {
-      const qpItem: QuickPickItem = mock.qpItemFile;
-
-      const actual = utils.isValueFileType(qpItem);
-      const expected = true;
-      assert.equal(actual, expected);
+      assert.equal(utils.isValueFileType(mock.qpItemFile), true);
     });
 
     it("should return false if value type is directory", () => {
-      const qpItem: QuickPickItem = mock.qpItemDirectory;
-
-      const actual = utils.isValueFileType(qpItem);
-      const expected = false;
-      assert.equal(actual, expected);
+      assert.equal(utils.isValueFileType(mock.qpItemDirectory), false);
     });
   });
 
   describe("getSearchUrl", () => {
     it("should return search url with query string", () => {
       const baseUrl = "https://developer.mozilla.org/en-US/search";
-      sinon.stub(appConfig, "searchUrl").value(baseUrl);
+      stubMultiple([
+        {
+          object: appConfig,
+          method: "searchUrl",
+          returns: baseUrl,
+          isNotMethod: true,
+        },
+      ]);
 
-      const actual = utils.getSearchUrl("string includes 123");
-      const expected = `${baseUrl}?q=string+includes+123`;
-      assert.equal(actual, expected);
+      assert.equal(
+        utils.getSearchUrl("string includes 123"),
+        `${baseUrl}?q=string+includes+123`
+      );
     });
 
     it("should return search url without query string", () => {
       const baseUrl = "https://developer.mozilla.org/en-US/search";
-      sinon.stub(appConfig, "searchUrl").value(baseUrl);
+      stubMultiple([
+        {
+          object: appConfig,
+          method: "searchUrl",
+          returns: baseUrl,
+          isNotMethod: true,
+        },
+      ]);
 
-      const actual = utils.getSearchUrl("");
-      const expected = `${baseUrl}?q=`;
-      assert.equal(actual, expected);
+      assert.equal(utils.getSearchUrl(""), `${baseUrl}?q=`);
     });
   });
 
   describe("getNameFromQuickPickItem", () => {
     it("should return name from label without first category", () => {
-      const qpItem: QuickPickItem = mock.qpItemFile;
-
-      const actual = utils.getNameFromQuickPickItem(qpItem);
-      const expected = "test-label sub-label";
-      assert.equal(actual, expected);
+      assert.equal(
+        utils.getNameFromQuickPickItem(mock.qpItemFile),
+        "test-label sub-label"
+      );
     });
 
     it("should return empty name", () => {
-      const qpItem: QuickPickItem = mock.qpItemEmptyLabel;
-
-      const actual = utils.getNameFromQuickPickItem(qpItem);
-      const expected = "";
-      assert.equal(actual, expected);
+      assert.equal(utils.getNameFromQuickPickItem(mock.qpItemEmptyLabel), "");
     });
   });
 
   describe("removeDataWithEmptyUrl", () => {
-    it("should return name from label without first category", () => {
-      const qpItems: QuickPickItem[] = mock.qpItems;
-      const actual = utils.removeDataWithEmptyUrl(qpItems).length;
-      const expected = 2;
-      assert.equal(actual, expected);
+    it("should remove qpItems with empty url", () => {
+      assert.equal(utils.removeDataWithEmptyUrl(mock.qpItems).length, 2);
     });
   });
 
   describe("printErrorMessage", () => {
     it("should display notification", async () => {
-      const showInformationMessageStub = sinon.stub(
-        vscode.window,
-        "showInformationMessage"
-      );
+      const [showInformationMessageStub] = stubMultiple([
+        {
+          object: vscode.window,
+          method: "showInformationMessage",
+        },
+      ]);
+
       utils.printErrorMessage(new Error("test error message"));
 
       assert.equal(showInformationMessageStub.calledOnce, true);
@@ -114,10 +101,19 @@ describe("Utils", () => {
 
   describe("printClearCacheMessage", () => {
     it("should display notification", async () => {
-      const showInformationMessageStub = sinon.stub(
-        vscode.window,
-        "showInformationMessage"
-      );
+      restoreStubbedMultiple([
+        {
+          object: vscode.window,
+          method: "showInformationMessage",
+        },
+      ]);
+      const [showInformationMessageStub] = stubMultiple([
+        {
+          object: vscode.window,
+          method: "showInformationMessage",
+        },
+      ]);
+
       utils.printClearCacheMessage();
       assert.equal(showInformationMessageStub.calledOnce, true);
     });
