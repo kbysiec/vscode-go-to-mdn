@@ -80,31 +80,6 @@ class QuickPick {
     }
   }
 
-  private onDidAccept = () => {
-    const selected = this.quickPick.selectedItems[0];
-    this.submit(selected);
-  };
-
-  private onDidHide = () => {
-    this.clearText();
-  };
-
-  private onDidChangeValueClearing = () => {
-    this.quickPick.items = [];
-  };
-
-  private onDidChangeValue = (value: string) => {
-    this.quickPick.busy = true;
-    const items = this.filter(value);
-    this.quickPick.items = items;
-    this.quickPick.busy = false;
-  };
-
-  private onWillGoLowerTreeLevel = () => {
-    const qpData = this.getItems();
-    this.dataService.rememberHigherLevelQpData(qpData);
-  };
-
   private loadItems(items: QuickPickItem[]): void {
     this.quickPick.items = items;
     this.items = items;
@@ -169,6 +144,31 @@ class QuickPick {
   private async openInBrowser(url: string): Promise<void> {
     await this.open(url);
   }
+
+  private onDidAccept = () => {
+    const selected = this.quickPick.selectedItems[0];
+    this.submit(selected);
+  };
+
+  private onDidHide = () => {
+    this.clearText();
+  };
+
+  private onDidChangeValueClearing = () => {
+    this.quickPick.items = [];
+  };
+
+  private onDidChangeValue = (value: string) => {
+    this.quickPick.busy = true;
+    const items = this.filter(value);
+    this.quickPick.items = items;
+    this.quickPick.busy = false;
+  };
+
+  private onWillGoLowerTreeLevel = () => {
+    const qpData = this.getItems();
+    this.dataService.rememberHigherLevelQpData(qpData);
+  };
 }
 
 export default QuickPick;

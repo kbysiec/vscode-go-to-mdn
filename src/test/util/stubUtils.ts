@@ -5,6 +5,7 @@ interface StubMultipleConfig {
   method: string;
   returns?: any;
   isNotMethod?: boolean;
+  throws?: any;
 }
 
 interface RestoreStubbedMultipleConfig {
@@ -19,6 +20,8 @@ export const stubMultiple = (configList: StubMultipleConfig[]) => {
     config.returns && config.isNotMethod
       ? stub.value(config.returns)
       : stub.returns(config.returns);
+
+    config.throws && stub.throws(config.throws);
 
     stubArray.push(stub);
   });
