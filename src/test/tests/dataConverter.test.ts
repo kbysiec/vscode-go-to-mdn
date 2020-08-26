@@ -72,9 +72,7 @@ describe("DataConverter", () => {
         },
       ]);
 
-      const items: Item[] = mock.items;
-
-      const actual = dataConverter.prepareQpData(items);
+      const actual = dataConverter.prepareQpData(mock.items);
       const expectedLength = 2;
       const expectedSecondItem: QuickPickItem = {
         label: `$(link) sub-label 2`,
@@ -112,9 +110,7 @@ describe("DataConverter", () => {
         },
       ]);
 
-      const qpItem: QuickPickItem = mock.qpItemFile;
-
-      const actual = dataConverter.mapQpItemToItem(qpItem);
+      const actual = dataConverter.mapQpItemToItem(mock.qpItemFile);
       const expected: Item = {
         name: "test-label sub-label",
         url: "#",

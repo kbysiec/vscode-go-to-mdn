@@ -13,9 +13,7 @@ describe("Parser", () => {
 
   describe("parseFlatElements", () => {
     it("should return array of Item elements", () => {
-      const inputData: any = mock.flatElementsInput;
-
-      const actual = parser.parseFlatElements(inputData);
+      const actual = parser.parseFlatElements(mock.flatElementsInput);
       const expected: Item[] = [
         {
           name: "sub-label",
@@ -44,17 +42,13 @@ describe("Parser", () => {
     });
 
     it("should return empty array", () => {
-      const actual = parser.parseFlatElements({});
-      const expected: Item[] = [];
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(parser.parseFlatElements({}), []);
     });
   });
 
   describe("parseRootDirectories", () => {
     it("should return array of Item elements once content contains has links", () => {
-      const content: string = mock.rootDirectoriesWithLinks;
-
-      const actual = parser.parseRootDirectories(content);
+      const actual = parser.parseRootDirectories(mock.rootDirectoriesWithLinks);
       const expected: Item[] = [
         {
           name: "label",
@@ -75,34 +69,33 @@ describe("Parser", () => {
     });
 
     it("should return array of Item elements once content doesn't contain any link", () => {
-      const content: string = mock.rootDirectoriesNoLink;
-
-      const actual = parser.parseRootDirectories(content);
-      const expected: Item[] = [];
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(
+        parser.parseRootDirectories(mock.rootDirectoriesNoLink),
+        []
+      );
     });
   });
 
   describe("parseElements", () => {
     it("should return array of Item elements if content is array of files without unnecessary nesting of keys", () => {
-      const content: string = mock.parseElementsContent;
-      const item: Item = mock.parseElementsItem;
-
-      const actual = parser.parseElements(content, item);
+      const actual = parser.parseElements(
+        mock.parseElementsContent,
+        mock.parseElementsItem
+      );
       const expected: Item[] = [
         {
           name: "animate Color - reference",
           url:
             "https://developer.mozilla.org/docs/Web/SVG/Element/animateColor",
           type: ItemType.File,
-          parent: item,
+          parent: mock.parseElementsItem,
           breadcrumbs: ["svg", "elements", "animate Color", "animate Color"],
         },
         {
           name: "by",
           url: "",
           type: ItemType.File,
-          parent: item,
+          parent: mock.parseElementsItem,
           breadcrumbs: ["svg", "elements", "animate Color", "by"],
         },
       ];
@@ -111,17 +104,17 @@ describe("Parser", () => {
     });
 
     it("should return array of Item elements if content is array of files with unnecessary nesting of keys", () => {
-      const content: string = mock.parseElementsWithNestingContent;
-      const item: Item = mock.parseElementsWithNestingItem;
-
-      const actual = parser.parseElements(content, item);
+      const actual = parser.parseElements(
+        mock.parseElementsWithNestingContent,
+        mock.parseElementsWithNestingItem
+      );
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
           url:
             "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
           type: ItemType.File,
-          parent: item,
+          parent: mock.parseElementsWithNestingItem,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -133,7 +126,7 @@ describe("Parser", () => {
           name: "wildcard",
           url: "",
           type: ItemType.File,
-          parent: item,
+          parent: mock.parseElementsWithNestingItem,
           breadcrumbs: ["webdriver", "commands", "Accept Alert", "wildcard"],
         },
       ];
@@ -142,16 +135,16 @@ describe("Parser", () => {
     });
 
     it("should return array of 1 Item element if content contains object with empty __compat property", () => {
-      const content: string = mock.parseElementsWithEmptyCompatContent;
-      const item: Item = mock.parseElementsWithEmptyCompatItem;
-
-      const actual = parser.parseElements(content, item);
+      const actual = parser.parseElements(
+        mock.parseElementsWithEmptyCompatContent,
+        mock.parseElementsWithEmptyCompatItem
+      );
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
           url: "",
           type: ItemType.File,
-          parent: item,
+          parent: mock.parseElementsWithEmptyCompatItem,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -165,16 +158,16 @@ describe("Parser", () => {
     });
 
     it("should return array of 1 Item element if content doesn't contain any object with __compat property", () => {
-      const content: string = mock.parseElementsWithNoCompatContent;
-      const item: Item = mock.parseElementsWithNoCompatItem;
-
-      const actual = parser.parseElements(content, item);
+      const actual = parser.parseElements(
+        mock.parseElementsWithNoCompatContent,
+        mock.parseElementsWithNoCompatItem
+      );
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
           url: "",
           type: ItemType.File,
-          parent: item,
+          parent: mock.parseElementsWithNoCompatItem,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -188,10 +181,10 @@ describe("Parser", () => {
     });
 
     it("should return empty array if parent element is undefined", () => {
-      const content: string = mock.parseElementsContent;
-      const item: Item = mock.parseElementsItemNoParent;
-
-      const actual = parser.parseElements(content, item);
+      const actual = parser.parseElements(
+        mock.parseElementsContent,
+        mock.parseElementsItemNoParent
+      );
       const expected: Item[] = [];
 
       assert.deepEqual(actual, expected);
@@ -200,18 +193,18 @@ describe("Parser", () => {
 
   describe("parseDirectories", () => {
     it("should return array of Item elements if content is array of directories", () => {
-      const item: Item = mock.parseDirectoriesItem;
-      const content: Array<any> = mock.parseDirectoriesContent;
-
-      const actual = parser.parseDirectories(content, item);
+      const actual = parser.parseDirectories(
+        mock.parseDirectoriesContent,
+        mock.parseDirectoriesItem
+      );
       const expected: Item[] = [
         {
           name: "Abort Controller",
           url:
             "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
           type: ItemType.Directory,
-          parent: item,
-          rootParent: item,
+          parent: mock.parseDirectoriesItem,
+          rootParent: mock.parseDirectoriesItem,
           breadcrumbs: ["api", "Abort Controller"],
         },
         {
@@ -219,8 +212,8 @@ describe("Parser", () => {
           url:
             "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
           type: ItemType.Directory,
-          parent: item,
-          rootParent: item,
+          parent: mock.parseDirectoriesItem,
+          rootParent: mock.parseDirectoriesItem,
           breadcrumbs: ["api", "Abort Payment Event"],
         },
       ];

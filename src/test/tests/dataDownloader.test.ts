@@ -40,10 +40,11 @@ describe("DataDownloader", () => {
     });
 
     it("should return root directories items", async () => {
-      const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
-        new Response(content, { status: 200 })
+        new Response(mock.downloadTreeDataRootDirectoriesContent, {
+          status: 200,
+        })
       );
       fetch.default = fetchStub;
 
@@ -68,22 +69,22 @@ describe("DataDownloader", () => {
     });
 
     it("should return element items", async () => {
-      const item: Item = mock.downloadTreeDataElementsItem;
-      const content: string = mock.downloadTreeDataElementsContent;
       const fetchStub = fetchMock.get(
         "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=master",
-        new Response(content, { status: 200 })
+        new Response(mock.downloadTreeDataElementsContent, { status: 200 })
       );
       fetch.default = fetchStub;
 
-      const actual = await dataDownloader.downloadTreeData(item);
+      const actual = await dataDownloader.downloadTreeData(
+        mock.downloadTreeDataElementsItem
+      );
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
           url:
             "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
           type: ItemType.File,
-          parent: item,
+          parent: mock.downloadTreeDataElementsItem,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -95,7 +96,7 @@ describe("DataDownloader", () => {
           name: "wildcard",
           url: "",
           type: ItemType.File,
-          parent: item,
+          parent: mock.downloadTreeDataElementsItem,
           breadcrumbs: ["webdriver", "commands", "Accept Alert", "wildcard"],
         },
       ];
@@ -103,23 +104,23 @@ describe("DataDownloader", () => {
     });
 
     it("should return directories items", async () => {
-      const item: Item = mock.downloadTreeDataDirectoriesItem;
-      const content: string = mock.downloadTreeDataDirectoriesContent;
       const fetchStub = fetchMock.get(
         "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=master",
-        new Response(content, { status: 200 })
+        new Response(mock.downloadTreeDataDirectoriesContent, { status: 200 })
       );
       fetch.default = fetchStub;
 
-      const actual = await dataDownloader.downloadTreeData(item);
+      const actual = await dataDownloader.downloadTreeData(
+        mock.downloadTreeDataDirectoriesItem
+      );
       const expected: Item[] = [
         {
           name: "Abort Controller",
           url:
             "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
           type: ItemType.Directory,
-          parent: item,
-          rootParent: item,
+          parent: mock.downloadTreeDataDirectoriesItem,
+          rootParent: mock.downloadTreeDataDirectoriesItem,
           breadcrumbs: ["api", "Abort Controller"],
         },
         {
@@ -127,8 +128,8 @@ describe("DataDownloader", () => {
           url:
             "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
           type: ItemType.Directory,
-          parent: item,
-          rootParent: item,
+          parent: mock.downloadTreeDataDirectoriesItem,
+          rootParent: mock.downloadTreeDataDirectoriesItem,
           breadcrumbs: ["api", "Abort Payment Event"],
         },
       ];
@@ -163,10 +164,11 @@ describe("DataDownloader", () => {
         },
       ]);
 
-      const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
-        new Response(content, { status: 200 })
+        new Response(mock.downloadTreeDataRootDirectoriesContent, {
+          status: 200,
+        })
       );
       fetch.default = fetchStub;
 
@@ -179,9 +181,8 @@ describe("DataDownloader", () => {
           "Content-type": "application/json",
         },
       });
-      const expected = true;
 
-      assert.equal(actual, expected);
+      assert.equal(actual, true);
       sinon.restore();
     });
 
@@ -201,10 +202,11 @@ describe("DataDownloader", () => {
         },
       ]);
 
-      const content: string = mock.downloadTreeDataRootDirectoriesContent;
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
-        new Response(content, { status: 200 })
+        new Response(mock.downloadTreeDataRootDirectoriesContent, {
+          status: 200,
+        })
       );
       fetch.default = fetchStub;
 
@@ -217,9 +219,8 @@ describe("DataDownloader", () => {
           "Content-type": "application/json",
         },
       });
-      const expected = true;
 
-      assert.equal(actual, expected);
+      assert.equal(actual, true);
       sinon.restore();
     });
   });

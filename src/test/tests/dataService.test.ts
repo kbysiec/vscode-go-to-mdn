@@ -2,7 +2,7 @@ import { assert } from "chai";
 import DataService from "../../dataService";
 import ItemType from "../../enums/itemType";
 import QuickPickItem from "../../interfaces/quickPickItem";
-import * as mock from "../mocks/extensionController.mock";
+import * as mock from "../mocks/dataService.mock";
 import Cache from "../../cache";
 import Utils from "../../utils";
 import Config from "../../config";
@@ -147,7 +147,11 @@ describe("DataService", () => {
         },
       ]);
 
-      const [, , , , , cacheFlatFilesWithProgressTaskStub] = stubMultiple([
+      const [cacheFlatFilesWithProgressTaskStub] = stubMultiple([
+        {
+          object: dataServiceAny,
+          method: "cacheFlatFilesWithProgressTask",
+        },
         {
           object: dataServiceAny.cache,
           method: "getFlatData",
@@ -171,10 +175,6 @@ describe("DataService", () => {
           object: dataServiceAny.config,
           method: "shouldDisplayFlatList",
           returns: false,
-        },
-        {
-          object: dataServiceAny,
-          method: "cacheFlatFilesWithProgressTask",
         },
       ]);
 
