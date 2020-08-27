@@ -108,22 +108,23 @@ class DataService {
     return data;
   }
 
-  private async getFlatFilesData(progress: any): Promise<void> {
+  private async getFlatFilesData(
+    progress: vscode.Progress<{
+      message?: string | undefined;
+      increment?: number | undefined;
+    }>
+  ): Promise<void> {
     progress &&
       progress.report({
-        increment: 30,
+        increment: 40,
       });
 
     await this.downloadFlatFilesData();
 
     progress &&
       progress.report({
-        increment: 70,
+        increment: 60,
       });
-  }
-
-  private async cacheFlatFilesData(progress: any) {
-    await this.getFlatFilesData(progress);
   }
 
   private async cacheFlatFilesWithProgress() {
@@ -142,8 +143,13 @@ class DataService {
     }
   }
 
-  private async cacheFlatFilesWithProgressTask(progress: any) {
-    await this.cacheFlatFilesData(progress);
+  private async cacheFlatFilesWithProgressTask(
+    progress: vscode.Progress<{
+      message?: string | undefined;
+      increment?: number | undefined;
+    }>
+  ) {
+    await this.getFlatFilesData(progress);
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve();
