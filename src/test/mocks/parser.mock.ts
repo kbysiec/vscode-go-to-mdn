@@ -14,15 +14,15 @@ export const flatElementsInput: any = {
         type: ItemType.Directory,
         parent: undefined,
         rootParent: undefined,
-        breadcrumbs: ["svg", "elements"]
-      }
+        breadcrumbs: ["svg", "elements"],
+      },
     },
     {
       name: "sub-label 2",
       url: "https://sub-label-2.com",
-      breadcrumbs: ["api", "test-label", "sub-label 2"]
-    }
-  ]
+      breadcrumbs: ["api", "test-label", "sub-label 2"],
+    },
+  ],
 };
 
 export const rootDirectoriesWithLinks: string = `*Please note that we have not (yet) migrated all compatibility data from the MDN wiki pages into this repository.*
@@ -47,10 +47,10 @@ export const parseElementsItem: Item = {
     type: ItemType.Directory,
     parent: undefined,
     rootParent: undefined,
-    breadcrumbs: ["svg", "elements"]
+    breadcrumbs: ["svg", "elements"],
   },
   rootParent: undefined,
-  breadcrumbs: ["svg", "elements", "animate Color"]
+  breadcrumbs: ["svg", "elements", "animate Color"],
 };
 
 export const parseElementsItemNoParent: Item = {
@@ -60,7 +60,7 @@ export const parseElementsItemNoParent: Item = {
   type: ItemType.Directory,
   parent: undefined,
   rootParent: undefined,
-  breadcrumbs: ["svg", "elements", "animate Color"]
+  breadcrumbs: ["svg", "elements", "animate Color"],
 };
 
 export const parseElementsContent = `{
@@ -129,10 +129,10 @@ export const parseElementsWithNestingItem = {
     type: ItemType.Directory,
     parent: undefined,
     rootParent: undefined,
-    breadcrumbs: ["webdriver", "commands"]
+    breadcrumbs: ["webdriver", "commands"],
   },
   rootParent: undefined,
-  breadcrumbs: ["webdriver", "commands", "Accept Alert"]
+  breadcrumbs: ["webdriver", "commands", "Accept Alert"],
 };
 
 export const parseElementsWithEmptyCompatContent = `
@@ -165,18 +165,35 @@ export const parseDirectoriesItem: Item = {
   name: "api",
   url: "#",
   type: ItemType.Directory,
-  breadcrumbs: ["api"]
+  breadcrumbs: ["api"],
 };
 
 export const parseDirectoriesContent: Array<any> = [
   {
     url:
       "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
-    type: ItemType.Directory
+    type: ItemType.Directory,
   },
   {
     url:
       "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
-    type: ItemType.Directory
-  }
+    type: ItemType.Directory,
+  },
+];
+
+export const directoriesOutputItems: Item[] = [
+  {
+    name: "label",
+    url:
+      "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
+    type: ItemType.Directory,
+    breadcrumbs: ["label"],
+  },
+  {
+    name: "category",
+    url:
+      "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
+    type: ItemType.Directory,
+    breadcrumbs: ["category"],
+  },
 ];

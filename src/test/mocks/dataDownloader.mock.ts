@@ -27,10 +27,10 @@ export const downloadTreeDataElementsItem: Item = {
     type: ItemType.Directory,
     parent: undefined,
     rootParent: undefined,
-    breadcrumbs: ["webdriver", "commands"]
+    breadcrumbs: ["webdriver", "commands"],
   },
   rootParent: undefined,
-  breadcrumbs: ["webdriver", "commands", "Accept Alert"]
+  breadcrumbs: ["webdriver", "commands", "Accept Alert"],
 };
 
 export const downloadTreeDataDirectoriesContent: string = `[
@@ -51,5 +51,22 @@ export const downloadTreeDataDirectoriesItem: Item = {
   url:
     "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=master",
   type: ItemType.Directory,
-  breadcrumbs: ["api"]
+  breadcrumbs: ["api"],
 };
+
+export const downloadTreeDataDirectoriesOutputItems: Item[] = [
+  {
+    name: "label",
+    url:
+      "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
+    type: ItemType.Directory,
+    breadcrumbs: ["label"],
+  },
+  {
+    name: "category",
+    url:
+      "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
+    type: ItemType.Directory,
+    breadcrumbs: ["category"],
+  },
+];

@@ -1,6 +1,5 @@
 import { assert } from "chai";
 import DataService from "../../dataService";
-import ItemType from "../../enums/itemType";
 import QuickPickItem from "../../interfaces/quickPickItem";
 import * as mock from "../mocks/dataService.mock";
 import Cache from "../../cache";
@@ -45,52 +44,11 @@ describe("DataService", () => {
       ]);
 
       const actual = await dataServiceAny.getFlatQuickPickData();
-      const expected: QuickPickItem[] = [
-        {
-          label: `$(link) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label",
-        },
-        {
-          label: `$(link) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2",
-        },
-      ];
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, mock.qpItems);
     });
 
     it("should return flat quick pick data if in cache is empty array", async () => {
-      const qpItems: QuickPickItem[] = [
-        {
-          label: `$(link) sub-label`,
-          url: "#",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label"],
-          description: "api test-label sub-label",
-        },
-        {
-          label: `$(link) sub-label 2`,
-          url: "https://sub-label-2.com",
-          type: ItemType.File,
-          parent: undefined,
-          rootParent: undefined,
-          breadcrumbs: ["api", "test-label", "sub-label 2"],
-          description: "api test-label sub-label 2",
-        },
-      ];
-
       restoreStubbedMultiple([
         { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
         { object: dataServiceAny.cache, method: "getFlatData" },
@@ -115,7 +73,7 @@ describe("DataService", () => {
         {
           object: dataServiceAny.dataConverter,
           method: "prepareQpData",
-          returns: qpItems,
+          returns: mock.qpItems,
         },
         {
           object: dataServiceAny.cache,
@@ -133,7 +91,10 @@ describe("DataService", () => {
         },
       ]);
 
-      assert.deepEqual(await dataServiceAny.getFlatQuickPickData(), qpItems);
+      assert.deepEqual(
+        await dataServiceAny.getFlatQuickPickData(),
+        mock.qpItems
+      );
     });
 
     it("should do nothing in fetching flat quick pick data if shouldDisplayFlatList returns false", async () => {

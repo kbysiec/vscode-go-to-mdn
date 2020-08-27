@@ -48,24 +48,10 @@ describe("Parser", () => {
 
   describe("parseRootDirectories", () => {
     it("should return array of Item elements once content contains has links", () => {
-      const actual = parser.parseRootDirectories(mock.rootDirectoriesWithLinks);
-      const expected: Item[] = [
-        {
-          name: "label",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["label"],
-        },
-        {
-          name: "category",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["category"],
-        },
-      ];
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(
+        parser.parseRootDirectories(mock.rootDirectoriesWithLinks),
+        mock.directoriesOutputItems
+      );
     });
 
     it("should return array of Item elements once content doesn't contain any link", () => {

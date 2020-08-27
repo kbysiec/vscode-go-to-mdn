@@ -49,22 +49,7 @@ describe("DataDownloader", () => {
       fetch.default = fetchStub;
 
       const actual = await dataDownloader.downloadTreeData();
-      const expected: Item[] = [
-        {
-          name: "label",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["label"],
-        },
-        {
-          name: "category",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
-          type: ItemType.Directory,
-          breadcrumbs: ["category"],
-        },
-      ];
+      const expected: Item[] = mock.downloadTreeDataDirectoriesOutputItems;
       assert.deepEqual(actual, expected);
     });
 
