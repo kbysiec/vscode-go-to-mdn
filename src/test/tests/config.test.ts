@@ -7,7 +7,6 @@ import { getConfiguration } from "../util/mockFactory";
 describe("Config", () => {
   let config: Config;
   let configAny: any;
-  let getConfigurationStub: sinon.SinonStub;
   let configuration: { [key: string]: any };
 
   before(() => {
@@ -17,15 +16,13 @@ describe("Config", () => {
   });
 
   beforeEach(() => {
-    getConfigurationStub = sinon
-      .stub(vscode.workspace, "getConfiguration")
-      .returns({
-        get: (section: string) =>
-          section.split(".").reduce((cfg, key) => cfg[key], configuration),
-        has: () => true,
-        inspect: () => undefined,
-        update: () => Promise.resolve(),
-      });
+    sinon.stub(vscode.workspace, "getConfiguration").returns({
+      get: (section: string) =>
+        section.split(".").reduce((cfg, key) => cfg[key], configuration),
+      has: () => true,
+      inspect: () => undefined,
+      update: () => Promise.resolve(),
+    });
   });
 
   afterEach(() => {
