@@ -23,11 +23,8 @@ class Config {
   }
 
   private get<T>(key: string, defaultValue: T): T {
-    const value = this.getConfiguration<T>(
-      `${this.defaultSection}.${key}`,
-      defaultValue
-    );
-    return value as T;
+    const cacheKey = `${this.defaultSection}.${key}`;
+    return this.getConfiguration<T>(cacheKey, defaultValue);
   }
 
   private getConfiguration<T>(section: string, defaultValue: T): T {
