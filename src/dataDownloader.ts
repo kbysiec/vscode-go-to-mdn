@@ -13,17 +13,15 @@ class DataDownloader {
   }
 
   async downloadTreeData(item?: Item): Promise<Item[]> {
-    if (!item) {
-      item = {
-        name: "root",
-        url: appConfig.rootUrl,
-        type: ItemType.Directory,
-        breadcrumbs: [],
-      };
-    }
+    item = item || {
+      name: "root",
+      url: appConfig.rootUrl,
+      type: ItemType.Directory,
+      breadcrumbs: [],
+    };
 
     let items: Item[];
-    const content = await this.fetch(item.url, this.getContent);
+    const content = await this.fetchTreeData(item);
 
     if (item.name === "root") {
       items = this.parser.parseRootDirectories(content);
@@ -37,25 +35,39 @@ class DataDownloader {
   }
 
   async downloadFlatData(): Promise<Item[]> {
-    const json = await this.fetch(appConfig.allFilesUrl, this.getJson);
-    const items: Item[] = this.parser.parseFlatElements(json);
-    return items;
+    const json = await this.fetchFlatData();
+    return this.parser.parseFlatElements(json);
+  }
+
+  private async fetchTreeData(item: Item) {
+    return await this.fetch(item.url, this.getContent);
   }
 
   private async fetch(url: string, callback: Function): Promise<any> {
+    const response: Response = await this.getResponse(url);
+    return await callback(response);
+  }
+
+  private getFetchConfig() {
     const token = this.config.getGithubPersonalAccessToken();
-    const fetchConfig = {
+
+    return {
       headers: {
         Authorization: token ? `token ${token}` : "",
         "Content-type": "application/json",
       },
     };
-    const response: Response = await fetch(url, fetchConfig).catch(
-      (error: Error) => {
-        throw new Error(error.message);
-      }
-    );
-    return await callback(response);
+  }
+
+  private async getResponse(url: string): Promise<Response> {
+    const fetchConfig = this.getFetchConfig();
+    return await fetch(url, fetchConfig).catch((error: Error) => {
+      throw new Error(error.message);
+    });
+  }
+
+  private async fetchFlatData() {
+    return await this.fetch(appConfig.allFilesUrl, this.getJson);
   }
 
   private async getJson(response: Response): Promise<any> {
