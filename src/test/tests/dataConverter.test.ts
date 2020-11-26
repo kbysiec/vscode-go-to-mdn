@@ -49,7 +49,7 @@ describe("DataConverter", () => {
         parent: undefined,
         rootParent: undefined,
         breadcrumbs: ["api", "test-label", "sub-label"],
-        description: undefined,
+        description: "",
       };
 
       assert.equal(actual.length, expectedLength);

@@ -7,6 +7,9 @@ import Config from "./config";
 import Utils from "./utils";
 
 class DataConverter {
+  private readonly linkIcon = "$(link)";
+  private readonly directoryIcon = "$(file-directory)";
+
   constructor(private config: Config, private utils: Utils) {}
 
   prepareQpData(data: Item[], isRootLevel: boolean = false): QuickPickItem[] {
@@ -15,9 +18,13 @@ class DataConverter {
       data,
       shouldDisplayFlatListFlag
     );
-    !shouldDisplayFlatListFlag &&
-      !isRootLevel &&
-      this.addBackwardNavigationItem(qpData);
+
+    this.addBackwardNavigationItemIfNecessary(
+      qpData,
+      shouldDisplayFlatListFlag,
+      isRootLevel
+    );
+
     return qpData;
   }
 
@@ -36,35 +43,55 @@ class DataConverter {
     data: Item[],
     isFlat: boolean = false
   ): QuickPickItem[] {
-    return data.map((el) => {
-      const icon =
-        el.type === ItemType.Directory ? "$(file-directory)" : "$(link)";
-      const description = isFlat
-        ? this.prepareBreadcrumbs(el, isFlat)
-        : undefined;
-      return {
-        label: `${icon} ${el.name}`,
-        url: el.url,
-        parent: el.parent,
-        rootParent: el.rootParent,
-        type: el.type,
-        breadcrumbs: el.breadcrumbs,
-        description,
-      };
-    });
+    return data.map((item: Item) => this.mapItemToQpItem(item, isFlat));
+  }
+
+  private getIcon(item: Item): string {
+    return item.type === ItemType.Directory
+      ? this.directoryIcon
+      : this.linkIcon;
+  }
+
+  private getDescription(item: Item, isFlat: boolean): string {
+    return isFlat ? this.getBreadcrumbs(item, isFlat) : "";
+  }
+
+  private mapItemToQpItem(item: Item, isFlat: boolean): QuickPickItem {
+    const icon = this.getIcon(item);
+    const description = this.getDescription(item, isFlat);
+
+    return {
+      label: `${icon} ${item.name}`,
+      url: item.url,
+      parent: item.parent,
+      rootParent: item.rootParent,
+      type: item.type,
+      breadcrumbs: item.breadcrumbs,
+      description,
+    };
   }
 
   private addBackwardNavigationItem(qpData: QuickPickItem[]): void {
     qpData.unshift({
-      label: `$(file-directory) ${appConfig.higherLevelLabel}`,
-      description: this.prepareBreadcrumbs(qpData[0]),
+      label: `${this.directoryIcon} ${appConfig.higherLevelLabel}`,
+      description: this.getBreadcrumbs(qpData[0]),
       type: ItemType.Directory,
       url: "#",
       breadcrumbs: [],
     });
   }
 
-  private prepareBreadcrumbs(
+  private addBackwardNavigationItemIfNecessary(
+    qpData: QuickPickItem[],
+    shouldDisplayFlatListFlag: boolean,
+    isRootLevel: boolean
+  ): void {
+    !shouldDisplayFlatListFlag &&
+      !isRootLevel &&
+      this.addBackwardNavigationItem(qpData);
+  }
+
+  private getBreadcrumbs(
     item: Item | QuickPickItem,
     isFlat: boolean = false
   ): string {
