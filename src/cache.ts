@@ -11,12 +11,8 @@ class Cache {
   }
 
   updateTreeDataByItem(data: Item[], item?: Item): void {
-    let cache: any = this.extensionContext.globalState.get(
-      appConfig.treeCacheKey
-    );
-    if (!cache) {
-      cache = {};
-    }
+    let cache: any =
+      this.extensionContext.globalState.get(appConfig.treeCacheKey) || {};
 
     const key = item ? item.url : appConfig.rootUrl;
     cache[key] = data;
@@ -24,25 +20,20 @@ class Cache {
   }
 
   getFlatData(): Item[] | undefined {
-    const cache: any = this.extensionContext.globalState.get(
+    const data: any = this.extensionContext.globalState.get(
       appConfig.flatCacheKey
     );
-    if (cache && cache.length) {
-      return cache;
-    }
-    return [];
+
+    return data && data.length ? data : [];
   }
 
   getTreeDataByItem(item?: QuickPickItem): Item[] | undefined {
     const cache: any = this.extensionContext.globalState.get(
       appConfig.treeCacheKey
     );
-    let cachedData = [];
-    if (cache) {
-      const key = item ? item.url : appConfig.rootUrl;
-      cachedData = cache[key];
-    }
-    return cachedData;
+    const key = item ? item.url : appConfig.rootUrl;
+
+    return cache ? cache[key] : [];
   }
 
   clearCache(): void {
