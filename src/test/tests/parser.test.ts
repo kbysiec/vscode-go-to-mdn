@@ -27,6 +27,7 @@ describe("Parser", () => {
             rootParent: undefined,
             breadcrumbs: ["svg", "elements"],
           },
+          rootParent: undefined,
           type: ItemType.File,
           breadcrumbs: ["api", "test-label", "sub-label"],
         },
@@ -34,6 +35,7 @@ describe("Parser", () => {
           name: "sub-label 2",
           url: "https://sub-label-2.com",
           parent: undefined,
+          rootParent: undefined,
           type: ItemType.File,
           breadcrumbs: ["api", "test-label", "sub-label 2"],
         },
@@ -75,6 +77,7 @@ describe("Parser", () => {
             "https://developer.mozilla.org/docs/Web/SVG/Element/animateColor",
           type: ItemType.File,
           parent: mock.parseElementsItem,
+          rootParent: undefined,
           breadcrumbs: ["svg", "elements", "animate Color", "animate Color"],
         },
         {
@@ -82,6 +85,7 @@ describe("Parser", () => {
           url: "",
           type: ItemType.File,
           parent: mock.parseElementsItem,
+          rootParent: undefined,
           breadcrumbs: ["svg", "elements", "animate Color", "by"],
         },
       ];
@@ -101,6 +105,7 @@ describe("Parser", () => {
             "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
           type: ItemType.File,
           parent: mock.parseElementsWithNestingItem,
+          rootParent: undefined,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -113,6 +118,7 @@ describe("Parser", () => {
           url: "",
           type: ItemType.File,
           parent: mock.parseElementsWithNestingItem,
+          rootParent: undefined,
           breadcrumbs: ["webdriver", "commands", "Accept Alert", "wildcard"],
         },
       ];
@@ -131,6 +137,7 @@ describe("Parser", () => {
           url: "",
           type: ItemType.File,
           parent: mock.parseElementsWithEmptyCompatItem,
+          rootParent: undefined,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -154,6 +161,7 @@ describe("Parser", () => {
           url: "",
           type: ItemType.File,
           parent: mock.parseElementsWithNoCompatItem,
+          rootParent: undefined,
           breadcrumbs: [
             "webdriver",
             "commands",

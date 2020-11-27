@@ -186,6 +186,8 @@ export const directoriesOutputItems: Item[] = [
     name: "label",
     url:
       "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
+    parent: undefined,
+    rootParent: undefined,
     type: ItemType.Directory,
     breadcrumbs: ["label"],
   },
@@ -193,6 +195,8 @@ export const directoriesOutputItems: Item[] = [
     name: "category",
     url:
       "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
+    parent: undefined,
+    rootParent: undefined,
     type: ItemType.Directory,
     breadcrumbs: ["category"],
   },

@@ -70,6 +70,7 @@ describe("DataDownloader", () => {
             "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
           type: ItemType.File,
           parent: mock.downloadTreeDataElementsItem,
+          rootParent: undefined,
           breadcrumbs: [
             "webdriver",
             "commands",
@@ -82,6 +83,7 @@ describe("DataDownloader", () => {
           url: "",
           type: ItemType.File,
           parent: mock.downloadTreeDataElementsItem,
+          rootParent: undefined,
           breadcrumbs: ["webdriver", "commands", "Accept Alert", "wildcard"],
         },
       ];
@@ -241,6 +243,7 @@ describe("DataDownloader", () => {
           url:
             "https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact",
           parent: undefined,
+          rootParent: undefined,
           type: ItemType.File,
           breadcrumbs: ["api", "HTMLU List Element", "compact"],
         },

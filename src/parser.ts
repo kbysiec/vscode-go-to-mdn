@@ -3,37 +3,15 @@ import ItemType from "./enums/itemType";
 import { appConfig } from "./appConfig";
 
 class Parser {
-  parseFlatElements(data: any): Item[] {
-    let items: Item[] = [];
-
-    if (data.items) {
-      items = data.items.map((el: any) => ({
-        name: el.name,
-        url: el.url,
-        parent: el.parent ? el.parent : undefined,
-        type: ItemType.File,
-        breadcrumbs: [...el.breadcrumbs],
-      }));
-    }
-
-    return items;
+  parseFlatElements(json: any): Item[] {
+    return json.items
+      ? json.items.map((item: any) => this.parseFlatElement(item))
+      : [];
   }
 
   parseRootDirectories(content: any): Item[] {
     const results = content.match(appConfig.regex) || [];
-    const data: Item[] = results.map((el: any) => {
-      const url = this.normalizeUrl(el);
-      const type = ItemType.Directory;
-      const name = this.getNameFromUrl(url);
-      return {
-        name,
-        url,
-        type,
-        breadcrumbs: [name],
-      };
-    });
-
-    return data;
+    return results.map((item: any) => this.parseRootDirectory(item));
   }
 
   parseElements(content: any, item: Item): Item[] {
@@ -52,21 +30,38 @@ class Parser {
   }
 
   parseDirectories(content: any, item: Item): Item[] {
-    const data: Item[] = content.map((el: any) => {
-      const url = el.url;
-      let name = this.getNameFromUrl(url);
-      name = this.normalizeItemName(name);
-      return {
-        name,
-        url,
-        type: ItemType.Directory,
-        parent: item,
-        rootParent: item.parent || item,
-        breadcrumbs: [...item.breadcrumbs, name],
-      };
-    });
+    return content.map((el: any) => this.parseDirectory(item, el.url));
+  }
 
-    return data;
+  private parseFlatElement(item: any): Item {
+    return this.createItem(
+      item.name,
+      item.url,
+      ItemType.File,
+      [...item.breadcrumbs],
+      item.parent || undefined
+    );
+  }
+
+  private parseRootDirectory(item: any): Item {
+    const url = this.normalizeUrl(item);
+    const name = this.getNameFromUrl(url);
+
+    return this.createItem(name, url, ItemType.Directory, [name]);
+  }
+
+  private parseDirectory(item: any, url: string): Item {
+    let name = this.getNameFromUrl(url);
+    name = this.normalizeItemName(name);
+
+    return this.createItem(
+      name,
+      url,
+      ItemType.Directory,
+      [...item.breadcrumbs, name],
+      item,
+      item.parent || item
+    );
   }
 
   private normalizeUrl(url: string): string {
@@ -88,14 +83,18 @@ class Parser {
   }
 
   private getItemElementsAtFirstItemLevel(itemElements: any): any {
-    while (
-      itemElements &&
-      !Object.hasOwnProperty.call(itemElements, appConfig.accessProperty)
-    ) {
+    while (this.ifItemElementsHaveNotAccessProperty(itemElements)) {
       const propertyName = Object.keys(itemElements)[0] || "";
       itemElements = itemElements[propertyName];
     }
     return itemElements;
+  }
+
+  private ifItemElementsHaveNotAccessProperty(itemElements: any): boolean {
+    return (
+      itemElements &&
+      !Object.hasOwnProperty.call(itemElements, appConfig.accessProperty)
+    );
   }
 
   private addReferenceElement(
@@ -103,51 +102,65 @@ class Parser {
     itemElements: any,
     item: Item
   ): void {
-    data.push({
-      name: `${item.name} - reference`,
-      url:
-        (itemElements &&
-          itemElements[appConfig.accessProperty] &&
-          itemElements[appConfig.accessProperty].mdn_url) ||
-        "",
-      parent: item,
-      type: ItemType.File,
-      breadcrumbs: [...item.breadcrumbs, item.name],
-    });
+    data.push(
+      this.createItem(
+        `${item.name} - reference`,
+        this.getUrlForReferenceElement(itemElements),
+        ItemType.File,
+        [...item.breadcrumbs, item.name],
+        item
+      )
+    );
 
     itemElements && delete itemElements[appConfig.accessProperty];
+  }
+
+  private getUrlForReferenceElement(itemElements: any): string {
+    return (
+      (itemElements &&
+        itemElements[appConfig.accessProperty] &&
+        itemElements[appConfig.accessProperty].mdn_url) ||
+      ""
+    );
   }
 
   private addElements(data: Item[], itemElements: any, item: Item): void {
     for (let prop in itemElements) {
       let element = itemElements[prop];
 
-      if (!element.hasOwnProperty(appConfig.accessProperty)) {
-        for (let innerProp in element) {
-          let innerElement = element[innerProp];
-
-          const name = this.normalizeItemName(innerProp);
-          data.push({
-            name,
-            url: innerElement.mdn_url || "",
-            parent: item,
-            type: ItemType.File,
-            breadcrumbs: [...item.breadcrumbs, name],
-          });
-        }
-      } else {
-        element = element[appConfig.accessProperty];
-
-        const name = this.normalizeItemName(prop);
-        data.push({
-          name,
-          url: element.mdn_url || "",
-          parent: item,
-          type: ItemType.File,
-          breadcrumbs: [...item.breadcrumbs, name],
-        });
-      }
+      !element.hasOwnProperty(appConfig.accessProperty)
+        ? this.addLowestLevelElements(data, element, item)
+        : this.addLowestLevelElement(data, element, item, prop);
     }
+  }
+
+  private addLowestLevelElements(data: Item[], element: any, item: Item) {
+    for (let innerProp in element) {
+      let innerElement = element[innerProp];
+      data.push(this.addElement(innerElement, innerProp, item));
+    }
+  }
+
+  private addLowestLevelElement(
+    data: Item[],
+    element: any,
+    item: Item,
+    prop: string
+  ) {
+    element = element[appConfig.accessProperty];
+    data.push(this.addElement(element, prop, item));
+  }
+
+  private addElement(element: any, prop: string, item: Item): Item {
+    const name = this.normalizeItemName(prop);
+
+    return this.createItem(
+      name,
+      element.mdn_url || "",
+      ItemType.File,
+      [...item.breadcrumbs, name],
+      item
+    );
   }
 
   private normalizeItemName(name: string): string {
@@ -155,6 +168,24 @@ class Parser {
       .replace(".json", "")
       .split(/(?=[A-Z][a-z])/)
       .join(" ");
+  }
+
+  private createItem(
+    name: string,
+    url: string,
+    type: ItemType,
+    breadcrumbs: string[],
+    parent?: Item,
+    rootParent?: Item
+  ): Item {
+    return {
+      name,
+      url,
+      parent,
+      rootParent,
+      type,
+      breadcrumbs,
+    };
   }
 }
 
