@@ -81,8 +81,16 @@ class QuickPick {
   }
 
   private loadItems(items: QuickPickItem[]): void {
-    this.quickPick.items = items;
+    this.setQpItems(items);
+    this.setItems(items);
+  }
+
+  private setItems(items: QuickPickItem[]): void {
     this.items = items;
+  }
+
+  private setQpItems(items: QuickPickItem[]): void {
+    this.quickPick.items = items;
   }
 
   private getItems(): QuickPickItem[] {
@@ -102,7 +110,7 @@ class QuickPick {
       ? this.setPlaceholder(
           "choose item from the list or type anything to search"
         )
-      : this.setPlaceholder(undefined);
+      : this.setPlaceholder("");
   }
 
   private clearText(): void {
@@ -132,21 +140,19 @@ class QuickPick {
   }
 
   private normalizeSubmittedValue(value: QuickPickItem | undefined) {
-    let normalizedValue: QuickPickItem | string;
-    if (value === undefined) {
-      normalizedValue = this.quickPick.value;
-    } else {
-      normalizedValue = value;
-    }
-    return normalizedValue;
+    return value || this.quickPick.value;
   }
 
   private async openInBrowser(url: string): Promise<void> {
     await this.open(url);
   }
 
+  private getSelectedItem(): QuickPickItem {
+    return this.quickPick.selectedItems[0];
+  }
+
   private onDidAccept = () => {
-    const selected = this.quickPick.selectedItems[0];
+    const selected = this.getSelectedItem();
     this.submit(selected);
   };
 
@@ -155,19 +161,19 @@ class QuickPick {
   };
 
   private onDidChangeValueClearing = () => {
-    this.quickPick.items = [];
+    this.setQpItems([]);
   };
 
   private onDidChangeValue = (value: string) => {
-    this.quickPick.busy = true;
+    this.showLoading(true);
     const items = this.filter(value);
-    this.quickPick.items = items;
-    this.quickPick.busy = false;
+    this.setQpItems(items);
+    this.showLoading(false);
   };
 
   private onWillGoLowerTreeLevel = () => {
-    const qpData = this.getItems();
-    this.dataService.rememberHigherLevelQpData(qpData);
+    const items = this.getItems();
+    this.dataService.rememberHigherLevelQpData(items);
   };
 }
 

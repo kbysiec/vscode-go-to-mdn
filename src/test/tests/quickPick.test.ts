@@ -145,7 +145,7 @@ describe("Quick Pick", () => {
       assert.deepEqual(quickPickAny.quickPick.items, mock.qpItems);
     });
 
-    it(`should placeholder be set to undefined
+    it(`should placeholder be set to empty string
       if dataService.isHigherLevelDataEmpty method returns false`, async () => {
       stubMultiple([
         {
@@ -167,7 +167,7 @@ describe("Quick Pick", () => {
 
       await quickPickAny.loadQuickPickData();
 
-      assert.equal(quickPickAny.quickPick.placeholder, undefined);
+      assert.equal(quickPickAny.quickPick.placeholder, "");
     });
 
     it(`should placeholder be set to 'choose item from the list or type anything to search'
