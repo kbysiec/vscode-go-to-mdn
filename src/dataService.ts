@@ -14,9 +14,7 @@ class DataService {
 
   private higherLevelData: QuickPickItem[][];
 
-  onWillGoLowerTreeLevelEventEmitter: vscode.EventEmitter<
-    void
-  > = new vscode.EventEmitter();
+  private onWillGoLowerTreeLevelEventEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter();
   readonly onWillGoLowerTreeLevel: vscode.Event<void> = this
     .onWillGoLowerTreeLevelEventEmitter.event;
 
@@ -40,8 +38,7 @@ class DataService {
       data = this.cache.getFlatData();
     }
 
-    const qpData = data ? this.dataConverter.prepareQpData(data) : [];
-    return qpData;
+    return data ? this.dataConverter.prepareQpData(data) : [];
   }
 
   async getQuickPickRootData(): Promise<QuickPickItem[]> {
@@ -75,8 +72,7 @@ class DataService {
   private async getLowerLevelQpData(
     value: QuickPickItem
   ): Promise<QuickPickItem[]> {
-    let data: QuickPickItem[];
-    data = await this.getTreeData(false, value);
+    let data = await this.getTreeData(false, value);
     data = this.utils.removeDataWithEmptyUrl(data);
     return data;
   }
@@ -88,12 +84,10 @@ class DataService {
     let data = this.cache.getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
-      let item: Item | undefined =
-        qpItem && this.dataConverter.mapQpItemToItem(qpItem);
+      let item = qpItem && this.dataConverter.mapQpItemToItem(qpItem);
       data = await this.downloadTreeData(item);
     }
-    const qpData = this.dataConverter.prepareQpData(data, isRootLevel);
-    return qpData;
+    return this.dataConverter.prepareQpData(data, isRootLevel);
   }
 
   private async downloadTreeData(item?: Item): Promise<Item[]> {
@@ -128,10 +122,7 @@ class DataService {
   }
 
   private async cacheFlatFilesWithProgress() {
-    if (
-      this.config.shouldDisplayFlatList() &&
-      this.config.getGithubPersonalAccessToken()
-    ) {
+    if (this.config.shouldDisplayFlatList()) {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
