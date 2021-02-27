@@ -1,44 +1,37 @@
 import * as vscode from "vscode";
 import { assert } from "chai";
-import * as sinon from "sinon";
 import ExtensionController from "../../ExtensionController";
 import { getExtensionContext } from "../util/mockFactory";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubUtils";
+import { getTestSetups } from "../testSetups/extensionController.testSetup";
 
 describe("extensionController", () => {
-  let context: vscode.ExtensionContext;
-  let extensionController: ExtensionController;
-  let extensionControllerAny: any;
+  let context: vscode.ExtensionContext = getExtensionContext();
+  let extensionController: ExtensionController = new ExtensionController(
+    context
+  );
+  let setups = getTestSetups(extensionController);
 
   beforeEach(() => {
     context = getExtensionContext();
     extensionController = new ExtensionController(context);
-    extensionControllerAny = extensionController as any;
+    setups = getTestSetups(extensionController);
   });
 
   describe("browse", () => {
-    it("should load data and show quickPick", async () => {
-      const [showStub, loadQuickPickDataStub] = stubMultiple([
-        { object: extensionControllerAny.quickPick, method: "show" },
-        {
-          object: extensionControllerAny.quickPick,
-          method: "loadQuickPickData",
-        },
-      ]);
+    it("1: should load data and show quickPick", async () => {
+      const [showStub, loadQuickPickDataStub] = setups.browse1();
 
-      await extensionControllerAny.browse();
+      await extensionController.browse();
       assert.equal(showStub.calledOnce, true);
       assert.equal(loadQuickPickDataStub.calledOnce, true);
     });
   });
 
   describe("clearCache", () => {
-    it("should invoke cache clearing function on cache object", async () => {
-      const [clearCacheStub] = stubMultiple([
-        { object: extensionControllerAny.cache, method: "clearCache" },
-      ]);
+    it("1: should invoke cache clearing function on cache object", async () => {
+      const [clearCacheStub] = setups.clearCache1();
 
-      await extensionControllerAny.clearCache();
+      await extensionController.clearCache();
       assert.equal(clearCacheStub.calledOnce, true);
     });
   });
