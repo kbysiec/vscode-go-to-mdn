@@ -2,35 +2,29 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import Config from "../../config";
-import { getConfiguration } from "../util/mockFactory";
+import { getTestSetups } from "../testSetup/config.testSetup";
 
 describe("Config", () => {
-  let config: Config;
-  let configAny: any;
   let configuration: { [key: string]: any };
-
-  before(() => {
-    configuration = getConfiguration();
-    config = new Config();
-    configAny = config as any;
-  });
+  let getConfigurationStub: sinon.SinonStub;
+  let config: Config = new Config();
+  let setups = getTestSetups(config);
 
   beforeEach(() => {
-    sinon.stub(vscode.workspace, "getConfiguration").returns({
-      get: (section: string) =>
-        section.split(".").reduce((cfg, key) => cfg[key], configuration),
-      has: () => true,
-      inspect: () => undefined,
-      update: () => Promise.resolve(),
-    });
+    ({
+      configuration,
+      stubs: [getConfigurationStub],
+    } = setups.beforeEach());
+    config = new Config();
+    setups = getTestSetups(config);
   });
 
   afterEach(() => {
-    sinon.restore();
+    (vscode.workspace.getConfiguration as sinon.SinonStub).restore();
   });
 
   describe("getGithubPersonalAccessToken", () => {
-    it("should return string from configuration", () => {
+    it("1: should return string from configuration", () => {
       const section = "goToMDN";
       const key = "githubPersonalAccessToken";
 
@@ -42,7 +36,7 @@ describe("Config", () => {
   });
 
   describe("shouldDisplayFlatList", () => {
-    it("should return boolean from configuration", () => {
+    it("1: should return boolean from configuration", () => {
       const section = "goToMDN";
       const key = "shouldDisplayFlatList";
 

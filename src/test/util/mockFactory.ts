@@ -4,7 +4,6 @@ import Utils from "../../utils";
 import { createStubInstance } from "./stubbedClass";
 import Config from "../../config";
 import Cache from "../../cache";
-import DataService from "../../dataService";
 
 export const getExtensionContext = (): vscode.ExtensionContext => {
   return {
@@ -25,6 +24,27 @@ export const getExtensionContext = (): vscode.ExtensionContext => {
   } as vscode.ExtensionContext;
 };
 
+export const getConfiguration = (): { [key: string]: any } => {
+  return {
+    goToMDN: {
+      githubPersonalAccessToken: "test github token",
+      shouldDisplayFlatList: true,
+    },
+  };
+};
+
+export const getVscodeConfiguration = (configuration: {
+  [key: string]: any;
+}) => {
+  return {
+    get: (section: string) =>
+      section.split(".").reduce((cfg, key) => cfg[key], configuration),
+    has: () => true,
+    inspect: () => undefined,
+    update: () => Promise.resolve(),
+  };
+};
+
 export function getUtilsStub(): Utils {
   const utilsStubTemp: any = createStubInstance(Utils);
 
@@ -43,12 +63,3 @@ export function getCacheStub(): Cache {
   cacheStubTemp.extensionContext = getExtensionContext();
   return cacheStubTemp as Cache;
 }
-
-export const getConfiguration = (): { [key: string]: any } => {
-  return {
-    goToMDN: {
-      githubPersonalAccessToken: "test github token",
-      shouldDisplayFlatList: true,
-    },
-  };
-};
