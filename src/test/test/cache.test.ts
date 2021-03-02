@@ -5,45 +5,24 @@ import Cache from "../../cache";
 import { appConfig } from "../../appConfig";
 import * as mock from "../mock/cache.mock";
 import { getExtensionContext } from "../util/mockFactory";
-import { stubMultiple } from "../util/stubUtils";
+import { getTestSetups } from "../testSetup/cache.testSetup";
 
 describe("Cache", () => {
-  let cache: Cache;
-  let context: vscode.ExtensionContext;
+  let context: vscode.ExtensionContext = getExtensionContext();
+  let cache: Cache = new Cache(context);
   let updateStub: sinon.SinonStub;
+  let setups = getTestSetups(context);
 
   beforeEach(() => {
-    stubMultiple([
-      {
-        object: appConfig,
-        method: "flatCacheKey",
-        returns: "flatData",
-        isNotMethod: true,
-      },
-      {
-        object: appConfig,
-        method: "treeCacheKey",
-        returns: "treeData",
-        isNotMethod: true,
-      },
-      {
-        object: appConfig,
-        method: "rootUrl",
-        returns:
-          "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=master",
-        isNotMethod: true,
-      },
-    ]);
-
     context = getExtensionContext();
-    updateStub = sinon.stub();
-    context.globalState.update = updateStub;
-
     cache = new Cache(context);
+    setups = getTestSetups(context);
+
+    updateStub = setups.beforeEach();
   });
 
   describe("updateFlatData", () => {
-    it("should update cache value", () => {
+    it("1: should update cache value", () => {
       cache.updateFlatData(mock.items);
 
       assert.equal(
@@ -54,15 +33,8 @@ describe("Cache", () => {
   });
 
   describe("updateTreeDataByItem", () => {
-    it("should update cache value if item is undefined", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: undefined,
-        },
-      ]);
-
+    it("1: should update cache value if item is undefined", () => {
+      setups.updateTreeDataByItem1();
       cache.updateTreeDataByItem(mock.items);
 
       assert.equal(
@@ -73,15 +45,8 @@ describe("Cache", () => {
       );
     });
 
-    it("should update cache value if item is passed", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: {},
-        },
-      ]);
-
+    it("2: should update cache value if item is passed", () => {
+      setups.updateTreeDataByItem2();
       cache.updateTreeDataByItem(mock.items, mock.item);
 
       assert.equal(
@@ -94,77 +59,37 @@ describe("Cache", () => {
   });
 
   describe("getFlatData", () => {
-    it("should return value from cache", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: mock.items,
-        },
-      ]);
-
+    it("1: should return value from cache", () => {
+      setups.getFlatData1();
       assert.deepEqual(cache.getFlatData(), mock.items);
     });
 
-    it("should return empty array from cache", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: undefined,
-        },
-      ]);
-
+    it("2: should return empty array from cache", () => {
+      setups.getFlatData2();
       assert.deepEqual(cache.getFlatData(), []);
     });
   });
 
   describe("getTreeDataByItem", () => {
-    it("should return value from cache if item is undefined", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: {
-            [appConfig.rootUrl]: mock.items,
-          },
-        },
-      ]);
-
+    it("1: should return value from cache if item is undefined", () => {
+      setups.getTreeDataByItem1();
       assert.deepEqual(cache.getTreeDataByItem(), mock.items);
     });
 
-    it("should return value from cache if item is passed", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: {
-            [mock.qpItem.url]: mock.items,
-          },
-        },
-      ]);
-
+    it("2: should return value from cache if item is passed", () => {
+      setups.getTreeDataByItem2();
       assert.deepEqual(cache.getTreeDataByItem(mock.qpItem), mock.items);
     });
 
-    it("should return empty array from cache if key not found", () => {
-      stubMultiple([
-        {
-          object: context.globalState,
-          method: "get",
-          returns: undefined,
-        },
-      ]);
-
+    it("3: should return empty array from cache if key not found", () => {
+      setups.getTreeDataByItem3();
       assert.deepEqual(cache.getTreeDataByItem(), []);
     });
   });
 
   describe("clearCache", () => {
-    it("should clear cache", () => {
+    it("1: should clear cache", () => {
       cache.clearCache();
-
       assert.equal(updateStub.calledTwice, true);
     });
   });
