@@ -4,24 +4,24 @@ import * as extension from "../../extension";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubUtils";
 import ExtensionController from "../../ExtensionController";
+import { getTestSetups } from "../testSetups/extension.testSetup";
 
 describe("extension", () => {
-  let context: vscode.ExtensionContext;
-  let extensionController: ExtensionController;
-  let extensionControllerAny: any;
+  let context: vscode.ExtensionContext = getExtensionContext();
+  let extensionController: ExtensionController = new ExtensionController(
+    context
+  );
+  let setups = getTestSetups(extensionController);
 
   beforeEach(() => {
     context = getExtensionContext();
     extensionController = new ExtensionController(context);
-    extensionControllerAny = extensionController as any;
+    setups = getTestSetups(extensionController);
   });
 
   describe("activate", () => {
-    it("should register two commands", async () => {
-      const [registerCommandStub] = stubMultiple([
-        { object: vscode.commands, method: "registerCommand" },
-      ]);
-
+    it("1: should register two commands", async () => {
+      const [registerCommandStub] = setups.activate1();
       await extension.activate(context);
 
       assert.equal(registerCommandStub.calledTwice, true);
@@ -29,9 +29,8 @@ describe("extension", () => {
   });
 
   describe("deactivate", () => {
-    it("should function exist", () => {
-      const [logStub] = stubMultiple([{ object: console, method: "log" }]);
-
+    it("1: should function exist", () => {
+      const [logStub] = setups.deactivate1();
       extension.deactivate();
 
       assert.equal(logStub.calledOnce, true);
@@ -40,14 +39,8 @@ describe("extension", () => {
   });
 
   describe("browse", () => {
-    it("should extensionController.browse method be invoked", () => {
-      const [browseStub] = stubMultiple([
-        {
-          object: extensionController,
-          method: "browse",
-        },
-      ]);
-
+    it("1: should extensionController.browse method be invoked", () => {
+      const [browseStub] = setups.browse1();
       extension.browse(extensionController);
 
       assert.equal(browseStub.calledOnce, true);
@@ -55,14 +48,8 @@ describe("extension", () => {
   });
 
   describe("clearCache", () => {
-    it("should extensionController.clearCache method be invoked", () => {
-      const [clearCacheStub] = stubMultiple([
-        {
-          object: extensionController,
-          method: "clearCache",
-        },
-      ]);
-
+    it("1: should extensionController.clearCache method be invoked", () => {
+      const [clearCacheStub] = setups.clearCache1();
       extension.clearCache(extensionController);
 
       assert.equal(clearCacheStub.calledOnce, true);
