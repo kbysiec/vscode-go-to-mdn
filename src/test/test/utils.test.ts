@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { assert } from "chai";
 import Utils from "../../utils";
 import { appConfig } from "../../appConfig";
-import * as mock from "../mocks/utils.mock";
+import * as mock from "../mock/utils.mock";
 import { stubMultiple, restoreStubbedMultiple } from "../util/stubUtils";
 
 describe("Utils", () => {

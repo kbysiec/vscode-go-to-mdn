@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import Config from "../../config";
-import QuickPickItem from "../../interfaces/QuickPickItem";
-import Item from "../../interfaces/Item";
-import ItemType from "../../enums/ItemType";
-import * as mock from "../mocks/dataConverter.mock";
+import QuickPickItem from "../../interface/QuickPickItem";
+import Item from "../../interface/Item";
+import ItemType from "../../enum/ItemType";
+import * as mock from "../mock/dataConverter.mock";
 import { getConfigStub, getUtilsStub } from "../util/mockFactory";
 import DataConverter from "../../dataConverter";
 import Utils from "../../utils";

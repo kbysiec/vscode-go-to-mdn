@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import * as sinon from "sinon";
 import QuickPick from "../../quickPick";
-import * as mock from "../mocks/quickPick.mock";
+import * as mock from "../mock/quickPick.mock";
 import Cache from "../../cache";
 import { getCacheStub, getUtilsStub } from "../util/mockFactory";
 import { appConfig } from "../../appConfig";

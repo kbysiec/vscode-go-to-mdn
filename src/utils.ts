@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import QuickPickItem from "./interfaces/quickPickItem";
-import ItemType from "./enums/itemType";
+import QuickPickItem from "./interface/quickPickItem";
+import ItemType from "./enum/itemType";
 import { appConfig } from "./appConfig";
 
 class Utils {

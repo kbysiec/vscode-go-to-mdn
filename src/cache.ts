@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import Item from "./interfaces/item";
-import QuickPickItem from "./interfaces/quickPickItem";
+import Item from "./interface/item";
+import QuickPickItem from "./interface/quickPickItem";
 import { appConfig } from "./appConfig";
 
 class Cache {

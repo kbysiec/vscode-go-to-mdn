@@ -1,6 +1,6 @@
-import Item from "../../interfaces/item";
-import ItemType from "../../enums/itemType";
-import QuickPickItem from "../../interfaces/quickPickItem";
+import Item from "../../interface/item";
+import ItemType from "../../enum/itemType";
+import QuickPickItem from "../../interface/quickPickItem";
 
 export const item: Item = {
   name: "sub-label 3",

@@ -1,6 +1,6 @@
 import { QuickPickItem as QuickPickItemVscode } from "vscode";
 import Item from "./item";
-import ItemType from "src/enums/itemType";
+import ItemType from "src/enum/itemType";
 
 interface QuickPickItem extends QuickPickItemVscode {
   url: string;

@@ -1,4 +1,4 @@
-import ItemType from "../enums/itemType";
+import ItemType from "../enum/itemType";
 
 interface Item {
   name: string;

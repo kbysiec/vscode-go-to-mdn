@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import ConfigKey from "./enums/configKey";
+import ConfigKey from "./enum/configKey";
 
 class Config {
   private default = {

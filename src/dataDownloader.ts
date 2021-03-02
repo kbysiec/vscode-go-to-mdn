@@ -1,6 +1,6 @@
 import fetch, { Response } from "node-fetch";
-import Item from "./interfaces/item";
-import ItemType from "./enums/itemType";
+import Item from "./interface/item";
+import ItemType from "./enum/itemType";
 import Parser from "./parser";
 import { appConfig } from "./appConfig";
 import Config from "./config";

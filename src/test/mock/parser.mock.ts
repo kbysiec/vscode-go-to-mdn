@@ -1,5 +1,5 @@
-import ItemType from "../../enums/itemType";
-import Item from "../../interfaces/item";
+import ItemType from "../../enum/itemType";
+import Item from "../../interface/item";
 
 export const flatElementsInput: any = {
   items: [

@@ -4,9 +4,9 @@ import DataConverter from "./dataConverter";
 import Utils from "./utils";
 import Config from "./config";
 import Cache from "./cache";
-import QuickPickItem from "./interfaces/quickPickItem";
+import QuickPickItem from "./interface/quickPickItem";
 import { appConfig } from "./appConfig";
-import Item from "./interfaces/item";
+import Item from "./interface/item";
 
 class DataService {
   private dataDownloader: DataDownloader;

@@ -3,7 +3,7 @@ import * as sinon from "sinon";
 import { assert } from "chai";
 import Cache from "../../cache";
 import { appConfig } from "../../appConfig";
-import * as mock from "../mocks/cache.mock";
+import * as mock from "../mock/cache.mock";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubUtils";
 

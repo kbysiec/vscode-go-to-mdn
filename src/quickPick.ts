@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 const open = require("open");
 const debounce = require("debounce");
-import QuickPickItem from "./interfaces/QuickPickItem";
+import QuickPickItem from "./interface/QuickPickItem";
 import DataService from "./dataService";
 import Cache from "./cache";
 import Utils from "./utils";

@@ -4,7 +4,7 @@ import * as extension from "../../extension";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubUtils";
 import ExtensionController from "../../ExtensionController";
-import { getTestSetups } from "../testSetups/extension.testSetup";
+import { getTestSetups } from "../testSetup/extension.testSetup";
 
 describe("extension", () => {
   let context: vscode.ExtensionContext = getExtensionContext();

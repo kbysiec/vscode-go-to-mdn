@@ -1,6 +1,6 @@
-import ItemType from "../../enums/itemType";
-import QuickPickItem from "../../interfaces/quickPickItem";
-import Item from "../../interfaces/item";
+import ItemType from "../../enum/itemType";
+import QuickPickItem from "../../interface/quickPickItem";
+import Item from "../../interface/item";
 
 export const qpItemDirectory: QuickPickItem = {
   label: "api test-label sub-label",
@@ -62,7 +62,7 @@ export const items: Item[] = [
   {
     name: "sub-label",
     url: "#",
-    type: ItemType.File,
+    type: ItemType.Directory,
     breadcrumbs: ["api", "test-label", "sub-label"],
   },
   {

@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import DataService from "../../dataService";
-import QuickPickItem from "../../interfaces/quickPickItem";
-import * as mock from "../mocks/dataService.mock";
+import QuickPickItem from "../../interface/quickPickItem";
+import * as mock from "../mock/dataService.mock";
 import Cache from "../../cache";
 import Utils from "../../utils";
 import Config from "../../config";
