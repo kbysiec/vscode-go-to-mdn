@@ -63,7 +63,7 @@ class QuickPick {
     this.showLoading(false);
   }
 
-  private submit(selected: QuickPickItem | undefined): void {
+  private async submit(selected: QuickPickItem | undefined): Promise<void> {
     const value = this.normalizeSubmittedValue(selected);
 
     try {
@@ -71,9 +71,9 @@ class QuickPick {
         if (!this.dataService.isHigherLevelDataEmpty()) {
           return;
         }
-        this.processIfValueIsStringType(value as string);
+        await this.processIfValueIsStringType(value as string);
       } else {
-        this.processIfValueIsQuickPickItemType(value as QuickPickItem);
+        await this.processIfValueIsQuickPickItemType(value as QuickPickItem);
       }
     } catch (error) {
       this.utils.printErrorMessage(error);
@@ -151,9 +151,9 @@ class QuickPick {
     return this.quickPick.selectedItems[0];
   }
 
-  private onDidAccept = () => {
+  private onDidAccept = async () => {
     const selected = this.getSelectedItem();
-    this.submit(selected);
+    await this.submit(selected);
   };
 
   private onDidHide = () => {
