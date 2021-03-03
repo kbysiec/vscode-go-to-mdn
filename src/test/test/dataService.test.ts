@@ -1,297 +1,94 @@
 import { assert } from "chai";
 import DataService from "../../dataService";
-import QuickPickItem from "../../interface/quickPickItem";
 import * as mock from "../mock/dataService.mock";
 import Cache from "../../cache";
 import Utils from "../../utils";
 import Config from "../../config";
 import { getUtilsStub, getConfigStub, getCacheStub } from "../util/mockFactory";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubUtils";
+import { getTestSetups } from "../testSetup/dataService.testSetup";
 
 describe("DataService", () => {
-  let cacheStub: Cache;
-  let utilsStub: Utils;
-  let configStub: Config;
-  let dataService: DataService;
-  let dataServiceAny: any;
+  let cacheStub: Cache = getCacheStub();
+  let utilsStub: Utils = getUtilsStub();
+  let configStub: Config = getConfigStub();
+  let dataService: DataService = new DataService(
+    cacheStub,
+    utilsStub,
+    configStub
+  );
+  let setups = getTestSetups(dataService);
 
   beforeEach(() => {
     cacheStub = getCacheStub();
     utilsStub = getUtilsStub();
     configStub = getConfigStub();
     dataService = new DataService(cacheStub, utilsStub, configStub);
-    dataServiceAny = dataService as any;
+    setups = getTestSetups(dataService);
   });
 
   describe("getFlatQuickPickData", () => {
-    it("should return flat quick pick data from cache", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
-        { object: dataServiceAny.cache, method: "getFlatData" },
-      ]);
-
-      stubMultiple([
-        {
-          object: dataServiceAny.config,
-          method: "shouldDisplayFlatList",
-          returns: true,
-        },
-        {
-          object: dataServiceAny.cache,
-          method: "getFlatData",
-          returns: mock.items,
-        },
-      ]);
-
-      const actual = await dataServiceAny.getFlatQuickPickData();
-
-      assert.deepEqual(actual, mock.qpItems);
+    it("1: should return flat quick pick data from cache", async () => {
+      setups.getFlatQuickPickData1();
+      assert.deepEqual(await dataService.getFlatQuickPickData(), mock.qpItems);
     });
 
-    it("should return flat quick pick data if in cache is empty array", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
-        { object: dataServiceAny.cache, method: "getFlatData" },
-        { object: dataServiceAny.cache, method: "updateFlatData" },
-        {
-          object: dataServiceAny.config,
-          method: "getGithubPersonalAccessToken",
-        },
-      ]);
-
-      stubMultiple([
-        {
-          object: dataServiceAny.cache,
-          method: "getFlatData",
-          returns: [],
-        },
-        {
-          object: dataServiceAny.dataDownloader,
-          method: "downloadFlatData",
-          returns: Promise.resolve(mock.items),
-        },
-        {
-          object: dataServiceAny.dataConverter,
-          method: "prepareQpData",
-          returns: mock.qpItems,
-        },
-        {
-          object: dataServiceAny.cache,
-          method: "updateFlatData",
-        },
-        {
-          object: dataServiceAny.config,
-          method: "getGithubPersonalAccessToken",
-          returns: "sample token",
-        },
-        {
-          object: dataServiceAny.config,
-          method: "shouldDisplayFlatList",
-          returns: true,
-        },
-      ]);
-
-      assert.deepEqual(
-        await dataServiceAny.getFlatQuickPickData(),
-        mock.qpItems
-      );
+    it("2: should return flat quick pick data if in cache is empty array", async () => {
+      setups.getFlatQuickPickData2();
+      assert.deepEqual(await dataService.getFlatQuickPickData(), mock.qpItems);
     });
 
-    it("should do nothing in fetching flat quick pick data if shouldDisplayFlatList returns false", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
-        { object: dataServiceAny.cache, method: "getFlatData" },
-        { object: dataServiceAny.cache, method: "updateFlatData" },
-        {
-          object: dataServiceAny.config,
-          method: "getGithubPersonalAccessToken",
-        },
-      ]);
+    it("3: should do nothing in fetching flat quick pick data if shouldDisplayFlatList returns false", async () => {
+      const [
+        cacheFlatFilesWithProgressTaskStub,
+      ] = setups.getFlatQuickPickData3();
 
-      const [cacheFlatFilesWithProgressTaskStub] = stubMultiple([
-        {
-          object: dataServiceAny,
-          method: "cacheFlatFilesWithProgressTask",
-        },
-        {
-          object: dataServiceAny.cache,
-          method: "getFlatData",
-          returns: undefined,
-        },
-        {
-          object: dataServiceAny.dataDownloader,
-          method: "downloadFlatData",
-          returns: Promise.resolve(mock.items),
-        },
-        {
-          object: dataServiceAny.cache,
-          method: "updateFlatData",
-        },
-        {
-          object: dataServiceAny.config,
-          method: "getGithubPersonalAccessToken",
-          returns: "sample token",
-        },
-        {
-          object: dataServiceAny.config,
-          method: "shouldDisplayFlatList",
-          returns: false,
-        },
-      ]);
-
-      await dataServiceAny.getFlatQuickPickData();
-
+      await dataService.getFlatQuickPickData();
       assert.equal(cacheFlatFilesWithProgressTaskStub.calledOnce, false);
     });
   });
 
   describe("getQuickPickRootData", () => {
-    it("should return tree root data", async () => {
-      stubMultiple([
-        {
-          object: dataServiceAny,
-          method: "getTreeData",
-          returns: mock.qpItems,
-        },
-      ]);
-
-      assert.deepEqual(
-        await dataServiceAny.getQuickPickRootData(),
-        mock.qpItems
-      );
+    it("1: should return tree root data", async () => {
+      setups.getQuickPickRootData1();
+      assert.deepEqual(await dataService.getQuickPickRootData(), mock.qpItems);
     });
   });
 
   describe("getQuickPickData", () => {
-    it("should return higher level data", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "getNameFromQuickPickItem" },
-      ]);
-
-      stubMultiple([
-        {
-          object: dataServiceAny.utils,
-          method: "getNameFromQuickPickItem",
-          returns: "..",
-        },
-        {
-          object: dataServiceAny,
-          method: "higherLevelData",
-          returns: [mock.qpItems],
-          isNotMethod: true,
-        },
-      ]);
-
-      const backwardNavigationQpItem: QuickPickItem =
-        mock.backwardNavigationQpItem;
-
+    it("1: should return higher level data", async () => {
+      setups.getQuickPickData1();
       assert.deepEqual(
-        await dataServiceAny.getQuickPickData(backwardNavigationQpItem),
+        await dataService.getQuickPickData(mock.backwardNavigationQpItem),
         mock.qpItems
       );
     });
 
-    it("should return lower level data", async () => {
-      stubMultiple([
-        {
-          object: dataServiceAny,
-          method: "getLowerLevelQpData",
-          returns: mock.qpItems,
-        },
-      ]);
-
-      assert.deepEqual(
-        await dataServiceAny.getQuickPickData(mock.qpItem),
-        mock.qpItems
-      );
-    });
-
-    it("should return lower level data without empty urls", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "removeDataWithEmptyUrl" },
-      ]);
-
-      stubMultiple([
-        {
-          object: dataServiceAny.utils,
-          method: "removeDataWithEmptyUrl",
-          returns: mock.qpItems,
-        },
-        {
-          object: dataServiceAny,
-          method: "getTreeData",
-          returns: mock.qpItems,
-        },
-      ]);
-
-      assert.deepEqual(
-        await dataServiceAny.getQuickPickData(mock.qpItem),
-        mock.qpItems
-      );
-    });
-
-    it("should return quick pick tree data if data is not in cache and parent item is provided", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "removeDataWithEmptyUrl" },
-        { object: dataServiceAny.cache, method: "updateTreeDataByItem" },
-        { object: dataServiceAny.cache, method: "getTreeDataByItem" },
-      ]);
-      stubMultiple([
-        {
-          object: dataServiceAny.cache,
-          method: "getTreeDataByItem",
-          returns: [],
-        },
-        {
-          object: dataServiceAny.dataDownloader,
-          method: "downloadTreeData",
-          returns: Promise.resolve(mock.items),
-        },
-        {
-          object: dataServiceAny.cache,
-          method: "updateTreeDataByItem",
-        },
-        {
-          object: dataServiceAny.dataConverter,
-          method: "prepareQpData",
-          returns: mock.qpItems,
-        },
-        {
-          object: dataServiceAny.utils,
-          method: "removeDataWithEmptyUrl",
-          returns: mock.qpItems,
-        },
-      ]);
-
+    it("2: should return lower level data", async () => {
+      setups.getQuickPickData2();
       assert.deepEqual(
         await dataService.getQuickPickData(mock.qpItem),
         mock.qpItems
       );
     });
 
-    it("should return quick pick tree data if data is in cache", async () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "removeDataWithEmptyUrl" },
-        { object: dataServiceAny.cache, method: "getTreeDataByItem" },
-      ]);
-      stubMultiple([
-        {
-          object: dataServiceAny.cache,
-          method: "getTreeDataByItem",
-          returns: mock.items,
-        },
-        {
-          object: dataServiceAny.dataConverter,
-          method: "prepareQpData",
-          returns: mock.qpItems,
-        },
-        {
-          object: dataServiceAny.utils,
-          method: "removeDataWithEmptyUrl",
-          returns: mock.qpItems,
-        },
-      ]);
+    it("3: should return lower level data without empty urls", async () => {
+      setups.getQuickPickData3();
+      assert.deepEqual(
+        await dataService.getQuickPickData(mock.qpItem),
+        mock.qpItems
+      );
+    });
 
+    it("4: should return quick pick tree data if data is not in cache and parent item is provided", async () => {
+      setups.getQuickPickData4();
+      assert.deepEqual(
+        await dataService.getQuickPickData(mock.qpItem),
+        mock.qpItems
+      );
+    });
+
+    it("5: should return quick pick tree data if data is in cache", async () => {
+      setups.getQuickPickData5();
       assert.deepEqual(
         await dataService.getQuickPickData(mock.qpItem),
         mock.qpItems
@@ -300,34 +97,18 @@ describe("DataService", () => {
   });
 
   describe("rememberHigherLevelQpData", () => {
-    it("should remember higher level data", () => {
-      stubMultiple([
-        {
-          object: dataServiceAny,
-          method: "higherLevelData",
-          returns: [],
-          isNotMethod: true,
-        },
-      ]);
-
+    it("1: should remember higher level data", () => {
+      setups.rememberHigherLevelQpData1();
       dataService.rememberHigherLevelQpData(mock.qpItems);
 
-      assert.deepEqual(dataServiceAny.higherLevelData, [mock.qpItems]);
+      assert.deepEqual((dataService as any).higherLevelData, [mock.qpItems]);
     });
   });
 
   describe("isHigherLevelDataEmpty", () => {
-    it("should check if higherLevelData array is empty", () => {
-      stubMultiple([
-        {
-          object: dataServiceAny,
-          method: "higherLevelData",
-          returns: [mock.qpItems],
-          isNotMethod: true,
-        },
-      ]);
-
-      assert.equal(dataServiceAny.isHigherLevelDataEmpty(), false);
+    it("1: should check if higherLevelData array is empty", () => {
+      setups.isHigherLevelDataEmpty1();
+      assert.equal(dataService.isHigherLevelDataEmpty(), false);
     });
   });
 });
