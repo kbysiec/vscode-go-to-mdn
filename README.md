@@ -58,10 +58,6 @@ requests number.
 Flag to determine if the results should be displayed as flat list or as tree with navigation.
 Default value is `true`.
 
-## Source Code
-
-The source code is available on GitHub [here](https://github.com/AgilePlayers/vscode-go-to-mdn).
-
 ## Release Notes
 
 Please check changelog for release details.
