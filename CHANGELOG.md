@@ -4,6 +4,9 @@ All notable changes to the "vscode-go-to-mdn" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.1.5] - 2021-03-20
+- Changed backend url for downloading flat view data
+
 ## [1.1.1] - 2019-11-28
 - Fixed bug with filtering results in tree view
 
