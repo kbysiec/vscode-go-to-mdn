@@ -1,6 +1,6 @@
 export const appConfig = {
   regex:
-    /https:\/\/github\.com\/mdn\/browser-compat-data\/tree\/master\/[a-zA-Z]+/gm,
+    /https:\/\/github\.com\/mdn\/browser-compat-data\/tree\/master\/(?!.*\bbrowsers\b)[a-zA-Z]+/gm,
   searchUrl: "https://developer.mozilla.org/en-US/search",
   rootUrl:
     "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=1446832d245da286fb0d624d595b82ef1a7ce3c9",
