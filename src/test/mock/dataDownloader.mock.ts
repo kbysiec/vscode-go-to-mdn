@@ -17,13 +17,11 @@ export const downloadTreeDataElementsContent: string = `{
 
 export const downloadTreeDataElementsItem: Item = {
   name: "Accept Alert",
-  url:
-    "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=master",
+  url: "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=main",
   type: ItemType.Directory,
   parent: {
     name: "commands",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands?ref=main",
     type: ItemType.Directory,
     parent: undefined,
     rootParent: undefined,
@@ -36,20 +34,19 @@ export const downloadTreeDataElementsItem: Item = {
 export const downloadTreeDataDirectoriesContent: string = `[
   {
     "name": "AbortController.json",
-    "url": "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
+    "url": "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=main",
     "type": "file"
   },
   {
     "name": "AbortPaymentEvent.json",
-    "url": "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
+    "url": "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=main",
     "type": "file"
   }
 ]`;
 
 export const downloadTreeDataDirectoriesItem: Item = {
   name: "api",
-  url:
-    "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=master",
+  url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=main",
   type: ItemType.Directory,
   breadcrumbs: ["api"],
 };
@@ -57,8 +54,7 @@ export const downloadTreeDataDirectoriesItem: Item = {
 export const downloadTreeDataDirectoriesOutputItems: Item[] = [
   {
     name: "label",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=main",
     parent: undefined,
     rootParent: undefined,
     type: ItemType.Directory,
@@ -66,8 +62,7 @@ export const downloadTreeDataDirectoriesOutputItems: Item[] = [
   },
   {
     name: "category",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=main",
     parent: undefined,
     rootParent: undefined,
     type: ItemType.Directory,

@@ -26,7 +26,7 @@ export const getTestSetups = (context: vscode.ExtensionContext) => {
           object: appConfig,
           method: "rootUrl",
           returns:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=master",
+            "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=main",
           isNotMethod: true,
         },
       ]);

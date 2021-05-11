@@ -35,7 +35,7 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
     },
     downloadTreeData2: () => {
       const fetchStub = fetchMock.get(
-        "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=master",
+        "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=main",
         new Response(mock.downloadTreeDataElementsContent, { status: 200 })
       );
       fetch.default = fetchStub;
@@ -43,8 +43,7 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
-          url:
-            "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
+          url: "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
           type: ItemType.File,
           parent: mock.downloadTreeDataElementsItem,
           rootParent: undefined,
@@ -69,7 +68,7 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
     },
     downloadTreeData3: () => {
       const fetchStub = fetchMock.get(
-        "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=master",
+        "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=main",
         new Response(mock.downloadTreeDataDirectoriesContent, { status: 200 })
       );
       fetch.default = fetchStub;
@@ -77,8 +76,7 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
       const expected: Item[] = [
         {
           name: "Abort Controller",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
+          url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=main",
           type: ItemType.Directory,
           parent: mock.downloadTreeDataDirectoriesItem,
           rootParent: mock.downloadTreeDataDirectoriesItem,
@@ -86,8 +84,7 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
         },
         {
           name: "Abort Payment Event",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
+          url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=main",
           type: ItemType.Directory,
           parent: mock.downloadTreeDataDirectoriesItem,
           rootParent: mock.downloadTreeDataDirectoriesItem,
@@ -171,8 +168,7 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
       const expected: Item[] = [
         {
           name: "compact",
-          url:
-            "https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact",
+          url: "https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact",
           parent: undefined,
           rootParent: undefined,
           type: ItemType.File,

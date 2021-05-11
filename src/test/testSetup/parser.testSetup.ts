@@ -12,8 +12,7 @@ export const getTestSetups = () => {
           url: "#",
           parent: {
             name: "elements",
-            url:
-              "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements?ref=master",
+            url: "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements?ref=main",
             type: ItemType.Directory,
             parent: undefined,
             rootParent: undefined,
@@ -39,8 +38,7 @@ export const getTestSetups = () => {
       const expected: Item[] = [
         {
           name: "animate Color - reference",
-          url:
-            "https://developer.mozilla.org/docs/Web/SVG/Element/animateColor",
+          url: "https://developer.mozilla.org/docs/Web/SVG/Element/animateColor",
           type: ItemType.File,
           parent: mock.parseElementsItem,
           rootParent: undefined,
@@ -62,8 +60,7 @@ export const getTestSetups = () => {
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
-          url:
-            "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
+          url: "https://developer.mozilla.org/docs/Web/WebDriver/Commands/AcceptAlert",
           type: ItemType.File,
           parent: mock.parseElementsWithNestingItem,
           rootParent: undefined,
@@ -128,8 +125,7 @@ export const getTestSetups = () => {
       const expected: Item[] = [
         {
           name: "Abort Controller",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
+          url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=main",
           type: ItemType.Directory,
           parent: mock.parseDirectoriesItem,
           rootParent: mock.parseDirectoriesItem,
@@ -137,8 +133,7 @@ export const getTestSetups = () => {
         },
         {
           name: "Abort Payment Event",
-          url:
-            "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
+          url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=main",
           type: ItemType.Directory,
           parent: mock.parseDirectoriesItem,
           rootParent: mock.parseDirectoriesItem,

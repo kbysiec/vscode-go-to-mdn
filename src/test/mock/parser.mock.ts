@@ -9,8 +9,7 @@ export const flatElementsInput: any = {
       breadcrumbs: ["api", "test-label", "sub-label"],
       parent: {
         name: "elements",
-        url:
-          "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements?ref=master",
+        url: "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements?ref=main",
         type: ItemType.Directory,
         parent: undefined,
         rootParent: undefined,
@@ -37,13 +36,11 @@ export const rootDirectoriesNoLink: string = `*Please note that we have not (yet
 
 export const parseElementsItem: Item = {
   name: "animate Color",
-  url:
-    "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements/animateColor.json?ref=master",
+  url: "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements/animateColor.json?ref=main",
   type: ItemType.Directory,
   parent: {
     name: "elements",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements?ref=main",
     type: ItemType.Directory,
     parent: undefined,
     rootParent: undefined,
@@ -55,8 +52,7 @@ export const parseElementsItem: Item = {
 
 export const parseElementsItemNoParent: Item = {
   name: "animate Color",
-  url:
-    "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements/animateColor.json?ref=master",
+  url: "https://api.github.com/repos/mdn/browser-compat-data/contents/svg/elements/animateColor.json?ref=main",
   type: ItemType.Directory,
   parent: undefined,
   rootParent: undefined,
@@ -119,13 +115,11 @@ export const parseElementsWithNestingContent = `
 
 export const parseElementsWithNestingItem = {
   name: "Accept Alert",
-  url:
-    "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=master",
+  url: "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=main",
   type: ItemType.Directory,
   parent: {
     name: "commands",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands?ref=main",
     type: ItemType.Directory,
     parent: undefined,
     rootParent: undefined,
@@ -170,13 +164,11 @@ export const parseDirectoriesItem: Item = {
 
 export const parseDirectoriesContent: Array<any> = [
   {
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortController.json?ref=main",
     type: ItemType.Directory,
   },
   {
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/api/AbortPaymentEvent.json?ref=main",
     type: ItemType.Directory,
   },
 ];
@@ -184,8 +176,7 @@ export const parseDirectoriesContent: Array<any> = [
 export const directoriesOutputItems: Item[] = [
   {
     name: "label",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/label?ref=main",
     parent: undefined,
     rootParent: undefined,
     type: ItemType.Directory,
@@ -193,8 +184,7 @@ export const directoriesOutputItems: Item[] = [
   },
   {
     name: "category",
-    url:
-      "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=master",
+    url: "https://api.github.com/repos/mdn/browser-compat-data/contents/category?ref=main",
     parent: undefined,
     rootParent: undefined,
     type: ItemType.Directory,
