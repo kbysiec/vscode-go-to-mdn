@@ -85,7 +85,7 @@
   },
   "dependencies": {
     "debounce": "^1.2.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "open": "^7.0.4"
   },
   "license": "MIT",
