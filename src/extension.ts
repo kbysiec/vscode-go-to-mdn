@@ -27,7 +27,3 @@ export async function activate(context: vscode.ExtensionContext) {
     )
   );
 }
-
-export function deactivate() {
-  console.log('Extension "Go to MDN" has been deactivated.');
-}

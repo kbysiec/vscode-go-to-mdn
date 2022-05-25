@@ -1,10 +1,9 @@
-import * as vscode from "vscode";
 import { assert } from "chai";
+import * as vscode from "vscode";
 import * as extension from "../../extension";
-import { getExtensionContext } from "../util/mockFactory";
-import { stubMultiple } from "../util/stubUtils";
 import ExtensionController from "../../ExtensionController";
 import { getTestSetups } from "../testSetup/extension.testSetup";
+import { getExtensionContext } from "../util/mockFactory";
 
 describe("extension", () => {
   let context: vscode.ExtensionContext = getExtensionContext();
@@ -25,16 +24,6 @@ describe("extension", () => {
       await extension.activate(context);
 
       assert.equal(registerCommandStub.calledTwice, true);
-    });
-  });
-
-  describe("deactivate", () => {
-    it("1: should function exist", () => {
-      const [logStub] = setups.deactivate1();
-      extension.deactivate();
-
-      assert.equal(logStub.calledOnce, true);
-      assert.equal(typeof extension.deactivate, "function");
     });
   });
 
