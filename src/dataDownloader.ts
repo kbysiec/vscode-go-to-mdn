@@ -1,9 +1,9 @@
 import fetch, { Response } from "node-fetch";
-import Item from "./interface/item";
-import ItemType from "./enum/itemType";
-import Parser from "./parser";
 import { appConfig } from "./appConfig";
 import Config from "./config";
+import ItemType from "./enum/itemType";
+import Item from "./interface/item";
+import Parser from "./parser";
 
 class DataDownloader {
   private parser: Parser;

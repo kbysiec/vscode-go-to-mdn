@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
 import { assert } from "chai";
 import * as sinon from "sinon";
+import * as vscode from "vscode";
 import Config from "../../config";
 import { getTestSetups } from "../testSetup/config.testSetup";
 

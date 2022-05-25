@@ -1,8 +1,8 @@
-import * as vscode from "vscode";
 import * as sinon from "sinon";
+import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
-import { stubMultiple } from "../util/stubHelpers";
 import * as mock from "../mock/cache.mock";
+import { stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = (context: vscode.ExtensionContext) => {
   let updateStub: sinon.SinonStub;

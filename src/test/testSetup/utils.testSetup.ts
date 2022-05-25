@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
-import Utils from "../../utils";
-import { stubMultiple, restoreStubbedMultiple } from "../util/stubHelpers";
+import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = () => {
   const getSearchUrl = () => {

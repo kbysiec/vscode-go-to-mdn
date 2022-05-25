@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
-import DataDownloader from "./dataDownloader";
-import DataConverter from "./dataConverter";
-import Utils from "./utils";
-import Config from "./config";
-import Cache from "./cache";
-import QuickPickItem from "./interface/quickPickItem";
 import { appConfig } from "./appConfig";
+import Cache from "./cache";
+import Config from "./config";
+import DataConverter from "./dataConverter";
+import DataDownloader from "./dataDownloader";
 import Item from "./interface/item";
+import QuickPickItem from "./interface/quickPickItem";
+import Utils from "./utils";
 
 class DataService {
   private dataDownloader: DataDownloader;
@@ -14,9 +14,10 @@ class DataService {
 
   private higherLevelData: QuickPickItem[][];
 
-  private onWillGoLowerTreeLevelEventEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter();
-  readonly onWillGoLowerTreeLevel: vscode.Event<void> = this
-    .onWillGoLowerTreeLevelEventEmitter.event;
+  private onWillGoLowerTreeLevelEventEmitter: vscode.EventEmitter<void> =
+    new vscode.EventEmitter();
+  readonly onWillGoLowerTreeLevel: vscode.Event<void> =
+    this.onWillGoLowerTreeLevelEventEmitter.event;
 
   constructor(
     private cache: Cache,

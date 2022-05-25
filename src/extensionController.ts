@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import QuickPick from "./quickPick";
 import Cache from "./cache";
+import QuickPick from "./quickPick";
 import Utils from "./utils";
 
 class ExtensionController {

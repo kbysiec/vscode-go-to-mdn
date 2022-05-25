@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
+import { appConfig } from "./appConfig";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
-import { appConfig } from "./appConfig";
 
 class Cache {
   constructor(private extensionContext: vscode.ExtensionContext) {}

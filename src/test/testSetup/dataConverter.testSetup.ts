@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import DataConverter from "../../dataConverter";
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";

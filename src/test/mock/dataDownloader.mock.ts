@@ -1,5 +1,5 @@
-import Item from "../../interface/item";
 import ItemType from "../../enum/itemType";
+import Item from "../../interface/item";
 
 export const downloadTreeDataRootDirectoriesContent: string = `{
   "name": "README.md",

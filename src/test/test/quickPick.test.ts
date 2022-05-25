@@ -1,13 +1,10 @@
 import { assert } from "chai";
-import * as sinon from "sinon";
-import QuickPick from "../../quickPick";
-import * as mock from "../mock/quickPick.mock";
 import Cache from "../../cache";
-import { getCacheStub, getUtilsStub } from "../util/mockFactory";
-import { appConfig } from "../../appConfig";
+import QuickPick from "../../quickPick";
 import Utils from "../../utils";
-import { stubMultiple, restoreStubbedMultiple } from "../util/stubUtils";
+import * as mock from "../mock/quickPick.mock";
 import { getTestSetups } from "../testSetup/quickPick.testSetup";
+import { getCacheStub, getUtilsStub } from "../util/mockFactory";
 
 describe("Quick Pick", () => {
   let cacheStub: Cache = getCacheStub();

@@ -1,9 +1,6 @@
-import * as vscode from "vscode";
 import { assert } from "chai";
 import Utils from "../../utils";
-import { appConfig } from "../../appConfig";
 import * as mock from "../mock/utils.mock";
-import { stubMultiple, restoreStubbedMultiple } from "../util/stubUtils";
 import { getTestSetups } from "../testSetup/utils.testSetup";
 
 describe("Utils", () => {

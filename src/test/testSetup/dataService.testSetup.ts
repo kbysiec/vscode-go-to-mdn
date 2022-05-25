@@ -1,6 +1,6 @@
 import DataService from "../../dataService";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 import * as mock from "../mock/dataService.mock";
+import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = (dataService: DataService) => {
   const dataServiceAny = dataService as any;

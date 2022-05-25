@@ -1,9 +1,8 @@
-import * as vscode from "vscode";
-import Item from "./interface/item";
-import QuickPickItem from "./interface/quickPickItem";
-import ItemType from "./enum/itemType";
 import { appConfig } from "./appConfig";
 import Config from "./config";
+import ItemType from "./enum/itemType";
+import Item from "./interface/item";
+import QuickPickItem from "./interface/quickPickItem";
 import Utils from "./utils";
 
 class DataConverter {

@@ -18,11 +18,11 @@ Once confirming the interested item, the default browser will be opened with dir
 
 You have two ways to browse the results:
 
-* flat navigation:
+- flat navigation:
 
 ![Preview of the browse feature](img/browse_flat.gif)
 
-* tree navigation:
+- tree navigation:
 
 ![Preview of the browse feature](img/browse.gif)
 
@@ -33,17 +33,17 @@ website will be opened with search results for your query.
 
 ## Commands
 
-* `goToMDN.browse`
+- `goToMDN.browse`
 
   Search any text or browse available data downloaded from MDN API.
 
-* `goToMDN.clearCache`
+- `goToMDN.clearCache`
 
   If you know that the cached data is outdated, clear extension cache to download it one more time.
 
 ## Extension Settings
 
-* `goToMDN.githubPersonalAccessToken`
+- `goToMDN.githubPersonalAccessToken`
 
 Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
 
@@ -53,7 +53,7 @@ Most of users should not need more than 60, but in case anyone would like to bro
 provide a personal access token (in settings) generated in his/her github account to increase the available
 requests number.
 
-* `goToMDN.shouldDisplayFlatList`
+- `goToMDN.shouldDisplayFlatList`
 
 Flag to determine if the results should be displayed as flat list or as tree with navigation.
 Default value is `true`.

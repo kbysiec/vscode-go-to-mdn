@@ -1,11 +1,11 @@
 import { assert } from "chai";
-import DataService from "../../dataService";
-import * as mock from "../mock/dataService.mock";
 import Cache from "../../cache";
-import Utils from "../../utils";
 import Config from "../../config";
-import { getUtilsStub, getConfigStub, getCacheStub } from "../util/mockFactory";
+import DataService from "../../dataService";
+import Utils from "../../utils";
+import * as mock from "../mock/dataService.mock";
 import { getTestSetups } from "../testSetup/dataService.testSetup";
+import { getCacheStub, getConfigStub, getUtilsStub } from "../util/mockFactory";
 
 describe("DataService", () => {
   let cacheStub: Cache = getCacheStub();
@@ -38,9 +38,8 @@ describe("DataService", () => {
     });
 
     it("3: should do nothing in fetching flat quick pick data if shouldDisplayFlatList returns false", async () => {
-      const [
-        cacheFlatFilesWithProgressTaskStub,
-      ] = setups.getFlatQuickPickData3();
+      const [cacheFlatFilesWithProgressTaskStub] =
+        setups.getFlatQuickPickData3();
 
       await dataService.getFlatQuickPickData();
       assert.equal(cacheFlatFilesWithProgressTaskStub.calledOnce, false);

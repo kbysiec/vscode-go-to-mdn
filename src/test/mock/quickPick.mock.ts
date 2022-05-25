@@ -1,5 +1,5 @@
-import QuickPickItem from "../../interface/quickPickItem";
 import ItemType from "../../enum/itemType";
+import QuickPickItem from "../../interface/quickPickItem";
 
 export const qpItem: QuickPickItem = {
   label: "api test-label sub-label",

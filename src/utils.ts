@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import QuickPickItem from "./interface/quickPickItem";
-import ItemType from "./enum/itemType";
 import { appConfig } from "./appConfig";
+import ItemType from "./enum/itemType";
+import QuickPickItem from "./interface/quickPickItem";
 
 class Utils {
   isValueStringType(value: QuickPickItem | string): boolean {

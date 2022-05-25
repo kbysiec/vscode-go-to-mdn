@@ -1,6 +1,5 @@
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";
-import Parser from "../../parser";
 import * as mock from "../mock/parser.mock";
 
 export const getTestSetups = () => {

@@ -1,9 +1,9 @@
-import * as vscode from "vscode";
 import * as sinon from "sinon";
+import * as vscode from "vscode";
+import Cache from "../../cache";
+import Config from "../../config";
 import Utils from "../../utils";
 import { createStubInstance } from "./stubbedClass";
-import Config from "../../config";
-import Cache from "../../cache";
 
 export const getExtensionContext = (): vscode.ExtensionContext => {
   return {

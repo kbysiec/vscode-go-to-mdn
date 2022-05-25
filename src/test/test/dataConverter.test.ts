@@ -1,12 +1,12 @@
 import { assert } from "chai";
 import Config from "../../config";
-import QuickPickItem from "../../interface/QuickPickItem";
-import Item from "../../interface/Item";
-import * as mock from "../mock/dataConverter.mock";
-import { getConfigStub, getUtilsStub } from "../util/mockFactory";
 import DataConverter from "../../dataConverter";
+import Item from "../../interface/Item";
+import QuickPickItem from "../../interface/QuickPickItem";
 import Utils from "../../utils";
+import * as mock from "../mock/dataConverter.mock";
 import { getTestSetups } from "../testSetup/dataConverter.testSetup";
+import { getConfigStub, getUtilsStub } from "../util/mockFactory";
 
 describe("DataConverter", () => {
   let configStub: Config = getConfigStub();

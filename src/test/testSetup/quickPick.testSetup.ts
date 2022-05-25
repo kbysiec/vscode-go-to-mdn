@@ -1,9 +1,7 @@
-import * as vscode from "vscode";
-import * as sinon from "sinon";
-import QuickPick from "../../quickPick";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
-import * as mock from "../mock/quickPick.mock";
 import { appConfig } from "../../appConfig";
+import QuickPick from "../../quickPick";
+import * as mock from "../mock/quickPick.mock";
+import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = (quickPick: QuickPick) => {
   const quickPickAny = quickPick as any;

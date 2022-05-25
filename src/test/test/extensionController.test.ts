@@ -1,8 +1,8 @@
-import * as vscode from "vscode";
 import { assert } from "chai";
+import * as vscode from "vscode";
 import ExtensionController from "../../ExtensionController";
-import { getExtensionContext } from "../util/mockFactory";
 import { getTestSetups } from "../testSetup/extensionController.testSetup";
+import { getExtensionContext } from "../util/mockFactory";
 
 describe("extensionController", () => {
   let context: vscode.ExtensionContext = getExtensionContext();

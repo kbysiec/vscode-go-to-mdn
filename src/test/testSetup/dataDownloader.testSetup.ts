@@ -1,12 +1,11 @@
-import * as vscode from "vscode";
+import { Response } from "node-fetch";
 import * as sinon from "sinon";
 import { appConfig } from "../../appConfig";
 import DataDownloader from "../../dataDownloader";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
-import * as mock from "../mock/dataDownloader.mock";
-import { Response } from "node-fetch";
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";
+import * as mock from "../mock/dataDownloader.mock";
+import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 
 const fetch = require("node-fetch");
 const fetchMock = require("fetch-mock").sandbox();

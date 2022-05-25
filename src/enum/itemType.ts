@@ -1,6 +1,6 @@
 enum ItemType {
   Directory = "dir",
-  File = "file"
+  File = "file",
 }
 
 export default ItemType;

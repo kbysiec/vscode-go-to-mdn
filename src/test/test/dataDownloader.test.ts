@@ -1,12 +1,12 @@
 import { assert, expect, use } from "chai";
 import * as sinon from "sinon";
-import DataDownloader from "../../dataDownloader";
+import Config from "src/config";
 import { appConfig } from "../../appConfig";
+import DataDownloader from "../../dataDownloader";
 import Item from "../../interface/item";
 import * as mock from "../mock/dataDownloader.mock";
-import Config from "src/config";
-import { getConfigStub } from "../util/mockFactory";
 import { getTestSetups } from "../testSetup/dataDownloader.testSetup";
+import { getConfigStub } from "../util/mockFactory";
 
 const chaiAsPromised = require("chai-as-promised");
 use(chaiAsPromised);

@@ -1,6 +1,6 @@
-import Item from "./interface/item";
-import ItemType from "./enum/itemType";
 import { appConfig } from "./appConfig";
+import ItemType from "./enum/itemType";
+import Item from "./interface/item";
 
 class Parser {
   parseFlatElements(json: any): Item[] {

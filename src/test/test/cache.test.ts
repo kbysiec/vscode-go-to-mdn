@@ -1,11 +1,11 @@
-import * as vscode from "vscode";
-import * as sinon from "sinon";
 import { assert } from "chai";
-import Cache from "../../cache";
+import * as sinon from "sinon";
+import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
+import Cache from "../../cache";
 import * as mock from "../mock/cache.mock";
-import { getExtensionContext } from "../util/mockFactory";
 import { getTestSetups } from "../testSetup/cache.testSetup";
+import { getExtensionContext } from "../util/mockFactory";
 
 describe("Cache", () => {
   let context: vscode.ExtensionContext = getExtensionContext();
