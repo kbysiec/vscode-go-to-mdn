@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
+import Cache from "./cache";
+import Config from "./config";
+import DataService from "./dataService";
+import QuickPickItem from "./interface/QuickPickItem";
+import Utils from "./utils";
 const open = require("open");
 const debounce = require("debounce");
-import QuickPickItem from "./interface/QuickPickItem";
-import DataService from "./dataService";
-import Cache from "./cache";
-import Utils from "./utils";
-import Config from "./config";
 
 class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickItem>;
@@ -76,7 +76,7 @@ class QuickPick {
         await this.processIfValueIsQuickPickItemType(value as QuickPickItem);
       }
     } catch (error) {
-      this.utils.printErrorMessage(error);
+      this.utils.printErrorMessage(error as Error);
     }
   }
 
