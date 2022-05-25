@@ -20,9 +20,7 @@ if (!tty.getWindowSize) {
   };
 }
 
-let mocha = new Mocha({
-  // ui: 'tdd',
-});
+let mocha = new Mocha({});
 
 mocha.color(true);
 

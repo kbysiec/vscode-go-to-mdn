@@ -160,7 +160,6 @@ export const getTestSetups = (quickPick: QuickPick) => {
       ]);
     },
     submit2: () => {
-      // sinon.restore();
       restoreStubbedMultiple([
         {
           object: quickPickAny.utils,
