@@ -3,7 +3,12 @@ import Cache from "./cache";
 import Config from "./config";
 import DataService from "./dataService";
 import QuickPickItem from "./interface/QuickPickItem";
-import Utils from "./utils";
+import {
+  getSearchUrl,
+  isValueFileType,
+  isValueStringType,
+  printErrorMessage,
+} from "./utils";
 const open = require("open");
 const debounce = require("debounce");
 
@@ -16,9 +21,9 @@ class QuickPick {
 
   private open: any = open;
 
-  constructor(private cache: Cache, private utils: Utils) {
+  constructor(private cache: Cache) {
     this.config = new Config();
-    this.dataService = new DataService(this.cache, this.utils, this.config);
+    this.dataService = new DataService(this.cache, this.config);
     this.dataService.onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
 
     this.quickPick = vscode.window.createQuickPick<QuickPickItem>();
@@ -67,7 +72,7 @@ class QuickPick {
     const value = this.normalizeSubmittedValue(selected);
 
     try {
-      if (this.utils.isValueStringType(value)) {
+      if (isValueStringType(value)) {
         if (!this.dataService.isHigherLevelDataEmpty()) {
           return;
         }
@@ -76,7 +81,7 @@ class QuickPick {
         await this.processIfValueIsQuickPickItemType(value as QuickPickItem);
       }
     } catch (error) {
-      this.utils.printErrorMessage(error as Error);
+      printErrorMessage(error as Error);
     }
   }
 
@@ -126,12 +131,12 @@ class QuickPick {
   }
 
   private async processIfValueIsStringType(value: string) {
-    const url = this.utils.getSearchUrl(value);
+    const url = getSearchUrl(value);
     url && (await this.openInBrowser(url));
   }
 
   private async processIfValueIsQuickPickItemType(value: QuickPickItem) {
-    if (this.utils.isValueFileType(value)) {
+    if (isValueFileType(value)) {
       let url = value.url;
       url && (await this.openInBrowser(url));
     } else {

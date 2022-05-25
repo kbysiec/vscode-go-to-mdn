@@ -1,7 +1,7 @@
 import { appConfig } from "../../appConfig";
 import QuickPick from "../../quickPick";
 import * as mock from "../mock/quickPick.mock";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
+import { stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = (quickPick: QuickPick) => {
   const quickPickAny = quickPick as any;
@@ -123,17 +123,6 @@ export const getTestSetups = (quickPick: QuickPick) => {
       ]);
     },
     submit1: () => {
-      restoreStubbedMultiple([
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-        },
-        {
-          object: quickPickAny.utils,
-          method: "isValueFileType",
-        },
-      ]);
-
       return stubMultiple([
         {
           object: quickPickAny,
@@ -145,40 +134,14 @@ export const getTestSetups = (quickPick: QuickPick) => {
           method: "isHigherLevelDataEmpty",
           returns: true,
         },
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-          returns: false,
-        },
-        {
-          object: quickPickAny.utils,
-          method: "isValueFileType",
-          returns: true,
-        },
       ]);
     },
     submit2: () => {
-      restoreStubbedMultiple([
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-        },
-        {
-          object: quickPickAny.utils,
-          method: "getSearchUrl",
-        },
-      ]);
-
       return stubMultiple([
         {
           object: quickPickAny,
           method: "open",
           returns: Promise.resolve(),
-        },
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-          returns: true,
         },
         {
           object: quickPickAny.dataService,
@@ -197,21 +160,9 @@ export const getTestSetups = (quickPick: QuickPick) => {
           returns: "https://developer.mozilla.org/search",
           isNotMethod: true,
         },
-        {
-          object: quickPickAny.utils,
-          method: "getSearchUrl",
-          returns: "https://developer.mozilla.org/search?q=test+search+text",
-        },
       ]);
     },
     submit3: () => {
-      restoreStubbedMultiple([
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-        },
-      ]);
-
       return stubMultiple([
         {
           object: quickPickAny,
@@ -228,11 +179,6 @@ export const getTestSetups = (quickPick: QuickPick) => {
           object: quickPickAny.dataService,
           method: "isHigherLevelDataEmpty",
           returns: false,
-        },
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-          returns: true,
         },
         {
           object: quickPickAny.quickPick,
@@ -243,26 +189,11 @@ export const getTestSetups = (quickPick: QuickPick) => {
       ]);
     },
     submit4: () => {
-      restoreStubbedMultiple([
-        { object: quickPickAny.utils, method: "isValueStringType" },
-        { object: quickPickAny.utils, method: "isValueFileType" },
-      ]);
-
       return stubMultiple([
         {
           object: quickPickAny,
           method: "openInBrowser",
           returns: Promise.resolve(),
-        },
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-          returns: false,
-        },
-        {
-          object: quickPickAny.utils,
-          method: "isValueFileType",
-          returns: true,
         },
       ]);
     },
@@ -276,18 +207,7 @@ export const getTestSetups = (quickPick: QuickPick) => {
       ]);
     },
     submit6: () => {
-      restoreStubbedMultiple([
-        { object: quickPickAny.utils, method: "isValueStringType" },
-        { object: quickPickAny.utils, method: "printErrorMessage" },
-      ]);
-
       return stubMultiple([
-        { object: quickPickAny.utils, method: "printErrorMessage" },
-        {
-          object: quickPickAny.utils,
-          method: "isValueStringType",
-          returns: true,
-        },
         {
           object: quickPickAny,
           method: "processIfValueIsStringType",

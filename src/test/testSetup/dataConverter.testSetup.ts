@@ -70,10 +70,6 @@ export const getTestSetups = (dataConverter: DataConverter) => {
           object: dataConverterAny.config,
           method: "shouldDisplayFlatList",
         },
-        {
-          object: dataConverterAny.utils,
-          method: "getNameFromQuickPickItem",
-        },
       ]);
 
       stubMultiple([

@@ -1,23 +1,26 @@
 import { assert } from "chai";
+import * as proxyquire from "proxyquire";
+import * as sinon from "sinon";
 import Config from "../../config";
 import DataConverter from "../../dataConverter";
 import Item from "../../interface/Item";
 import QuickPickItem from "../../interface/QuickPickItem";
-import Utils from "../../utils";
 import * as mock from "../mock/dataConverter.mock";
 import { getTestSetups } from "../testSetup/dataConverter.testSetup";
-import { getConfigStub, getUtilsStub } from "../util/mockFactory";
+import { getConfigStub } from "../util/mockFactory";
+
+const ProxiedDataConverter = proxyquire("../../dataConverter", {
+  getNameFromQuickPickItem: sinon.stub(),
+}).default;
 
 describe("DataConverter", () => {
   let configStub: Config = getConfigStub();
-  let utilsStub: Utils = getUtilsStub();
-  let dataConverter: DataConverter = new DataConverter(configStub, utilsStub);
+  let dataConverter: DataConverter = new ProxiedDataConverter(configStub);
   let setups = getTestSetups(dataConverter);
 
   beforeEach(() => {
     configStub = getConfigStub();
-    utilsStub = getUtilsStub();
-    dataConverter = new DataConverter(configStub, utilsStub);
+    dataConverter = new ProxiedDataConverter(configStub);
     setups = getTestSetups(dataConverter);
   });
 

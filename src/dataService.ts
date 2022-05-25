@@ -6,7 +6,7 @@ import DataConverter from "./dataConverter";
 import DataDownloader from "./dataDownloader";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
-import Utils from "./utils";
+import { getNameFromQuickPickItem, removeDataWithEmptyUrl } from "./utils";
 
 class DataService {
   private dataDownloader: DataDownloader;
@@ -19,13 +19,9 @@ class DataService {
   readonly onWillGoLowerTreeLevel: vscode.Event<void> =
     this.onWillGoLowerTreeLevelEventEmitter.event;
 
-  constructor(
-    private cache: Cache,
-    private utils: Utils,
-    private config: Config
-  ) {
+  constructor(private cache: Cache, private config: Config) {
     this.dataDownloader = new DataDownloader(this.config);
-    this.dataConverter = new DataConverter(this.config, this.utils);
+    this.dataConverter = new DataConverter(this.config);
 
     this.higherLevelData = [];
   }
@@ -48,7 +44,7 @@ class DataService {
 
   async getQuickPickData(value: QuickPickItem): Promise<QuickPickItem[]> {
     let data: QuickPickItem[];
-    const name = this.utils.getNameFromQuickPickItem(value);
+    const name = getNameFromQuickPickItem(value);
     if (name === appConfig.higherLevelLabel) {
       data = this.getHigherLevelQpData();
     } else {
@@ -74,7 +70,7 @@ class DataService {
     value: QuickPickItem
   ): Promise<QuickPickItem[]> {
     let data = await this.getTreeData(false, value);
-    data = this.utils.removeDataWithEmptyUrl(data);
+    data = removeDataWithEmptyUrl(data);
     return data;
   }
 

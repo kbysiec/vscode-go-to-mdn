@@ -3,13 +3,13 @@ import Config from "./config";
 import ItemType from "./enum/itemType";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
-import Utils from "./utils";
+import { getNameFromQuickPickItem } from "./utils";
 
 class DataConverter {
   private readonly linkIcon = "$(link)";
   private readonly directoryIcon = "$(file-directory)";
 
-  constructor(private config: Config, private utils: Utils) {}
+  constructor(private config: Config) {}
 
   prepareQpData(data: Item[], isRootLevel: boolean = false): QuickPickItem[] {
     const shouldDisplayFlatListFlag = this.config.shouldDisplayFlatList();
@@ -29,7 +29,7 @@ class DataConverter {
 
   mapQpItemToItem(qpItem: QuickPickItem): Item {
     return {
-      name: this.utils.getNameFromQuickPickItem(qpItem),
+      name: getNameFromQuickPickItem(qpItem),
       url: qpItem.url,
       type: qpItem.type,
       parent: qpItem.parent,

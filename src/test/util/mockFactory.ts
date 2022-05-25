@@ -2,7 +2,6 @@ import * as sinon from "sinon";
 import * as vscode from "vscode";
 import Cache from "../../cache";
 import Config from "../../config";
-import Utils from "../../utils";
 import { createStubInstance } from "./stubbedClass";
 
 export const getExtensionContext = (): vscode.ExtensionContext => {
@@ -44,12 +43,6 @@ export const getVscodeConfiguration = (configuration: {
     update: () => Promise.resolve(),
   };
 };
-
-export function getUtilsStub(): Utils {
-  const utilsStubTemp: any = createStubInstance(Utils);
-
-  return utilsStubTemp as Utils;
-}
 
 export function getConfigStub(): Config {
   const configStub: any = createStubInstance(Config);

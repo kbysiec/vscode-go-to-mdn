@@ -11,6 +11,7 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "esModuleInterop": false,
     "lib": ["es6"]
   },
   "exclude": ["node_modules", ".vscode-test"]

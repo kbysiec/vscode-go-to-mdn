@@ -120,16 +120,7 @@ export const getTestSetups = (dataService: DataService) => {
       ]);
     },
     getQuickPickData1: () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "getNameFromQuickPickItem" },
-      ]);
-
       stubMultiple([
-        {
-          object: dataServiceAny.utils,
-          method: "getNameFromQuickPickItem",
-          returns: "..",
-        },
         {
           object: dataServiceAny,
           method: "higherLevelData",
@@ -148,16 +139,7 @@ export const getTestSetups = (dataService: DataService) => {
       ]);
     },
     getQuickPickData3: () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "removeDataWithEmptyUrl" },
-      ]);
-
       stubMultiple([
-        {
-          object: dataServiceAny.utils,
-          method: "removeDataWithEmptyUrl",
-          returns: mock.qpItems,
-        },
         {
           object: dataServiceAny,
           method: "getTreeData",
@@ -167,7 +149,6 @@ export const getTestSetups = (dataService: DataService) => {
     },
     getQuickPickData4: () => {
       restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "removeDataWithEmptyUrl" },
         { object: dataServiceAny.cache, method: "updateTreeDataByItem" },
         { object: dataServiceAny.cache, method: "getTreeDataByItem" },
       ]);
@@ -191,16 +172,10 @@ export const getTestSetups = (dataService: DataService) => {
           method: "prepareQpData",
           returns: mock.qpItems,
         },
-        {
-          object: dataServiceAny.utils,
-          method: "removeDataWithEmptyUrl",
-          returns: mock.qpItems,
-        },
       ]);
     },
     getQuickPickData5: () => {
       restoreStubbedMultiple([
-        { object: dataServiceAny.utils, method: "removeDataWithEmptyUrl" },
         { object: dataServiceAny.cache, method: "getTreeDataByItem" },
       ]);
       stubMultiple([
@@ -212,11 +187,6 @@ export const getTestSetups = (dataService: DataService) => {
         {
           object: dataServiceAny.dataConverter,
           method: "prepareQpData",
-          returns: mock.qpItems,
-        },
-        {
-          object: dataServiceAny.utils,
-          method: "removeDataWithEmptyUrl",
           returns: mock.qpItems,
         },
       ]);

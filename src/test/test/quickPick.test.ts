@@ -1,22 +1,28 @@
 import { assert } from "chai";
+import * as proxyquire from "proxyquire";
+import * as sinon from "sinon";
 import Cache from "../../cache";
 import QuickPick from "../../quickPick";
-import Utils from "../../utils";
 import * as mock from "../mock/quickPick.mock";
 import { getTestSetups } from "../testSetup/quickPick.testSetup";
-import { getCacheStub, getUtilsStub } from "../util/mockFactory";
+import { getCacheStub } from "../util/mockFactory";
+
+const ProxiedQuickPick = proxyquire("../../quickPick", {
+  getSearchUrl: sinon.stub(),
+  isValueFileType: sinon.stub(),
+  isValueStringType: sinon.stub(),
+  printErrorMessage: sinon.stub(),
+}).default;
 
 describe("Quick Pick", () => {
   let cacheStub: Cache = getCacheStub();
-  let utilsStub: Utils = getUtilsStub();
-  let quickPick: QuickPick = new QuickPick(cacheStub, utilsStub);
+  let quickPick: QuickPick = new ProxiedQuickPick(cacheStub);
   let quickPickAny: any;
   let setups = getTestSetups(quickPick);
 
   beforeEach(() => {
-    utilsStub = getUtilsStub();
     cacheStub = getCacheStub();
-    quickPick = new QuickPick(cacheStub, utilsStub);
+    quickPick = new ProxiedQuickPick(cacheStub);
     quickPickAny = quickPick as any;
     setups = getTestSetups(quickPick);
   });

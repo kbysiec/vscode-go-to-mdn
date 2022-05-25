@@ -1,14 +1,12 @@
 import { assert } from "chai";
-import Utils from "../../utils";
+import * as utils from "../../utils";
 import * as mock from "../mock/utils.mock";
 import { getTestSetups } from "../testSetup/utils.testSetup";
 
 describe("Utils", () => {
-  let utils: Utils = new Utils();
   let setups = getTestSetups();
 
   beforeEach(() => {
-    utils = new Utils();
     setups = getTestSetups();
   });
 
