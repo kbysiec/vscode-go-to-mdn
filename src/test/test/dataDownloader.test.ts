@@ -1,25 +1,19 @@
 import { assert, expect, use } from "chai";
 import * as sinon from "sinon";
-import Config from "src/config";
 import { appConfig } from "../../appConfig";
-import DataDownloader from "../../dataDownloader";
+import * as dataDownloader from "../../dataDownloader";
 import Item from "../../interface/item";
 import * as mock from "../mock/dataDownloader.mock";
 import { getTestSetups } from "../testSetup/dataDownloader.testSetup";
-import { getConfigStub } from "../util/mockFactory";
 
 const chaiAsPromised = require("chai-as-promised");
 use(chaiAsPromised);
 
 describe("DataDownloader", () => {
-  let configStub: Config = getConfigStub();
-  let dataDownloader: DataDownloader = new DataDownloader(configStub);
-  let setups = getTestSetups(dataDownloader);
+  let setups = getTestSetups();
 
   beforeEach(() => {
-    configStub = getConfigStub();
-    dataDownloader = new DataDownloader(configStub);
-    setups = getTestSetups(dataDownloader);
+    setups = getTestSetups();
     setups.beforeEach();
   });
 

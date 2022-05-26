@@ -1,18 +1,16 @@
 import { Response } from "node-fetch";
 import * as sinon from "sinon";
 import { appConfig } from "../../appConfig";
-import DataDownloader from "../../dataDownloader";
+import * as config from "../../config";
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";
 import * as mock from "../mock/dataDownloader.mock";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
+import { stubMultiple } from "../util/stubHelpers";
 
 const fetch = require("node-fetch");
 const fetchMock = require("fetch-mock").sandbox();
 
-export const getTestSetups = (dataDownloader: DataDownloader) => {
-  const dataDownloaderAny = dataDownloader as any;
-
+export const getTestSetups = () => {
   return {
     beforeEach: () => {
       fetch.cache = {};
@@ -101,16 +99,9 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
       fetch.default = fetchStub;
     },
     downloadTreeData5: () => {
-      restoreStubbedMultiple([
-        {
-          object: dataDownloaderAny.config,
-          method: "getGithubPersonalAccessToken",
-        },
-      ]);
-
       stubMultiple([
         {
-          object: dataDownloaderAny.config,
+          object: config,
           method: "getGithubPersonalAccessToken",
           returns: undefined,
         },
@@ -128,16 +119,9 @@ export const getTestSetups = (dataDownloader: DataDownloader) => {
       return fetchSpy;
     },
     downloadTreeData6: () => {
-      restoreStubbedMultiple([
-        {
-          object: dataDownloaderAny.config,
-          method: "getGithubPersonalAccessToken",
-        },
-      ]);
-
       stubMultiple([
         {
-          object: dataDownloaderAny.config,
+          object: config,
           method: "getGithubPersonalAccessToken",
           returns: "123456789",
         },

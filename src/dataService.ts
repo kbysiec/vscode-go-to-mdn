@@ -8,14 +8,12 @@ import {
 } from "./cache";
 import { shouldDisplayFlatList } from "./config";
 import { mapQpItemToItem, prepareQpData } from "./dataConverter";
-import DataDownloader from "./dataDownloader";
+import { downloadFlatData, downloadTreeData } from "./dataDownloader";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
 import { getNameFromQuickPickItem, removeDataWithEmptyUrl } from "./utils";
 
 class DataService {
-  private dataDownloader: DataDownloader;
-
   private higherLevelData: QuickPickItem[][];
 
   private onWillGoLowerTreeLevelEventEmitter: vscode.EventEmitter<void> =
@@ -24,8 +22,6 @@ class DataService {
     this.onWillGoLowerTreeLevelEventEmitter.event;
 
   constructor() {
-    this.dataDownloader = new DataDownloader();
-
     this.higherLevelData = [];
   }
 
@@ -91,13 +87,13 @@ class DataService {
   }
 
   private async downloadTreeData(item?: Item): Promise<Item[]> {
-    const data = await this.dataDownloader.downloadTreeData(item);
+    const data = await downloadTreeData(item);
     updateTreeDataByItem(data, item);
     return data;
   }
 
   private async downloadFlatFilesData(): Promise<Item[]> {
-    const data = await this.dataDownloader.downloadFlatData();
+    const data = await downloadFlatData();
     updateFlatData(data);
     return data;
   }
