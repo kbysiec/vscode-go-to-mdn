@@ -7,7 +7,7 @@ import {
   updateTreeDataByItem,
 } from "./cache";
 import { shouldDisplayFlatList } from "./config";
-import DataConverter from "./dataConverter";
+import { mapQpItemToItem, prepareQpData } from "./dataConverter";
 import DataDownloader from "./dataDownloader";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
@@ -15,7 +15,6 @@ import { getNameFromQuickPickItem, removeDataWithEmptyUrl } from "./utils";
 
 class DataService {
   private dataDownloader: DataDownloader;
-  private dataConverter: DataConverter;
 
   private higherLevelData: QuickPickItem[][];
 
@@ -26,7 +25,6 @@ class DataService {
 
   constructor() {
     this.dataDownloader = new DataDownloader();
-    this.dataConverter = new DataConverter();
 
     this.higherLevelData = [];
   }
@@ -40,7 +38,7 @@ class DataService {
       data = getFlatData();
     }
 
-    return data ? this.dataConverter.prepareQpData(data) : [];
+    return data ? prepareQpData(data) : [];
   }
 
   async getQuickPickRootData(): Promise<QuickPickItem[]> {
@@ -86,10 +84,10 @@ class DataService {
     let data = getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
-      let item = qpItem && this.dataConverter.mapQpItemToItem(qpItem);
+      let item = qpItem && mapQpItemToItem(qpItem);
       data = await this.downloadTreeData(item);
     }
-    return this.dataConverter.prepareQpData(data, isRootLevel);
+    return prepareQpData(data, isRootLevel);
   }
 
   private async downloadTreeData(item?: Item): Promise<Item[]> {

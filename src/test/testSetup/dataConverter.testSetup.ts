@@ -1,24 +1,15 @@
-import DataConverter from "../../dataConverter";
+import * as config from "../../config";
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";
 import QuickPickItem from "../../interface/quickPickItem";
 import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 
-export const getTestSetups = (dataConverter: DataConverter) => {
-  const dataConverterAny = dataConverter as any;
-
+export const getTestSetups = () => {
   return {
     prepareQpData1: () => {
-      restoreStubbedMultiple([
-        {
-          object: dataConverterAny.config,
-          method: "shouldDisplayFlatList",
-        },
-      ]);
-
       stubMultiple([
         {
-          object: dataConverterAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
           returns: false,
         },
@@ -39,14 +30,14 @@ export const getTestSetups = (dataConverter: DataConverter) => {
     prepareQpData2: () => {
       restoreStubbedMultiple([
         {
-          object: dataConverterAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
         },
       ]);
 
       stubMultiple([
         {
-          object: dataConverterAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
           returns: true,
         },
@@ -67,14 +58,14 @@ export const getTestSetups = (dataConverter: DataConverter) => {
     mapQpItemToItem1: () => {
       restoreStubbedMultiple([
         {
-          object: dataConverterAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
         },
       ]);
 
       stubMultiple([
         {
-          object: dataConverterAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
           returns: true,
         },

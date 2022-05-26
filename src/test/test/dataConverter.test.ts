@@ -1,27 +1,20 @@
 import { assert } from "chai";
-import * as proxyquire from "proxyquire";
-import * as sinon from "sinon";
-import Config from "../../config";
-import DataConverter from "../../dataConverter";
+import * as dataConverter from "../../dataConverter";
 import Item from "../../interface/Item";
 import QuickPickItem from "../../interface/QuickPickItem";
 import * as mock from "../mock/dataConverter.mock";
 import { getTestSetups } from "../testSetup/dataConverter.testSetup";
-import { getConfigStub } from "../util/mockFactory";
 
-const ProxiedDataConverter = proxyquire("../../dataConverter", {
-  getNameFromQuickPickItem: sinon.stub(),
-}).default;
+// const ProxiedDataConverter = proxyquire("../../dataConverter", {
+//   getNameFromQuickPickItem: sinon.stub(),
+//   shouldDisplayFlatList: sinon.stub(),
+// }).default;
 
 describe("DataConverter", () => {
-  let configStub: Config = getConfigStub();
-  let dataConverter: DataConverter = new ProxiedDataConverter(configStub);
-  let setups = getTestSetups(dataConverter);
+  let setups = getTestSetups();
 
   beforeEach(() => {
-    configStub = getConfigStub();
-    dataConverter = new ProxiedDataConverter(configStub);
-    setups = getTestSetups(dataConverter);
+    setups = getTestSetups();
   });
 
   describe("prepareQpData", () => {
