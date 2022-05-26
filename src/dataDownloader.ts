@@ -1,6 +1,6 @@
 import fetch, { Response } from "node-fetch";
 import { appConfig } from "./appConfig";
-import Config from "./config";
+import { getGithubPersonalAccessToken } from "./config";
 import ItemType from "./enum/itemType";
 import Item from "./interface/item";
 import Parser from "./parser";
@@ -8,7 +8,7 @@ import Parser from "./parser";
 class DataDownloader {
   private parser: Parser;
 
-  constructor(private config: Config) {
+  constructor() {
     this.parser = new Parser();
   }
 
@@ -49,7 +49,7 @@ class DataDownloader {
   }
 
   private getFetchConfig() {
-    const token = this.config.getGithubPersonalAccessToken();
+    const token = getGithubPersonalAccessToken();
 
     return {
       headers: {

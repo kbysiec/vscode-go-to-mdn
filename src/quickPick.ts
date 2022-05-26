@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-// import Cache from "./cache";
-import Config from "./config";
+import { shouldDisplayFlatList } from "./config";
 import DataService from "./dataService";
 import QuickPickItem from "./interface/QuickPickItem";
 import {
@@ -16,14 +15,12 @@ class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickItem>;
   private items: QuickPickItem[] = [];
 
-  private config: Config;
   private dataService: DataService;
 
   private open: any = open;
 
   constructor() {
-    this.config = new Config();
-    this.dataService = new DataService(this.config);
+    this.dataService = new DataService();
     this.dataService.onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
 
     this.quickPick = vscode.window.createQuickPick<QuickPickItem>();
@@ -34,7 +31,7 @@ class QuickPick {
     this.quickPick.onDidHide(this.onDidHide);
     this.quickPick.onDidAccept(this.onDidAccept);
 
-    if (this.config.shouldDisplayFlatList()) {
+    if (shouldDisplayFlatList()) {
       this.quickPick.onDidChangeValue(this.onDidChangeValueClearing);
       this.quickPick.onDidChangeValue(debounce(this.onDidChangeValue, 350));
     } else {
@@ -54,7 +51,7 @@ class QuickPick {
     this.showLoading(true);
     let data: QuickPickItem[];
 
-    if (this.config.shouldDisplayFlatList()) {
+    if (shouldDisplayFlatList()) {
       data = await this.dataService.getFlatQuickPickData();
     } else if (value) {
       data = await this.dataService.getQuickPickData(value);

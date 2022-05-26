@@ -1,36 +1,36 @@
 import * as vscode from "vscode";
-import ConfigKey from "./enum/configKey";
 
-class Config {
-  private default = {
-    githubPersonalAccessToken: "",
-    shouldDisplayFlatList: true,
-  };
-  private readonly defaultSection = "goToMDN";
+const keys = {
+  shouldDisplayFlatList: {
+    name: "shouldDisplayFlatList",
+    defaultValue: true,
+  },
+  githubPersonalAccessToken: {
+    name: "githubPersonalAccessToken",
+    defaultValue: "",
+  },
+};
 
-  getGithubPersonalAccessToken(): string {
-    return this.get(
-      ConfigKey.githubPersonalAccessToken,
-      this.default.githubPersonalAccessToken
-    );
-  }
-
-  shouldDisplayFlatList(): boolean {
-    return this.get(
-      ConfigKey.shouldDisplayFlatList,
-      this.default.shouldDisplayFlatList
-    );
-  }
-
-  private get<T>(key: string, defaultValue: T): T {
-    const cacheKey = `${this.defaultSection}.${key}`;
-    return this.getConfiguration<T>(cacheKey, defaultValue);
-  }
-
-  private getConfiguration<T>(section: string, defaultValue: T): T {
-    const config = vscode.workspace.getConfiguration("");
-    return config.get<T>(section, defaultValue);
-  }
+function get<T>(key: string, defaultValue: T): T {
+  const cacheKey = `goToMDN.${key}`;
+  return getConfiguration<T>(cacheKey, defaultValue);
 }
 
-export default Config;
+function getConfiguration<T>(section: string, defaultValue: T): T {
+  const config = vscode.workspace.getConfiguration("");
+  return config.get<T>(section, defaultValue);
+}
+
+export function getGithubPersonalAccessToken(): string {
+  return get(
+    keys.githubPersonalAccessToken.name,
+    keys.githubPersonalAccessToken.defaultValue
+  );
+}
+
+export function shouldDisplayFlatList(): boolean {
+  return get(
+    keys.shouldDisplayFlatList.name,
+    keys.shouldDisplayFlatList.defaultValue
+  );
+}

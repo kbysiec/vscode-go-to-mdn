@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import Config from "../../config";
-import { createStubInstance } from "./stubbedClass";
 
 export const getExtensionContext = (): vscode.ExtensionContext => {
   return {
@@ -41,10 +39,3 @@ export const getVscodeConfiguration = (configuration: {
     update: () => Promise.resolve(),
   };
 };
-
-export function getConfigStub(): Config {
-  const configStub: any = createStubInstance(Config);
-  configStub.default = getConfiguration().goToMDN;
-
-  return configStub as Config;
-}

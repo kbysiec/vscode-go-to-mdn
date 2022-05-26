@@ -6,7 +6,7 @@ import {
   updateFlatData,
   updateTreeDataByItem,
 } from "./cache";
-import Config from "./config";
+import { shouldDisplayFlatList } from "./config";
 import DataConverter from "./dataConverter";
 import DataDownloader from "./dataDownloader";
 import Item from "./interface/item";
@@ -24,9 +24,9 @@ class DataService {
   readonly onWillGoLowerTreeLevel: vscode.Event<void> =
     this.onWillGoLowerTreeLevelEventEmitter.event;
 
-  constructor(private config: Config) {
-    this.dataDownloader = new DataDownloader(this.config);
-    this.dataConverter = new DataConverter(this.config);
+  constructor() {
+    this.dataDownloader = new DataDownloader();
+    this.dataConverter = new DataConverter();
 
     this.higherLevelData = [];
   }
@@ -124,7 +124,7 @@ class DataService {
   }
 
   private async cacheFlatFilesWithProgress() {
-    if (this.config.shouldDisplayFlatList()) {
+    if (shouldDisplayFlatList()) {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,

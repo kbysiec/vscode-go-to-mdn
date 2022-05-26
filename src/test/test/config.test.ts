@@ -1,22 +1,16 @@
 import { assert } from "chai";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
-import Config from "../../config";
+import * as config from "../../config";
 import { getTestSetups } from "../testSetup/config.testSetup";
 
 describe("Config", () => {
   let configuration: { [key: string]: any };
-  let getConfigurationStub: sinon.SinonStub;
-  let config: Config = new Config();
-  let setups = getTestSetups(config);
+  let setups = getTestSetups();
 
   beforeEach(() => {
-    ({
-      configuration,
-      stubs: [getConfigurationStub],
-    } = setups.beforeEach());
-    config = new Config();
-    setups = getTestSetups(config);
+    ({ configuration } = setups.beforeEach());
+    setups = getTestSetups();
   });
 
   afterEach(() => {

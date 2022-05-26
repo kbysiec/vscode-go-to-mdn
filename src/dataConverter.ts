@@ -1,5 +1,5 @@
 import { appConfig } from "./appConfig";
-import Config from "./config";
+import { shouldDisplayFlatList } from "./config";
 import ItemType from "./enum/itemType";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
@@ -9,10 +9,10 @@ class DataConverter {
   private readonly linkIcon = "$(link)";
   private readonly directoryIcon = "$(file-directory)";
 
-  constructor(private config: Config) {}
+  constructor() {}
 
   prepareQpData(data: Item[], isRootLevel: boolean = false): QuickPickItem[] {
-    const shouldDisplayFlatListFlag = this.config.shouldDisplayFlatList();
+    const shouldDisplayFlatListFlag = shouldDisplayFlatList();
     const qpData: QuickPickItem[] = this.mapDataToQpData(
       data,
       shouldDisplayFlatListFlag
