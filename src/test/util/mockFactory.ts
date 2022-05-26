@@ -1,6 +1,4 @@
-import * as sinon from "sinon";
 import * as vscode from "vscode";
-import Cache from "../../cache";
 import Config from "../../config";
 import { createStubInstance } from "./stubbedClass";
 
@@ -49,10 +47,4 @@ export function getConfigStub(): Config {
   configStub.default = getConfiguration().goToMDN;
 
   return configStub as Config;
-}
-
-export function getCacheStub(): Cache {
-  const cacheStubTemp: any = sinon.createStubInstance(Cache);
-  cacheStubTemp.extensionContext = getExtensionContext();
-  return cacheStubTemp as Cache;
 }

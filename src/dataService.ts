@@ -1,6 +1,11 @@
 import * as vscode from "vscode";
 import { appConfig } from "./appConfig";
-import Cache from "./cache";
+import {
+  getFlatData,
+  getTreeDataByItem,
+  updateFlatData,
+  updateTreeDataByItem,
+} from "./cache";
 import Config from "./config";
 import DataConverter from "./dataConverter";
 import DataDownloader from "./dataDownloader";
@@ -19,7 +24,7 @@ class DataService {
   readonly onWillGoLowerTreeLevel: vscode.Event<void> =
     this.onWillGoLowerTreeLevelEventEmitter.event;
 
-  constructor(private cache: Cache, private config: Config) {
+  constructor(private config: Config) {
     this.dataDownloader = new DataDownloader(this.config);
     this.dataConverter = new DataConverter(this.config);
 
@@ -27,12 +32,12 @@ class DataService {
   }
 
   async getFlatQuickPickData(): Promise<QuickPickItem[]> {
-    let data = this.cache.getFlatData();
+    let data = getFlatData();
     const areCached = data ? data.length > 0 : false;
 
     if (!areCached) {
       await this.cacheFlatFilesWithProgress();
-      data = this.cache.getFlatData();
+      data = getFlatData();
     }
 
     return data ? this.dataConverter.prepareQpData(data) : [];
@@ -78,7 +83,7 @@ class DataService {
     isRootLevel: boolean,
     qpItem?: QuickPickItem
   ): Promise<QuickPickItem[]> {
-    let data = this.cache.getTreeDataByItem(qpItem);
+    let data = getTreeDataByItem(qpItem);
 
     if (!data || !data.length) {
       let item = qpItem && this.dataConverter.mapQpItemToItem(qpItem);
@@ -89,13 +94,13 @@ class DataService {
 
   private async downloadTreeData(item?: Item): Promise<Item[]> {
     const data = await this.dataDownloader.downloadTreeData(item);
-    this.cache.updateTreeDataByItem(data, item);
+    updateTreeDataByItem(data, item);
     return data;
   }
 
   private async downloadFlatFilesData(): Promise<Item[]> {
     const data = await this.dataDownloader.downloadFlatData();
-    this.cache.updateFlatData(data);
+    updateFlatData(data);
     return data;
   }
 

@@ -2,22 +2,20 @@ import { assert } from "chai";
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
-import Cache from "../../cache";
+import * as cache from "../../cache";
 import * as mock from "../mock/cache.mock";
 import { getTestSetups } from "../testSetup/cache.testSetup";
 import { getExtensionContext } from "../util/mockFactory";
 
 describe("Cache", () => {
   let context: vscode.ExtensionContext = getExtensionContext();
-  let cache: Cache = new Cache(context);
   let updateStub: sinon.SinonStub;
   let setups = getTestSetups(context);
 
   beforeEach(() => {
     context = getExtensionContext();
-    cache = new Cache(context);
+    cache.initCache(context);
     setups = getTestSetups(context);
-
     updateStub = setups.beforeEach();
   });
 

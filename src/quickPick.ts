@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import Cache from "./cache";
+// import Cache from "./cache";
 import Config from "./config";
 import DataService from "./dataService";
 import QuickPickItem from "./interface/QuickPickItem";
@@ -21,9 +21,9 @@ class QuickPick {
 
   private open: any = open;
 
-  constructor(private cache: Cache) {
+  constructor() {
     this.config = new Config();
-    this.dataService = new DataService(this.cache, this.config);
+    this.dataService = new DataService(this.config);
     this.dataService.onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
 
     this.quickPick = vscode.window.createQuickPick<QuickPickItem>();
