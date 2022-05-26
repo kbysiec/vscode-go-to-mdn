@@ -1,14 +1,12 @@
 import { assert } from "chai";
-import Parser from "../../parser";
+import * as parser from "../../parser";
 import * as mock from "../mock/parser.mock";
 import { getTestSetups } from "../testSetup/parser.testSetup";
 
 describe("Parser", () => {
-  let parser: Parser = new Parser();
   let setups = getTestSetups();
 
   beforeEach(() => {
-    parser = new Parser();
     setups = getTestSetups();
   });
 

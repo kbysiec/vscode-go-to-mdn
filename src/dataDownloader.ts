@@ -3,15 +3,14 @@ import { appConfig } from "./appConfig";
 import { getGithubPersonalAccessToken } from "./config";
 import ItemType from "./enum/itemType";
 import Item from "./interface/item";
-import Parser from "./parser";
+import {
+  parseDirectories,
+  parseElements,
+  parseFlatElements,
+  parseRootDirectories,
+} from "./parser";
 
 class DataDownloader {
-  private parser: Parser;
-
-  constructor() {
-    this.parser = new Parser();
-  }
-
   async downloadTreeData(item?: Item): Promise<Item[]> {
     item = item || {
       name: "root",
@@ -24,11 +23,11 @@ class DataDownloader {
     const content = await this.fetchTreeData(item);
 
     if (item.name === "root") {
-      items = this.parser.parseRootDirectories(content);
+      items = parseRootDirectories(content);
     } else if (typeof content === "string") {
-      items = this.parser.parseElements(content, item);
+      items = parseElements(content, item);
     } else {
-      items = this.parser.parseDirectories(content, item);
+      items = parseDirectories(content, item);
     }
 
     return items;
@@ -36,7 +35,7 @@ class DataDownloader {
 
   async downloadFlatData(): Promise<Item[]> {
     const json = await this.fetchFlatData();
-    return this.parser.parseFlatElements(json);
+    return parseFlatElements(json);
   }
 
   private async fetchTreeData(item: Item) {
