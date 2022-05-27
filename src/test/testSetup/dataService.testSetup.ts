@@ -1,25 +1,22 @@
-import DataService from "../../dataService";
+import * as cache from "../../cache";
+import * as config from "../../config";
+import * as dataConverter from "../../dataConverter";
+import * as dataDownloader from "../../dataDownloader";
+import * as dataService from "../../dataService";
 import * as mock from "../mock/dataService.mock";
 import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
 
-export const getTestSetups = (dataService: DataService) => {
-  const dataServiceAny = dataService as any;
-
+export const getTestSetups = () => {
   return {
     getFlatQuickPickData1: () => {
-      restoreStubbedMultiple([
-        { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
-        { object: dataServiceAny.cache, method: "getFlatData" },
-      ]);
-
       stubMultiple([
         {
-          object: dataServiceAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
           returns: true,
         },
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "getFlatData",
           returns: mock.items,
         },
@@ -27,42 +24,37 @@ export const getTestSetups = (dataService: DataService) => {
     },
     getFlatQuickPickData2: () => {
       restoreStubbedMultiple([
-        { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
-        { object: dataServiceAny.cache, method: "getFlatData" },
-        { object: dataServiceAny.cache, method: "updateFlatData" },
-        {
-          object: dataServiceAny.config,
-          method: "getGithubPersonalAccessToken",
-        },
+        { object: config, method: "shouldDisplayFlatList" },
+        { object: cache, method: "getFlatData" },
       ]);
 
       stubMultiple([
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "getFlatData",
           returns: [],
         },
         {
-          object: dataServiceAny.dataDownloader,
+          object: dataDownloader,
           method: "downloadFlatData",
           returns: Promise.resolve(mock.items),
         },
         {
-          object: dataServiceAny.dataConverter,
+          object: dataConverter,
           method: "prepareQpData",
           returns: mock.qpItems,
         },
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "updateFlatData",
         },
         {
-          object: dataServiceAny.config,
+          object: config,
           method: "getGithubPersonalAccessToken",
           returns: "sample token",
         },
         {
-          object: dataServiceAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
           returns: true,
         },
@@ -70,41 +62,45 @@ export const getTestSetups = (dataService: DataService) => {
     },
     getFlatQuickPickData3: () => {
       restoreStubbedMultiple([
-        { object: dataServiceAny.config, method: "shouldDisplayFlatList" },
-        { object: dataServiceAny.cache, method: "getFlatData" },
-        { object: dataServiceAny.cache, method: "updateFlatData" },
+        { object: config, method: "shouldDisplayFlatList" },
+        { object: cache, method: "getFlatData" },
+        { object: cache, method: "updateFlatData" },
         {
-          object: dataServiceAny.config,
+          object: config,
           method: "getGithubPersonalAccessToken",
+        },
+        {
+          object: dataDownloader,
+          method: "downloadFlatData",
         },
       ]);
 
       return stubMultiple([
         {
-          object: dataServiceAny,
+          object: dataService,
           method: "cacheFlatFilesWithProgressTask",
         },
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "getFlatData",
           returns: undefined,
         },
         {
-          object: dataServiceAny.dataDownloader,
+          object: dataDownloader,
           method: "downloadFlatData",
           returns: Promise.resolve(mock.items),
         },
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "updateFlatData",
         },
         {
-          object: dataServiceAny.config,
+          object: config,
           method: "getGithubPersonalAccessToken",
           returns: "sample token",
         },
         {
-          object: dataServiceAny.config,
+          object: config,
           method: "shouldDisplayFlatList",
           returns: false,
         },
@@ -113,16 +109,24 @@ export const getTestSetups = (dataService: DataService) => {
     getQuickPickRootData1: () => {
       stubMultiple([
         {
-          object: dataServiceAny,
-          method: "getTreeData",
-          returns: mock.qpItems,
+          object: cache,
+          method: "getTreeDataByItem",
+        },
+        {
+          object: cache,
+          method: "updateTreeDataByItem",
+        },
+        {
+          object: dataDownloader,
+          method: "downloadTreeData",
+          returns: Promise.resolve(mock.items),
         },
       ]);
     },
     getQuickPickData1: () => {
       stubMultiple([
         {
-          object: dataServiceAny,
+          object: dataService,
           method: "higherLevelData",
           returns: [mock.qpItems],
           isNotMethod: true,
@@ -132,7 +136,7 @@ export const getTestSetups = (dataService: DataService) => {
     getQuickPickData2: () => {
       stubMultiple([
         {
-          object: dataServiceAny,
+          object: dataService,
           method: "getLowerLevelQpData",
           returns: mock.qpItems,
         },
@@ -141,7 +145,7 @@ export const getTestSetups = (dataService: DataService) => {
     getQuickPickData3: () => {
       stubMultiple([
         {
-          object: dataServiceAny,
+          object: dataService,
           method: "getTreeData",
           returns: mock.qpItems,
         },
@@ -149,26 +153,28 @@ export const getTestSetups = (dataService: DataService) => {
     },
     getQuickPickData4: () => {
       restoreStubbedMultiple([
-        { object: dataServiceAny.cache, method: "updateTreeDataByItem" },
-        { object: dataServiceAny.cache, method: "getTreeDataByItem" },
+        { object: dataConverter, method: "prepareQpData" },
+        { object: dataDownloader, method: "downloadTreeData" },
+        { object: cache, method: "updateTreeDataByItem" },
+        { object: cache, method: "getTreeDataByItem" },
       ]);
       stubMultiple([
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "getTreeDataByItem",
           returns: [],
         },
         {
-          object: dataServiceAny.dataDownloader,
+          object: dataDownloader,
           method: "downloadTreeData",
           returns: Promise.resolve(mock.items),
         },
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "updateTreeDataByItem",
         },
         {
-          object: dataServiceAny.dataConverter,
+          object: dataConverter,
           method: "prepareQpData",
           returns: mock.qpItems,
         },
@@ -176,16 +182,17 @@ export const getTestSetups = (dataService: DataService) => {
     },
     getQuickPickData5: () => {
       restoreStubbedMultiple([
-        { object: dataServiceAny.cache, method: "getTreeDataByItem" },
+        { object: cache, method: "getTreeDataByItem" },
+        { object: dataConverter, method: "prepareQpData" },
       ]);
       stubMultiple([
         {
-          object: dataServiceAny.cache,
+          object: cache,
           method: "getTreeDataByItem",
           returns: mock.items,
         },
         {
-          object: dataServiceAny.dataConverter,
+          object: dataConverter,
           method: "prepareQpData",
           returns: mock.qpItems,
         },
@@ -194,7 +201,7 @@ export const getTestSetups = (dataService: DataService) => {
     rememberHigherLevelQpData1: () => {
       stubMultiple([
         {
-          object: dataServiceAny,
+          object: dataService,
           method: "higherLevelData",
           returns: [],
           isNotMethod: true,
@@ -204,7 +211,7 @@ export const getTestSetups = (dataService: DataService) => {
     isHigherLevelDataEmpty1: () => {
       stubMultiple([
         {
-          object: dataServiceAny,
+          object: dataService,
           method: "higherLevelData",
           returns: [mock.qpItems],
           isNotMethod: true,

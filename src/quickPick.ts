@@ -1,6 +1,13 @@
 import * as vscode from "vscode";
 import { shouldDisplayFlatList } from "./config";
-import DataService from "./dataService";
+import {
+  getFlatQuickPickData,
+  getQuickPickData,
+  getQuickPickRootData,
+  isHigherLevelDataEmpty,
+  onWillGoLowerTreeLevel,
+  rememberHigherLevelQpData,
+} from "./dataService";
 import QuickPickItem from "./interface/QuickPickItem";
 import {
   getSearchUrl,
@@ -15,13 +22,10 @@ class QuickPick {
   private quickPick: vscode.QuickPick<QuickPickItem>;
   private items: QuickPickItem[] = [];
 
-  private dataService: DataService;
-
   private open: any = open;
 
   constructor() {
-    this.dataService = new DataService();
-    this.dataService.onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
+    onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
 
     this.quickPick = vscode.window.createQuickPick<QuickPickItem>();
     this.quickPick.matchOnDescription = true;
@@ -52,11 +56,11 @@ class QuickPick {
     let data: QuickPickItem[];
 
     if (shouldDisplayFlatList()) {
-      data = await this.dataService.getFlatQuickPickData();
+      data = await getFlatQuickPickData();
     } else if (value) {
-      data = await this.dataService.getQuickPickData(value);
+      data = await getQuickPickData(value);
     } else {
-      data = await this.dataService.getQuickPickRootData();
+      data = await getQuickPickRootData();
     }
     this.preparePlaceholder();
 
@@ -70,7 +74,7 @@ class QuickPick {
 
     try {
       if (isValueStringType(value)) {
-        if (!this.dataService.isHigherLevelDataEmpty()) {
+        if (!isHigherLevelDataEmpty()) {
           return;
         }
         await this.processIfValueIsStringType(value as string);
@@ -108,7 +112,7 @@ class QuickPick {
   }
 
   private preparePlaceholder(): void {
-    this.dataService.isHigherLevelDataEmpty()
+    isHigherLevelDataEmpty()
       ? this.setPlaceholder(
           "choose item from the list or type anything to search"
         )
@@ -175,7 +179,7 @@ class QuickPick {
 
   private onWillGoLowerTreeLevel = () => {
     const items = this.getItems();
-    this.dataService.rememberHigherLevelQpData(items);
+    rememberHigherLevelQpData(items);
   };
 }
 

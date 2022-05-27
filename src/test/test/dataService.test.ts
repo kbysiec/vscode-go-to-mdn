@@ -1,29 +1,13 @@
 import { assert } from "chai";
-import * as proxyquire from "proxyquire";
-import * as sinon from "sinon";
-import Cache from "../../cache";
-import Config from "../../config";
-import DataService from "../../dataService";
+import * as dataService from "../../dataService";
 import * as mock from "../mock/dataService.mock";
 import { getTestSetups } from "../testSetup/dataService.testSetup";
-import { getCacheStub, getConfigStub } from "../util/mockFactory";
-
-const ProxiedDataService = proxyquire("../../dataService", {
-  getNameFromQuickPickItem: sinon.stub(),
-  removeDataWithEmptyUrl: sinon.stub(),
-}).default;
 
 describe("DataService", () => {
-  let cacheStub: Cache = getCacheStub();
-  let configStub: Config = getConfigStub();
-  let dataService: DataService = new ProxiedDataService(cacheStub, configStub);
-  let setups = getTestSetups(dataService);
+  let setups = getTestSetups();
 
   beforeEach(() => {
-    cacheStub = getCacheStub();
-    configStub = getConfigStub();
-    dataService = new ProxiedDataService(cacheStub, configStub);
-    setups = getTestSetups(dataService);
+    setups = getTestSetups();
   });
 
   describe("getFlatQuickPickData", () => {
