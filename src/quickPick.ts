@@ -18,169 +18,195 @@ import {
 const open = require("open");
 const debounce = require("debounce");
 
-class QuickPick {
-  private quickPick: vscode.QuickPick<QuickPickItem>;
-  private items: QuickPickItem[] = [];
+function registerEventListeners(): void {
+  quickPick.quickPickControl.onDidHide(quickPick.handleDidHide);
+  quickPick.quickPickControl.onDidAccept(quickPick.handleDidAccept);
 
-  private open: any = open;
-
-  constructor() {
-    onWillGoLowerTreeLevel(this.onWillGoLowerTreeLevel);
-
-    this.quickPick = vscode.window.createQuickPick<QuickPickItem>();
-    this.quickPick.matchOnDescription = true;
-  }
-
-  registerEventListeners(): void {
-    this.quickPick.onDidHide(this.onDidHide);
-    this.quickPick.onDidAccept(this.onDidAccept);
-
-    if (shouldDisplayFlatList()) {
-      this.quickPick.onDidChangeValue(this.onDidChangeValueClearing);
-      this.quickPick.onDidChangeValue(debounce(this.onDidChangeValue, 350));
-    } else {
-      this.quickPick.onDidChangeValue(this.onDidChangeValue);
-    }
-  }
-
-  show(): void {
-    this.quickPick.show();
-  }
-
-  hide(): void {
-    this.quickPick.hide();
-  }
-
-  async loadQuickPickData(value?: QuickPickItem): Promise<void> {
-    this.showLoading(true);
-    let data: QuickPickItem[];
-
-    if (shouldDisplayFlatList()) {
-      data = await getFlatQuickPickData();
-    } else if (value) {
-      data = await getQuickPickData(value);
-    } else {
-      data = await getQuickPickRootData();
-    }
-    this.preparePlaceholder();
-
-    this.clearText();
-    this.loadItems(data);
-    this.showLoading(false);
-  }
-
-  private async submit(selected: QuickPickItem | undefined): Promise<void> {
-    const value = this.normalizeSubmittedValue(selected);
-
-    try {
-      if (isValueStringType(value)) {
-        if (!isHigherLevelDataEmpty()) {
-          return;
-        }
-        await this.processIfValueIsStringType(value as string);
-      } else {
-        await this.processIfValueIsQuickPickItemType(value as QuickPickItem);
-      }
-    } catch (error) {
-      printErrorMessage(error as Error);
-    }
-  }
-
-  private loadItems(items: QuickPickItem[]): void {
-    this.setQpItems(items);
-    this.setItems(items);
-  }
-
-  private setItems(items: QuickPickItem[]): void {
-    this.items = items;
-  }
-
-  private setQpItems(items: QuickPickItem[]): void {
-    this.quickPick.items = items;
-  }
-
-  private getItems(): QuickPickItem[] {
-    return [...this.quickPick.items];
-  }
-
-  private showLoading(flag: boolean): void {
-    this.quickPick.busy = flag;
-  }
-
-  private setPlaceholder(text: string | undefined): void {
-    this.quickPick.placeholder = text;
-  }
-
-  private preparePlaceholder(): void {
-    isHigherLevelDataEmpty()
-      ? this.setPlaceholder(
-          "choose item from the list or type anything to search"
-        )
-      : this.setPlaceholder("");
-  }
-
-  private clearText(): void {
-    this.quickPick.value = "";
-  }
-
-  private filter(value: string): QuickPickItem[] {
-    return this.items.filter(
-      (item) =>
-        item.label.toLowerCase().includes(value.toLowerCase()) ||
-        item.description!.toLowerCase().includes(value.toLowerCase())
+  if (shouldDisplayFlatList()) {
+    quickPick.quickPickControl.onDidChangeValue(
+      quickPick.handleDidChangeValueClearing
     );
+    quickPick.quickPickControl.onDidChangeValue(
+      debounce(quickPick.handleDidChangeValue, 350)
+    );
+  } else {
+    quickPick.quickPickControl.onDidChangeValue(quickPick.handleDidChangeValue);
   }
-
-  private async processIfValueIsStringType(value: string) {
-    const url = getSearchUrl(value);
-    url && (await this.openInBrowser(url));
-  }
-
-  private async processIfValueIsQuickPickItemType(value: QuickPickItem) {
-    if (isValueFileType(value)) {
-      let url = value.url;
-      url && (await this.openInBrowser(url));
-    } else {
-      this.loadQuickPickData(value);
-    }
-  }
-
-  private normalizeSubmittedValue(value: QuickPickItem | undefined) {
-    return value || this.quickPick.value;
-  }
-
-  private async openInBrowser(url: string): Promise<void> {
-    await this.open(url);
-  }
-
-  private getSelectedItem(): QuickPickItem {
-    return this.quickPick.selectedItems[0];
-  }
-
-  private onDidAccept = async () => {
-    const selected = this.getSelectedItem();
-    await this.submit(selected);
-  };
-
-  private onDidHide = () => {
-    this.clearText();
-  };
-
-  private onDidChangeValueClearing = () => {
-    this.setQpItems([]);
-  };
-
-  private onDidChangeValue = (value: string) => {
-    this.showLoading(true);
-    const items = this.filter(value);
-    this.setQpItems(items);
-    this.showLoading(false);
-  };
-
-  private onWillGoLowerTreeLevel = () => {
-    const items = this.getItems();
-    rememberHigherLevelQpData(items);
-  };
 }
 
-export default QuickPick;
+function showQuickPick(): void {
+  quickPick.quickPickControl.show();
+}
+
+const loadQuickPickData = async (value?: QuickPickItem) => {
+  showLoading(true);
+  let data: QuickPickItem[];
+
+  if (shouldDisplayFlatList()) {
+    data = await getFlatQuickPickData();
+  } else if (value) {
+    data = await getQuickPickData(value);
+  } else {
+    data = await getQuickPickRootData();
+  }
+  preparePlaceholder();
+
+  quickPick.clearText();
+  loadItems(data);
+  showLoading(false);
+};
+
+const submit = async (selected: QuickPickItem | undefined) => {
+  const value = normalizeSubmittedValue(selected);
+
+  try {
+    if (isValueStringType(value)) {
+      if (!isHigherLevelDataEmpty()) {
+        return;
+      }
+      await quickPick.processIfValueIsStringType(value as string);
+    } else {
+      await quickPick.processIfValueIsQuickPickItemType(value as QuickPickItem);
+    }
+  } catch (error) {
+    printErrorMessage(error as Error);
+  }
+};
+
+function loadItems(items: QuickPickItem[]): void {
+  setQpItems(items);
+  setItems(items);
+}
+
+function setItems(newItems: QuickPickItem[]): void {
+  quickPick.items = newItems;
+}
+
+function setQpItems(items: QuickPickItem[]): void {
+  quickPick.quickPickControl.items = items;
+}
+
+function getItems(): QuickPickItem[] {
+  return [...quickPick.quickPickControl.items];
+}
+
+function showLoading(flag: boolean): void {
+  quickPick.quickPickControl.busy = flag;
+}
+
+function setPlaceholder(text: string | undefined): void {
+  quickPick.quickPickControl.placeholder = text;
+}
+
+function preparePlaceholder(): void {
+  isHigherLevelDataEmpty()
+    ? setPlaceholder("choose item from the list or type anything to search")
+    : setPlaceholder("");
+}
+
+const clearText = () => {
+  quickPick.quickPickControl.value = "";
+};
+
+function filter(value: string): QuickPickItem[] {
+  return quickPick.items.filter(
+    (item) =>
+      item.label.toLowerCase().includes(value.toLowerCase()) ||
+      item.description!.toLowerCase().includes(value.toLowerCase())
+  );
+}
+
+async function processIfValueIsStringType(value: string) {
+  const url = getSearchUrl(value);
+  url && (await quickPick.openInBrowser(url));
+}
+
+async function processIfValueIsQuickPickItemType(value: QuickPickItem) {
+  if (isValueFileType(value)) {
+    let url = value.url;
+    url && (await quickPick.openInBrowser(url));
+  } else {
+    quickPick.loadQuickPickData(value);
+  }
+}
+
+function normalizeSubmittedValue(value: QuickPickItem | undefined) {
+  return value || quickPick.quickPickControl.value;
+}
+
+async function openInBrowser(url: string): Promise<void> {
+  await open(url);
+}
+
+function getSelectedItem(): QuickPickItem {
+  return quickPick.quickPickControl.selectedItems[0];
+}
+
+const handleDidAccept = async () => {
+  const selected = getSelectedItem();
+  await quickPick.submit(selected);
+};
+
+const handleDidHide = () => {
+  quickPick.clearText();
+};
+
+const handleDidChangeValueClearing = () => {
+  setQpItems([]);
+};
+
+const handleDidChangeValue = (value: string) => {
+  showLoading(true);
+  const items = filter(value);
+  setQpItems(items);
+  showLoading(false);
+};
+
+const handleWillGoLowerTreeLevel = () => {
+  const items = getItems();
+  rememberHigherLevelQpData(items);
+};
+
+type quickPickModule = {
+  items: QuickPickItem[];
+  quickPickControl: vscode.QuickPick<QuickPickItem>;
+  registerEventListeners: () => void;
+  showQuickPick: () => void;
+  loadQuickPickData: (value?: QuickPickItem | undefined) => Promise<void>;
+  submit: (selected: QuickPickItem | undefined) => Promise<void>;
+  clearText: () => void;
+  processIfValueIsStringType: (value: string) => Promise<void>;
+  processIfValueIsQuickPickItemType: (value: QuickPickItem) => Promise<void>;
+  openInBrowser: (url: string) => Promise<void>;
+  handleDidAccept: () => Promise<void>;
+  handleDidHide: () => void;
+  handleDidChangeValueClearing: () => void;
+  handleDidChangeValue: (value: string) => void;
+  handleWillGoLowerTreeLevel: () => void;
+};
+
+const quickPick: quickPickModule = {
+  items: [],
+  quickPickControl: vscode.window.createQuickPick<QuickPickItem>(),
+  registerEventListeners,
+  showQuickPick,
+  loadQuickPickData,
+  submit,
+  clearText,
+  processIfValueIsStringType,
+  processIfValueIsQuickPickItemType,
+  openInBrowser,
+  handleDidAccept,
+  handleDidHide,
+  handleDidChangeValueClearing,
+  handleDidChangeValue,
+  handleWillGoLowerTreeLevel,
+};
+
+export function createQuickPick() {
+  quickPick.quickPickControl.matchOnDescription = true;
+  onWillGoLowerTreeLevel(quickPick.handleWillGoLowerTreeLevel);
+  quickPick.registerEventListeners();
+
+  return quickPick;
+}
