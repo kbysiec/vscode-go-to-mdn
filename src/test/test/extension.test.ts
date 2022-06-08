@@ -1,22 +1,22 @@
 import { assert } from "chai";
 import * as vscode from "vscode";
 import * as extension from "../../extension";
-import ExtensionController from "../../ExtensionController";
+import { createExtensionController } from "../../extensionController";
 import { getTestSetups } from "../testSetup/extension.testSetup";
-import { getExtensionContext } from "../util/mockFactory";
+
+type ExtensionController = ReturnType<typeof createExtensionController>;
+type SetupsType = ReturnType<typeof getTestSetups>;
 
 describe("extension", () => {
-  let context: vscode.ExtensionContext = getExtensionContext();
-  let extensionController: ExtensionController = new ExtensionController(
-    context
-  );
-  let setups = getTestSetups(extensionController);
+  let setups: SetupsType;
+  let context: vscode.ExtensionContext;
+  let extensionController: ExtensionController;
 
-  beforeEach(() => {
-    context = getExtensionContext();
-    extensionController = new ExtensionController(context);
-    setups = getTestSetups(extensionController);
+  before(() => {
+    setups = getTestSetups();
+    ({ context, extensionController } = setups.before());
   });
+  beforeEach(() => setups.afterEach());
 
   describe("activate", () => {
     it("1: should register two commands", async () => {
