@@ -1,25 +1,33 @@
 import * as vscode from "vscode";
 import { clearCache, initCache } from "./cache";
-import { createQuickPick } from "./quickPick";
+import * as quickPick from "./quickPick";
 import { printClearCacheMessage } from "./utils";
 
-class ExtensionController {
-  private quickPick: ReturnType<typeof createQuickPick>;
-
-  constructor(extensionContext: vscode.ExtensionContext) {
-    initCache(extensionContext);
-    this.quickPick = createQuickPick();
-  }
-
-  async browse(): Promise<void> {
-    await this.quickPick.loadQuickPickData();
-    this.quickPick.showQuickPick();
-  }
-
-  clearCache(): void {
-    clearCache();
-    printClearCacheMessage();
-  }
+async function browse(): Promise<void> {
+  await extensionController.quickPick!.loadQuickPickData();
+  extensionController.quickPick!.showQuickPick();
 }
 
-export default ExtensionController;
+function clear(): void {
+  clearCache();
+  printClearCacheMessage();
+}
+
+type extensionController = {
+  quickPick?: ReturnType<typeof quickPick.createQuickPick>;
+  browse: () => Promise<void>;
+  clear: () => void;
+};
+
+const extensionController: extensionController = {
+  browse,
+  clear,
+};
+
+export function createExtensionController(
+  extensionContext: vscode.ExtensionContext
+) {
+  extensionController.quickPick = quickPick.createQuickPick();
+  initCache(extensionContext);
+  return extensionController;
+}

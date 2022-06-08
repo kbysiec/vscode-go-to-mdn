@@ -1,21 +1,19 @@
 import { assert } from "chai";
-import * as vscode from "vscode";
-import ExtensionController from "../../ExtensionController";
+import { createExtensionController } from "../../extensionController";
 import { getTestSetups } from "../testSetup/extensionController.testSetup";
-import { getExtensionContext } from "../util/mockFactory";
+
+type ExtensionController = ReturnType<typeof createExtensionController>;
+type setupsType = ReturnType<typeof getTestSetups>;
 
 describe("extensionController", () => {
-  let context: vscode.ExtensionContext = getExtensionContext();
-  let extensionController: ExtensionController = new ExtensionController(
-    context
-  );
-  let setups = getTestSetups(extensionController);
+  let setups: setupsType;
+  let extensionController: ExtensionController;
 
-  beforeEach(() => {
-    context = getExtensionContext();
-    extensionController = new ExtensionController(context);
-    setups = getTestSetups(extensionController);
+  before(() => {
+    setups = getTestSetups();
+    extensionController = setups.before();
   });
+  beforeEach(() => setups.afterEach());
 
   describe("browse", () => {
     it("1: should load data and show quickPick", async () => {
@@ -31,7 +29,7 @@ describe("extensionController", () => {
     it("1: should invoke cache clearing function on cache object", async () => {
       const [clearCacheStub] = setups.clearCache1();
 
-      await extensionController.clearCache();
+      await extensionController.clear();
       assert.equal(clearCacheStub.calledOnce, true);
     });
   });
