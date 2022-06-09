@@ -1,22 +1,31 @@
+import * as sinon from "sinon";
 import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
+import { stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = () => {
+  const sandbox = sinon.createSandbox();
+
   const getSearchUrl = () => {
     const baseUrl = "https://developer.mozilla.org/en-US/search";
-    stubMultiple([
-      {
-        object: appConfig,
-        method: "searchUrl",
-        returns: baseUrl,
-        isNotMethod: true,
-      },
-    ]);
+    stubMultiple(
+      [
+        {
+          object: appConfig,
+          method: "searchUrl",
+          returns: baseUrl,
+          isNotMethod: true,
+        },
+      ],
+      sandbox
+    );
 
     return baseUrl;
   };
   return {
+    afterEach: () => {
+      sandbox.restore();
+    },
     getSearchUrl1: () => {
       return getSearchUrl();
     },
@@ -24,27 +33,26 @@ export const getTestSetups = () => {
       return getSearchUrl();
     },
     printErrorMessage1: () => {
-      return stubMultiple([
-        {
-          object: vscode.window,
-          method: "showInformationMessage",
-        },
-      ]);
+      return stubMultiple(
+        [
+          {
+            object: vscode.window,
+            method: "showInformationMessage",
+          },
+        ],
+        sandbox
+      );
     },
     printClearCacheMessage1: () => {
-      restoreStubbedMultiple([
-        {
-          object: vscode.window,
-          method: "showInformationMessage",
-        },
-      ]);
-
-      return stubMultiple([
-        {
-          object: vscode.window,
-          method: "showInformationMessage",
-        },
-      ]);
+      return stubMultiple(
+        [
+          {
+            object: vscode.window,
+            method: "showInformationMessage",
+          },
+        ],
+        sandbox
+      );
     },
   };
 };

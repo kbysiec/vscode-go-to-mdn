@@ -3,12 +3,15 @@ import * as utils from "../../utils";
 import * as mock from "../mock/utils.mock";
 import { getTestSetups } from "../testSetup/utils.testSetup";
 
-describe("Utils", () => {
-  let setups = getTestSetups();
+type SetupsType = ReturnType<typeof getTestSetups>;
 
-  beforeEach(() => {
+describe("Utils", () => {
+  let setups: SetupsType;
+
+  before(() => {
     setups = getTestSetups();
   });
+  afterEach(() => setups.afterEach());
 
   describe("isValueStringType", () => {
     it("1: should return true if value is a string", () => {
