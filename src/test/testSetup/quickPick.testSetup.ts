@@ -11,14 +11,25 @@ import { stubMultiple } from "../util/stubHelpers";
 type quickPickModule = typeof quickPickModule;
 
 const getComponent = (sandbox: sinon.SinonSandbox) => {
-  sandbox.stub(config, "shouldDisplayFlatList");
+  stubMultiple(
+    [
+      {
+        object: config,
+        method: "shouldDisplayFlatList",
+      },
+    ],
+    sandbox
+  );
   const openStub = sandbox.stub().returns(Promise.resolve());
   const proxiedModule: quickPickModule = proxyquire("../../quickPick", {
     open: openStub,
   });
   const { createQuickPick } = proxiedModule;
+  const quickPick = createQuickPick();
+  sandbox.restore();
+
   return {
-    quickPick: createQuickPick(),
+    quickPick,
     stubs: [openStub],
   };
 };
