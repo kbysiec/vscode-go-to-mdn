@@ -3,10 +3,12 @@ import * as parser from "../../parser";
 import * as mock from "../mock/parser.mock";
 import { getTestSetups } from "../testSetup/parser.testSetup";
 
-describe("Parser", () => {
-  let setups = getTestSetups();
+type SetupsType = ReturnType<typeof getTestSetups>;
 
-  beforeEach(() => {
+describe("Parser", () => {
+  let setups: SetupsType;
+
+  before(() => {
     setups = getTestSetups();
   });
 
