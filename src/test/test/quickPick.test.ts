@@ -14,7 +14,7 @@ describe("Quick Pick", () => {
     setups = getTestSetups();
     quickPick = setups.before();
   });
-  beforeEach(() => setups.afterEach());
+  afterEach(() => setups.afterEach());
 
   describe("registerEventListeners", () => {
     it("1: should register onDidHide and onDidAccept event listeners", () => {

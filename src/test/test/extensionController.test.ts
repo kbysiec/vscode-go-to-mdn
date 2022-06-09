@@ -13,7 +13,7 @@ describe("extensionController", () => {
     setups = getTestSetups();
     extensionController = setups.before();
   });
-  beforeEach(() => setups.afterEach());
+  afterEach(() => setups.afterEach());
 
   describe("browse", () => {
     it("1: should load data and show quickPick", async () => {

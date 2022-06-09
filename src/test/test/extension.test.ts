@@ -16,7 +16,7 @@ describe("extension", () => {
     setups = getTestSetups();
     ({ context, extensionController } = setups.before());
   });
-  beforeEach(() => setups.afterEach());
+  afterEach(() => setups.afterEach());
 
   describe("activate", () => {
     it("1: should register two commands", async () => {
