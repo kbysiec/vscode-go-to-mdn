@@ -1,21 +1,18 @@
 import { assert } from "chai";
-import * as sinon from "sinon";
-import * as vscode from "vscode";
 import * as config from "../../config";
 import { getTestSetups } from "../testSetup/config.testSetup";
 
+type SetupsType = ReturnType<typeof getTestSetups>;
+
 describe("Config", () => {
-  let configuration: { [key: string]: any };
-  let setups = getTestSetups();
+  let setups: SetupsType;
+  let configuration: { [key: string]: { [key: string]: string | boolean } };
 
-  beforeEach(() => {
-    ({ configuration } = setups.beforeEach());
+  before(() => {
     setups = getTestSetups();
+    ({ configuration } = setups.before());
   });
-
-  afterEach(() => {
-    (vscode.workspace.getConfiguration as sinon.SinonStub).restore();
-  });
+  afterEach(() => setups.afterEach());
 
   describe("getGithubPersonalAccessToken", () => {
     it("1: should return string from configuration", () => {
