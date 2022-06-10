@@ -1,19 +1,29 @@
+import * as sinon from "sinon";
 import * as config from "../../config";
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";
 import QuickPickItem from "../../interface/quickPickItem";
-import { restoreStubbedMultiple, stubMultiple } from "../util/stubHelpers";
+import * as utils from "../../utils";
+import { stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = () => {
+  const sandbox = sinon.createSandbox();
+
   return {
+    afterEach: () => {
+      sandbox.restore();
+    },
     prepareQpData1: () => {
-      stubMultiple([
-        {
-          object: config,
-          method: "shouldDisplayFlatList",
-          returns: false,
-        },
-      ]);
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "shouldDisplayFlatList",
+            returns: false,
+          },
+        ],
+        sandbox
+      );
 
       const expectedSecondItem: QuickPickItem = {
         label: `$(file-directory) sub-label`,
@@ -28,20 +38,16 @@ export const getTestSetups = () => {
       return expectedSecondItem;
     },
     prepareQpData2: () => {
-      restoreStubbedMultiple([
-        {
-          object: config,
-          method: "shouldDisplayFlatList",
-        },
-      ]);
-
-      stubMultiple([
-        {
-          object: config,
-          method: "shouldDisplayFlatList",
-          returns: true,
-        },
-      ]);
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "shouldDisplayFlatList",
+            returns: true,
+          },
+        ],
+        sandbox
+      );
 
       const expectedSecondItem: QuickPickItem = {
         label: `$(link) sub-label 2`,
@@ -56,20 +62,21 @@ export const getTestSetups = () => {
       return expectedSecondItem;
     },
     mapQpItemToItem1: () => {
-      restoreStubbedMultiple([
-        {
-          object: config,
-          method: "shouldDisplayFlatList",
-        },
-      ]);
-
-      stubMultiple([
-        {
-          object: config,
-          method: "shouldDisplayFlatList",
-          returns: true,
-        },
-      ]);
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "shouldDisplayFlatList",
+            returns: true,
+          },
+          {
+            object: utils,
+            method: "getNameFromQuickPickItem",
+            returns: "test-label sub-label",
+          },
+        ],
+        sandbox
+      );
 
       const expected: Item = {
         name: "test-label sub-label",

@@ -5,17 +5,15 @@ import QuickPickItem from "../../interface/QuickPickItem";
 import * as mock from "../mock/dataConverter.mock";
 import { getTestSetups } from "../testSetup/dataConverter.testSetup";
 
-// const ProxiedDataConverter = proxyquire("../../dataConverter", {
-//   getNameFromQuickPickItem: sinon.stub(),
-//   shouldDisplayFlatList: sinon.stub(),
-// }).default;
+type SetupsType = ReturnType<typeof getTestSetups>;
 
 describe("DataConverter", () => {
-  let setups = getTestSetups();
+  let setups: SetupsType;
 
-  beforeEach(() => {
+  before(() => {
     setups = getTestSetups();
   });
+  afterEach(() => setups.afterEach());
 
   describe("prepareQpData", () => {
     it(`1: should return array of QuickPickItem if isFlat is falsy
