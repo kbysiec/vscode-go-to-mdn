@@ -1,26 +1,26 @@
 import { assert } from "chai";
-import * as sinon from "sinon";
 import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
 import * as cache from "../../cache";
 import * as mock from "../mock/cache.mock";
 import { getTestSetups } from "../testSetup/cache.testSetup";
-import { getExtensionContext } from "../util/mockFactory";
+
+type SetupsType = ReturnType<typeof getTestSetups>;
 
 describe("Cache", () => {
-  let context: vscode.ExtensionContext = getExtensionContext();
-  let updateStub: sinon.SinonStub;
-  let setups = getTestSetups(context);
+  let context: vscode.ExtensionContext;
+  let setups: SetupsType;
 
-  beforeEach(() => {
-    context = getExtensionContext();
+  before(() => {
+    setups = getTestSetups();
+    context = setups.before();
     cache.initCache(context);
-    setups = getTestSetups(context);
-    updateStub = setups.beforeEach();
   });
+  afterEach(() => setups.afterEach());
 
   describe("updateFlatData", () => {
     it("1: should update cache value", () => {
+      const [updateStub] = setups.updateFlatData1();
       cache.updateFlatData(mock.items);
 
       assert.equal(
@@ -32,7 +32,7 @@ describe("Cache", () => {
 
   describe("updateTreeDataByItem", () => {
     it("1: should update cache value if item is undefined", () => {
-      setups.updateTreeDataByItem1();
+      const [updateStub] = setups.updateTreeDataByItem1();
       cache.updateTreeDataByItem(mock.items);
 
       assert.equal(
@@ -44,7 +44,7 @@ describe("Cache", () => {
     });
 
     it("2: should update cache value if item is passed", () => {
-      setups.updateTreeDataByItem2();
+      const [updateStub] = setups.updateTreeDataByItem2();
       cache.updateTreeDataByItem(mock.items, mock.item);
 
       assert.equal(
@@ -87,6 +87,7 @@ describe("Cache", () => {
 
   describe("clearCache", () => {
     it("1: should clear cache", () => {
+      const [updateStub] = setups.clearCache1();
       cache.clearCache();
       assert.equal(updateStub.calledTwice, true);
     });
