@@ -3,12 +3,15 @@ import * as dataService from "../../dataService";
 import * as mock from "../mock/dataService.mock";
 import { getTestSetups } from "../testSetup/dataService.testSetup";
 
-describe("DataService", () => {
-  let setups = getTestSetups();
+type SetupsType = ReturnType<typeof getTestSetups>;
 
-  beforeEach(() => {
+describe("DataService", () => {
+  let setups: SetupsType;
+
+  before(() => {
     setups = getTestSetups();
   });
+  afterEach(() => setups.afterEach());
 
   describe("getFlatQuickPickData", () => {
     it("1: should return flat quick pick data from cache", async () => {
