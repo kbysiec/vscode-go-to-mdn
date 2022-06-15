@@ -1,42 +1,63 @@
 import { Response } from "node-fetch";
+import * as proxyquire from "proxyquire";
 import * as sinon from "sinon";
 import { appConfig } from "../../appConfig";
 import * as config from "../../config";
+import * as dataDownloaderModule from "../../dataDownloader";
 import ItemType from "../../enum/itemType";
 import Item from "../../interface/item";
+import * as parser from "../../parser";
 import * as mock from "../mock/dataDownloader.mock";
 import { stubMultiple } from "../util/stubHelpers";
 
-const fetch = require("node-fetch");
 const fetchMock = require("fetch-mock").sandbox();
 
+type DataDownloader = typeof dataDownloaderModule;
+
+const getComponent = (sandbox: sinon.SinonSandbox, fetchStub?: any) => {
+  const proxiedModule: DataDownloader = proxyquire("../../dataDownloader", {
+    "node-fetch": fetchStub || sandbox.stub(),
+  });
+
+  return proxiedModule;
+};
+
 export const getTestSetups = () => {
+  const sandbox = sinon.createSandbox();
+  const dataDownloader = getComponent(sandbox);
+
   return {
-    beforeEach: () => {
-      fetch.cache = {};
-      fetch.cache.default = fetch.default;
+    before: () => {
+      return dataDownloader;
     },
     afterEach: () => {
       fetchMock.restore();
-      fetch.default = fetch.cache.default;
-      delete fetch.cache;
+      sandbox.restore();
     },
     downloadTreeData1: () => {
+      stubMultiple(
+        [
+          {
+            object: parser,
+            method: "parseRootDirectories",
+            returns: mock.downloadTreeDataDirectoriesOutputItems,
+          },
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
         new Response(mock.downloadTreeDataRootDirectoriesContent, {
           status: 200,
         })
       );
-      fetch.default = fetchStub;
+      return getComponent(sandbox, fetchStub);
     },
     downloadTreeData2: () => {
-      const fetchStub = fetchMock.get(
-        "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=main",
-        new Response(mock.downloadTreeDataElementsContent, { status: 200 })
-      );
-      fetch.default = fetchStub;
-
       const expected: Item[] = [
         {
           name: "Accept Alert - reference",
@@ -61,15 +82,32 @@ export const getTestSetups = () => {
         },
       ];
 
-      return expected;
+      stubMultiple(
+        [
+          {
+            object: parser,
+            method: "parseElements",
+            returns: expected,
+          },
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
+
+      const fetchStub = fetchMock.get(
+        "https://api.github.com/repos/mdn/browser-compat-data/contents/webdriver/commands/AcceptAlert.json?ref=main",
+        new Response(mock.downloadTreeDataElementsContent, { status: 200 })
+      );
+
+      return {
+        dataDownloader: getComponent(sandbox, fetchStub),
+        expected,
+      };
     },
     downloadTreeData3: () => {
-      const fetchStub = fetchMock.get(
-        "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=main",
-        new Response(mock.downloadTreeDataDirectoriesContent, { status: 200 })
-      );
-      fetch.default = fetchStub;
-
       const expected: Item[] = [
         {
           name: "Abort Controller",
@@ -89,23 +127,59 @@ export const getTestSetups = () => {
         },
       ];
 
-      return expected;
+      stubMultiple(
+        [
+          {
+            object: parser,
+            method: "parseDirectories",
+            returns: expected,
+          },
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
+
+      const fetchStub = fetchMock.get(
+        "https://api.github.com/repos/mdn/browser-compat-data/contents/api?ref=main",
+        new Response(mock.downloadTreeDataDirectoriesContent, { status: 200 })
+      );
+
+      return {
+        dataDownloader: getComponent(sandbox, fetchStub),
+        expected,
+      };
     },
     downloadTreeData4: () => {
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
+
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
         new Response("", { status: 204 })
       );
-      fetch.default = fetchStub;
+
+      return getComponent(sandbox, fetchStub);
     },
     downloadTreeData5: () => {
-      stubMultiple([
-        {
-          object: config,
-          method: "getGithubPersonalAccessToken",
-          returns: undefined,
-        },
-      ]);
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
 
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
@@ -113,19 +187,20 @@ export const getTestSetups = () => {
           status: 200,
         })
       );
-      fetch.default = fetchStub;
-      const fetchSpy = sinon.spy(fetch, "default");
 
-      return fetchSpy;
+      return { dataDownloader: getComponent(sandbox, fetchStub), fetchStub };
     },
     downloadTreeData6: () => {
-      stubMultiple([
-        {
-          object: config,
-          method: "getGithubPersonalAccessToken",
-          returns: "123456789",
-        },
-      ]);
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+            returns: "123456789",
+          },
+        ],
+        sandbox
+      );
 
       const fetchStub = fetchMock.get(
         appConfig.rootUrl,
@@ -133,21 +208,10 @@ export const getTestSetups = () => {
           status: 200,
         })
       );
-      fetch.default = fetchStub;
-      const fetchSpy = sinon.spy(fetch, "default");
 
-      return fetchSpy;
+      return { dataDownloader: getComponent(sandbox, fetchStub), fetchStub };
     },
     downloadFlatData1: () => {
-      const fetchStub = fetchMock.get(
-        appConfig.allFilesUrl,
-        new Response(
-          '{"items":[{"id":216685,"name":"compact","url":"https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact","parent":null,"rootParent":null,"type":2,"breadcrumbs":["api","HTMLU List Element","compact"],"timestamp":"2019-11-19T00:00:00"}]}',
-          { status: 200 }
-        )
-      );
-      fetch.default = fetchStub;
-
       const expected: Item[] = [
         {
           name: "compact",
@@ -159,20 +223,68 @@ export const getTestSetups = () => {
         },
       ];
 
-      return expected;
+      stubMultiple(
+        [
+          {
+            object: parser,
+            method: "parseFlatElements",
+            returns: expected,
+          },
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
+
+      const fetchStub = fetchMock.get(
+        appConfig.allFilesUrl,
+        new Response(
+          '{"items":[{"id":216685,"name":"compact","url":"https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact","parent":null,"rootParent":null,"type":2,"breadcrumbs":["api","HTMLU List Element","compact"],"timestamp":"2019-11-19T00:00:00"}]}',
+          { status: 200 }
+        )
+      );
+
+      return {
+        dataDownloader: getComponent(sandbox, fetchStub),
+        expected,
+      };
     },
     downloadFlatData2: () => {
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
+
       const fetchStub = fetchMock.get(
         appConfig.allFilesUrl,
         new Response("", { status: 204 })
       );
-      fetch.default = fetchStub;
+
+      return getComponent(sandbox, fetchStub);
     },
     downloadFlatData3: () => {
+      stubMultiple(
+        [
+          {
+            object: config,
+            method: "getGithubPersonalAccessToken",
+          },
+        ],
+        sandbox
+      );
+
       const fetchStub = fetchMock.get(appConfig.allFilesUrl, {
         throws: new Error("test error message"),
       });
-      fetch.default = fetchStub;
+
+      return getComponent(sandbox, fetchStub);
     },
   };
 };
