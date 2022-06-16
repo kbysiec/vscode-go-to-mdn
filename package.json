@@ -26,19 +26,7 @@
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Go to MDN",
-      "properties": {
-        "goToMDN.githubPersonalAccessToken": {
-          "type": "string",
-          "default": null,
-          "description": "Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour."
-        },
-        "goToMDN.shouldDisplayFlatList": {
-          "type": "boolean",
-          "default": true,
-          "description": "Should all anchors be displayed as flat list at one level. Requires provided github personal access token."
-        }
-      }
+      "title": "Go to MDN"
     },
     "commands": [
       {

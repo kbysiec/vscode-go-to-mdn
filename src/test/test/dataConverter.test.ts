@@ -16,18 +16,8 @@ describe("DataConverter", () => {
   afterEach(() => setups.afterEach());
 
   describe("prepareQpData", () => {
-    it(`1: should return array of QuickPickItem if isFlat is falsy
-      and one of items is a directory`, () => {
+    it("1: should return array of QuickPickItem", () => {
       const expectedSecondItem: QuickPickItem = setups.prepareQpData1();
-      const actual = dataConverter.prepareQpData(mock.items);
-      const expectedLength = 3;
-
-      assert.equal(actual.length, expectedLength);
-      assert.deepEqual(actual[1], expectedSecondItem);
-    });
-
-    it("2: should return array of QuickPickItem if isFlat is true", () => {
-      const expectedSecondItem: QuickPickItem = setups.prepareQpData2();
       const actual = dataConverter.prepareQpData(mock.items);
       const expectedLength = 2;
 

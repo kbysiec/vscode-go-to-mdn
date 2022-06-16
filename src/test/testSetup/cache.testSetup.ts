@@ -14,21 +14,8 @@ export const getTestSetups = () => {
         [
           {
             object: appConfig,
-            method: "flatCacheKey",
-            returns: "flatData",
-            isNotMethod: true,
-          },
-          {
-            object: appConfig,
-            method: "treeCacheKey",
-            returns: "treeData",
-            isNotMethod: true,
-          },
-          {
-            object: appConfig,
-            method: "rootUrl",
-            returns:
-              "https://api.github.com/repos/mdn/browser-compat-data/contents/README.md?ref=main",
+            method: "cacheKey",
+            returns: "data",
             isNotMethod: true,
           },
         ],
@@ -40,7 +27,7 @@ export const getTestSetups = () => {
     afterEach: () => {
       sandbox.restore();
     },
-    updateFlatData1: () => {
+    updateDataInCache1: () => {
       return stubMultiple(
         [
           {
@@ -51,39 +38,7 @@ export const getTestSetups = () => {
         sandbox
       );
     },
-    updateTreeDataByItem1: () => {
-      return stubMultiple(
-        [
-          {
-            object: context.globalState,
-            method: "update",
-          },
-          {
-            object: context.globalState,
-            method: "get",
-            returns: undefined,
-          },
-        ],
-        sandbox
-      );
-    },
-    updateTreeDataByItem2: () => {
-      return stubMultiple(
-        [
-          {
-            object: context.globalState,
-            method: "update",
-          },
-          {
-            object: context.globalState,
-            method: "get",
-            returns: {},
-          },
-        ],
-        sandbox
-      );
-    },
-    getFlatData1: () => {
+    getDataFromCache1: () => {
       stubMultiple(
         [
           {
@@ -95,47 +50,7 @@ export const getTestSetups = () => {
         sandbox
       );
     },
-    getFlatData2: () => {
-      stubMultiple(
-        [
-          {
-            object: context.globalState,
-            method: "get",
-            returns: undefined,
-          },
-        ],
-        sandbox
-      );
-    },
-    getTreeDataByItem1: () => {
-      stubMultiple(
-        [
-          {
-            object: context.globalState,
-            method: "get",
-            returns: {
-              [appConfig.rootUrl]: mock.items,
-            },
-          },
-        ],
-        sandbox
-      );
-    },
-    getTreeDataByItem2: () => {
-      stubMultiple(
-        [
-          {
-            object: context.globalState,
-            method: "get",
-            returns: {
-              [mock.qpItem.url]: mock.items,
-            },
-          },
-        ],
-        sandbox
-      );
-    },
-    getTreeDataByItem3: () => {
+    getDataFromCache2: () => {
       stubMultiple(
         [
           {

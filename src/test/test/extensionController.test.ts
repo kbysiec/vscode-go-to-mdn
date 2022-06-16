@@ -3,10 +3,10 @@ import { createExtensionController } from "../../extensionController";
 import { getTestSetups } from "../testSetup/extensionController.testSetup";
 
 type ExtensionController = ReturnType<typeof createExtensionController>;
-type setupsType = ReturnType<typeof getTestSetups>;
+type SetupsType = ReturnType<typeof getTestSetups>;
 
 describe("extensionController", () => {
-  let setups: setupsType;
+  let setups: SetupsType;
   let extensionController: ExtensionController;
 
   before(() => {

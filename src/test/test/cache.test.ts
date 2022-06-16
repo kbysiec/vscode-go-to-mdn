@@ -18,70 +18,24 @@ describe("Cache", () => {
   });
   afterEach(() => setups.afterEach());
 
-  describe("updateFlatData", () => {
+  describe("updateDataInCache", () => {
     it("1: should update cache value", () => {
-      const [updateStub] = setups.updateFlatData1();
-      cache.updateFlatData(mock.items);
+      const [updateStub] = setups.updateDataInCache1();
+      cache.updateDataInCache(mock.items);
 
-      assert.equal(
-        updateStub.calledWith(appConfig.flatCacheKey, mock.items),
-        true
-      );
+      assert.equal(updateStub.calledWith(appConfig.cacheKey, mock.items), true);
     });
   });
 
-  describe("updateTreeDataByItem", () => {
-    it("1: should update cache value if item is undefined", () => {
-      const [updateStub] = setups.updateTreeDataByItem1();
-      cache.updateTreeDataByItem(mock.items);
-
-      assert.equal(
-        updateStub.calledWith(appConfig.treeCacheKey, {
-          [appConfig.rootUrl]: mock.items,
-        }),
-        true
-      );
-    });
-
-    it("2: should update cache value if item is passed", () => {
-      const [updateStub] = setups.updateTreeDataByItem2();
-      cache.updateTreeDataByItem(mock.items, mock.item);
-
-      assert.equal(
-        updateStub.calledWith(appConfig.treeCacheKey, {
-          [mock.item.url]: mock.items,
-        }),
-        true
-      );
-    });
-  });
-
-  describe("getFlatData", () => {
+  describe("getDataFromCache", () => {
     it("1: should return value from cache", () => {
-      setups.getFlatData1();
-      assert.deepEqual(cache.getFlatData(), mock.items);
+      setups.getDataFromCache1();
+      assert.deepEqual(cache.getDataFromCache(), mock.items);
     });
 
     it("2: should return empty array from cache", () => {
-      setups.getFlatData2();
-      assert.deepEqual(cache.getFlatData(), []);
-    });
-  });
-
-  describe("getTreeDataByItem", () => {
-    it("1: should return value from cache if item is undefined", () => {
-      setups.getTreeDataByItem1();
-      assert.deepEqual(cache.getTreeDataByItem(), mock.items);
-    });
-
-    it("2: should return value from cache if item is passed", () => {
-      setups.getTreeDataByItem2();
-      assert.deepEqual(cache.getTreeDataByItem(mock.qpItem), mock.items);
-    });
-
-    it("3: should return empty array from cache if key not found", () => {
-      setups.getTreeDataByItem3();
-      assert.deepEqual(cache.getTreeDataByItem(), []);
+      setups.getDataFromCache2();
+      assert.deepEqual(cache.getDataFromCache(), []);
     });
   });
 
@@ -89,7 +43,7 @@ describe("Cache", () => {
     it("1: should clear cache", () => {
       const [updateStub] = setups.clearCache1();
       cache.clearCache();
-      assert.equal(updateStub.calledTwice, true);
+      assert.equal(updateStub.calledOnce, true);
     });
   });
 });

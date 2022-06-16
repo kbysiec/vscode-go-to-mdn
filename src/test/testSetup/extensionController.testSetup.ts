@@ -1,13 +1,13 @@
 import * as sinon from "sinon";
 import * as vscode from "vscode";
 import * as cache from "../../cache";
-import * as extensionControllerModule from "../../extensionController";
+import * as ExtensionController from "../../extensionController";
 import * as quickPick from "../../quickPick";
 import * as utils from "../../utils";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubHelpers";
 
-type extensionControllerModule = typeof extensionControllerModule;
+type ExtensionController = typeof ExtensionController;
 
 const getComponent = (sandbox: sinon.SinonSandbox) => {
   stubMultiple(
@@ -25,7 +25,7 @@ const getComponent = (sandbox: sinon.SinonSandbox) => {
     sandbox
   );
   const context: vscode.ExtensionContext = getExtensionContext();
-  const { createExtensionController } = extensionControllerModule;
+  const { createExtensionController } = ExtensionController;
   return {
     extensionController: createExtensionController(context),
   };

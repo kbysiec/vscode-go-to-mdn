@@ -1,6 +1,4 @@
-import { appConfig } from "./appConfig";
-import { shouldDisplayFlatList } from "./config";
-import ItemType from "./enum/itemType";
+// import { shouldDisplayFlatList } from "./config";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
 import { getNameFromQuickPickItem } from "./utils";
@@ -12,78 +10,36 @@ function mapDataToQpData(
   data: Item[],
   isFlat: boolean = false
 ): QuickPickItem[] {
-  return data.map((item: Item) => mapItemToQpItem(item, isFlat));
+  return data.map((item: Item) => mapItemToQpItem(item));
 }
 
 function getIcon(item: Item): string {
-  return item.type === ItemType.Directory ? directoryIcon : linkIcon;
+  return linkIcon;
 }
 
-function getDescription(item: Item, isFlat: boolean): string {
-  return isFlat ? getBreadcrumbs(item, isFlat) : "";
+function getDescription(item: Item): string {
+  return getBreadcrumbs(item);
 }
 
-function mapItemToQpItem(item: Item, isFlat: boolean): QuickPickItem {
+function mapItemToQpItem(item: Item): QuickPickItem {
   const icon = getIcon(item);
-  const description = getDescription(item, isFlat);
+  const description = getDescription(item);
 
   return {
     label: `${icon} ${item.name}`,
     url: item.url,
-    parent: item.parent,
-    rootParent: item.rootParent,
-    type: item.type,
     breadcrumbs: item.breadcrumbs,
     description,
   };
 }
 
-function addBackwardNavigationItem(qpData: QuickPickItem[]): void {
-  qpData.unshift({
-    label: `${directoryIcon} ${appConfig.higherLevelLabel}`,
-    description: getBreadcrumbs(qpData[0]),
-    type: ItemType.Directory,
-    url: "#",
-    breadcrumbs: [],
-  });
+function getBreadcrumbs(item: Item | QuickPickItem): string {
+  const breadcrumbs = item.breadcrumbs;
+  return breadcrumbs.join(" ");
 }
 
-function addBackwardNavigationItemIfNecessary(
-  qpData: QuickPickItem[],
-  shouldDisplayFlatListFlag: boolean,
-  isRootLevel: boolean
-): void {
-  !shouldDisplayFlatListFlag &&
-    !isRootLevel &&
-    addBackwardNavigationItem(qpData);
-}
-
-function getBreadcrumbs(
-  item: Item | QuickPickItem,
-  isFlat: boolean = false
-): string {
-  const breadcrumbs = isFlat
-    ? item.breadcrumbs
-    : [...item.breadcrumbs].slice(0, -1);
-  return breadcrumbs.join(`${isFlat ? " " : " / "}`);
-}
-
-export function prepareQpData(
-  data: Item[],
-  isRootLevel: boolean = false
-): QuickPickItem[] {
-  const shouldDisplayFlatListFlag = shouldDisplayFlatList();
-  const qpData: QuickPickItem[] = mapDataToQpData(
-    data,
-    shouldDisplayFlatListFlag
-  );
-
-  addBackwardNavigationItemIfNecessary(
-    qpData,
-    shouldDisplayFlatListFlag,
-    isRootLevel
-  );
-
+export function prepareQpData(data: Item[]): QuickPickItem[] {
+  const qpData: QuickPickItem[] = mapDataToQpData(data);
   return qpData;
 }
 
@@ -91,9 +47,6 @@ export function mapQpItemToItem(qpItem: QuickPickItem): Item {
   return {
     name: getNameFromQuickPickItem(qpItem),
     url: qpItem.url,
-    type: qpItem.type,
-    parent: qpItem.parent,
-    rootParent: qpItem.rootParent,
     breadcrumbs: qpItem.breadcrumbs,
   };
 }

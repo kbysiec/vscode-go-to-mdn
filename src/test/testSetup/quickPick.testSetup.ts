@@ -1,27 +1,17 @@
 import * as proxyquire from "proxyquire";
 import * as sinon from "sinon";
 import { appConfig } from "../../appConfig";
-import * as config from "../../config";
 import * as dataService from "../../dataService";
-import * as quickPickModule from "../../quickPick";
+import * as QuickPick from "../../quickPick";
 import * as utils from "../../utils";
 import * as mock from "../mock/quickPick.mock";
 import { stubMultiple } from "../util/stubHelpers";
 
-type quickPickModule = typeof quickPickModule;
+type QuickPick = typeof QuickPick;
 
 const getComponent = (sandbox: sinon.SinonSandbox) => {
-  stubMultiple(
-    [
-      {
-        object: config,
-        method: "shouldDisplayFlatList",
-      },
-    ],
-    sandbox
-  );
   const openStub = sandbox.stub().returns(Promise.resolve());
-  const proxiedModule: quickPickModule = proxyquire("../../quickPick", {
+  const proxiedModule: QuickPick = proxyquire("../../quickPick", {
     open: openStub,
   });
   const { createQuickPick } = proxiedModule;
@@ -56,37 +46,13 @@ export const getTestSetups = () => {
             method: "onDidHide",
           },
           { object: quickPick.quickPickControl, method: "onDidAccept" },
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-          },
         ],
         sandbox
       );
     },
     registerEventListeners2: () => {
       return stubMultiple(
-        [
-          { object: quickPick.quickPickControl, method: "onDidChangeValue" },
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: false,
-          },
-        ],
-        sandbox
-      );
-    },
-    registerEventListeners3: () => {
-      return stubMultiple(
-        [
-          { object: quickPick.quickPickControl, method: "onDidChangeValue" },
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: true,
-          },
-        ],
+        [{ object: quickPick.quickPickControl, method: "onDidChangeValue" }],
         sandbox
       );
     },
@@ -100,91 +66,8 @@ export const getTestSetups = () => {
       stubMultiple(
         [
           {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: true,
-          },
-          {
-            object: dataService,
-            method: "getFlatQuickPickData",
-            returns: Promise.resolve(mock.qpItems),
-          },
-        ],
-        sandbox
-      );
-    },
-    loadQuickPickData2: () => {
-      stubMultiple(
-        [
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: false,
-          },
-          {
             object: dataService,
             method: "getQuickPickData",
-            returns: Promise.resolve(mock.qpItems),
-          },
-        ],
-        sandbox
-      );
-    },
-    loadQuickPickData3: () => {
-      stubMultiple(
-        [
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: false,
-          },
-          {
-            object: dataService,
-            method: "getQuickPickRootData",
-            returns: Promise.resolve(mock.qpItems),
-          },
-        ],
-        sandbox
-      );
-    },
-    loadQuickPickData4: () => {
-      stubMultiple(
-        [
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: false,
-          },
-          {
-            object: dataService,
-            method: "isHigherLevelDataEmpty",
-            returns: false,
-          },
-          {
-            object: dataService,
-            method: "getQuickPickRootData",
-            returns: Promise.resolve(mock.qpItems),
-          },
-        ],
-        sandbox
-      );
-    },
-    loadQuickPickData5: () => {
-      stubMultiple(
-        [
-          {
-            object: config,
-            method: "shouldDisplayFlatList",
-            returns: false,
-          },
-          {
-            object: dataService,
-            method: "isHigherLevelDataEmpty",
-            returns: true,
-          },
-          {
-            object: dataService,
-            method: "getQuickPickRootData",
             returns: Promise.resolve(mock.qpItems),
           },
         ],
@@ -197,19 +80,9 @@ export const getTestSetups = () => {
         ...stubMultiple(
           [
             {
-              object: dataService,
-              method: "isHigherLevelDataEmpty",
-              returns: true,
-            },
-            {
               object: utils,
               method: "isValueStringType",
               returns: false,
-            },
-            {
-              object: utils,
-              method: "isValueFileType",
-              returns: true,
             },
           ],
           sandbox
@@ -221,11 +94,6 @@ export const getTestSetups = () => {
         openStub,
         ...stubMultiple(
           [
-            {
-              object: dataService,
-              method: "isHigherLevelDataEmpty",
-              returns: true,
-            },
             {
               object: quickPick.quickPickControl,
               method: "value",
@@ -249,11 +117,6 @@ export const getTestSetups = () => {
               method: "isValueStringType",
               returns: true,
             },
-            {
-              object: utils,
-              method: "isValueFileType",
-              returns: true,
-            },
           ],
           sandbox
         ),
@@ -268,76 +131,15 @@ export const getTestSetups = () => {
             returns: Promise.resolve(),
           },
           {
-            object: appConfig,
-            method: "searchUrl",
-            returns: "https://developer.mozilla.org/search",
-            isNotMethod: true,
-          },
-          {
-            object: dataService,
-            method: "isHigherLevelDataEmpty",
-            returns: false,
-          },
-          {
-            object: quickPick.quickPickControl,
-            method: "value",
-            returns: "test search text",
-            isNotMethod: true,
-          },
-          {
             object: utils,
             method: "isValueStringType",
-            returns: true,
+            returns: false,
           },
         ],
         sandbox
       );
     },
     submit4: () => {
-      return stubMultiple(
-        [
-          {
-            object: quickPick,
-            method: "openInBrowser",
-            returns: Promise.resolve(),
-          },
-          {
-            object: utils,
-            method: "isValueStringType",
-            returns: false,
-          },
-          {
-            object: utils,
-            method: "isValueFileType",
-            returns: true,
-          },
-        ],
-        sandbox
-      );
-    },
-    submit5: () => {
-      return stubMultiple(
-        [
-          {
-            object: quickPick,
-            method: "loadQuickPickData",
-            returns: Promise.resolve(),
-          },
-          {
-            object: utils,
-            method: "isValueStringType",
-            returns: false,
-          },
-          {
-            object: utils,
-            method: "isValueFileType",
-            returns: false,
-          },
-        ],
-        sandbox
-      );
-    },
-    submit6: () => {
       return stubMultiple(
         [
           {

@@ -23,16 +23,6 @@ describe("Utils", () => {
     });
   });
 
-  describe("isValueFileType", () => {
-    it("1: should return true if value type is file", () => {
-      assert.equal(utils.isValueFileType(mock.qpItemFile), true);
-    });
-
-    it("2: should return false if value type is directory", () => {
-      assert.equal(utils.isValueFileType(mock.qpItemDirectory), false);
-    });
-  });
-
   describe("getSearchUrl", () => {
     it("1: should return search url with query string", () => {
       const baseUrl = setups.getSearchUrl1();

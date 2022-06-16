@@ -1,20 +1,7 @@
 import * as vscode from "vscode";
-import { shouldDisplayFlatList } from "./config";
-import {
-  getFlatQuickPickData,
-  getQuickPickData,
-  getQuickPickRootData,
-  isHigherLevelDataEmpty,
-  onWillGoLowerTreeLevel,
-  rememberHigherLevelQpData,
-} from "./dataService";
+import { getQuickPickData } from "./dataService";
 import QuickPickItem from "./interface/QuickPickItem";
-import {
-  getSearchUrl,
-  isValueFileType,
-  isValueStringType,
-  printErrorMessage,
-} from "./utils";
+import { getSearchUrl, isValueStringType, printErrorMessage } from "./utils";
 const open = require("open");
 const debounce = require("debounce");
 
@@ -22,16 +9,12 @@ function registerEventListeners(): void {
   quickPick.quickPickControl.onDidHide(quickPick.handleDidHide);
   quickPick.quickPickControl.onDidAccept(quickPick.handleDidAccept);
 
-  if (shouldDisplayFlatList()) {
-    quickPick.quickPickControl.onDidChangeValue(
-      quickPick.handleDidChangeValueClearing
-    );
-    quickPick.quickPickControl.onDidChangeValue(
-      debounce(quickPick.handleDidChangeValue, 350)
-    );
-  } else {
-    quickPick.quickPickControl.onDidChangeValue(quickPick.handleDidChangeValue);
-  }
+  quickPick.quickPickControl.onDidChangeValue(
+    quickPick.handleDidChangeValueClearing
+  );
+  quickPick.quickPickControl.onDidChangeValue(
+    debounce(quickPick.handleDidChangeValue, 350)
+  );
 }
 
 function showQuickPick(): void {
@@ -42,13 +25,7 @@ const loadQuickPickData = async (value?: QuickPickItem) => {
   showLoading(true);
   let data: QuickPickItem[];
 
-  if (shouldDisplayFlatList()) {
-    data = await getFlatQuickPickData();
-  } else if (value) {
-    data = await getQuickPickData(value);
-  } else {
-    data = await getQuickPickRootData();
-  }
+  data = await getQuickPickData();
   preparePlaceholder();
 
   quickPick.clearText();
@@ -61,9 +38,6 @@ const submit = async (selected: QuickPickItem | undefined) => {
 
   try {
     if (isValueStringType(value)) {
-      if (!isHigherLevelDataEmpty()) {
-        return;
-      }
       await quickPick.processIfValueIsStringType(value as string);
     } else {
       await quickPick.processIfValueIsQuickPickItemType(value as QuickPickItem);
@@ -86,10 +60,6 @@ function setQpItems(items: QuickPickItem[]): void {
   quickPick.quickPickControl.items = items;
 }
 
-function getItems(): QuickPickItem[] {
-  return [...quickPick.quickPickControl.items];
-}
-
 function showLoading(flag: boolean): void {
   quickPick.quickPickControl.busy = flag;
 }
@@ -99,9 +69,7 @@ function setPlaceholder(text: string | undefined): void {
 }
 
 function preparePlaceholder(): void {
-  isHigherLevelDataEmpty()
-    ? setPlaceholder("choose item from the list or type anything to search")
-    : setPlaceholder("");
+  setPlaceholder("choose item from the list or type anything to search");
 }
 
 const clearText = () => {
@@ -122,12 +90,12 @@ async function processIfValueIsStringType(value: string) {
 }
 
 async function processIfValueIsQuickPickItemType(value: QuickPickItem) {
-  if (isValueFileType(value)) {
-    let url = value.url;
-    url && (await quickPick.openInBrowser(url));
-  } else {
-    quickPick.loadQuickPickData(value);
-  }
+  // if (isValueFileType(value)) {
+  let url = value.url;
+  url && (await quickPick.openInBrowser(url));
+  // } else {
+  quickPick.loadQuickPickData(value);
+  // }
 }
 
 function normalizeSubmittedValue(value: QuickPickItem | undefined) {
@@ -162,11 +130,6 @@ const handleDidChangeValue = (value: string) => {
   showLoading(false);
 };
 
-const handleWillGoLowerTreeLevel = () => {
-  const items = getItems();
-  rememberHigherLevelQpData(items);
-};
-
 type quickPickModule = {
   items: QuickPickItem[];
   quickPickControl: vscode.QuickPick<QuickPickItem>;
@@ -182,7 +145,6 @@ type quickPickModule = {
   handleDidHide: () => void;
   handleDidChangeValueClearing: () => void;
   handleDidChangeValue: (value: string) => void;
-  handleWillGoLowerTreeLevel: () => void;
 };
 
 const quickPick: quickPickModule = {
@@ -200,12 +162,10 @@ const quickPick: quickPickModule = {
   handleDidHide,
   handleDidChangeValueClearing,
   handleDidChangeValue,
-  handleWillGoLowerTreeLevel,
 };
 
 export function createQuickPick() {
   quickPick.quickPickControl.matchOnDescription = true;
-  onWillGoLowerTreeLevel(quickPick.handleWillGoLowerTreeLevel);
   quickPick.registerEventListeners();
 
   return quickPick;

@@ -1,14 +1,9 @@
 import * as vscode from "vscode";
 import { appConfig } from "./appConfig";
-import ItemType from "./enum/itemType";
 import QuickPickItem from "./interface/quickPickItem";
 
 export function isValueStringType(value: QuickPickItem | string): boolean {
   return typeof value === "string";
-}
-
-export function isValueFileType(value: QuickPickItem): boolean {
-  return value.type === ItemType.File;
 }
 
 export function getSearchUrl(value: string): string {
@@ -21,7 +16,7 @@ export function getNameFromQuickPickItem(item: QuickPickItem): string {
 }
 
 export function removeDataWithEmptyUrl(data: QuickPickItem[]): QuickPickItem[] {
-  return data.filter((element) => element.url);
+  return data.filter((item) => item.url);
 }
 
 export function printErrorMessage(error: Error): void {
