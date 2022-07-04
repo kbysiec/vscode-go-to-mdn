@@ -1,9 +1,9 @@
-import { OutputData } from "../../interface/outputData";
+import { InputData } from "../../interface/inputData";
 
 export const getTestSetups = () => {
   return {
     parseData1: () => {
-      const expected: OutputData = {
+      const expected: InputData = {
         items: [
           {
             name: "sub-label",

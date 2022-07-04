@@ -1,6 +1,6 @@
 import Item from "./item";
 
-export interface OutputData {
+export interface InputData {
   items: Item[];
   count: number;
 }

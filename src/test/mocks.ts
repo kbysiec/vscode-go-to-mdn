@@ -1,13 +1,13 @@
+import { InputData } from "../interface/inputData";
 import Item from "../interface/item";
-import { OutputData } from "../interface/outputData";
 import QuickPickItem from "../interface/quickPickItem";
 
-export const emptyOutputData: OutputData = {
+export const emptyOutputData: InputData = {
   items: [],
   count: 0,
 };
 
-export const outputData: OutputData = {
+export const outputData: InputData = {
   items: [
     {
       name: "sub-label",
