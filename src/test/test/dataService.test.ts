@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import * as dataService from "../../dataService";
-import * as mock from "../mock/dataService.mock";
+import * as mock from "../mocks";
 import { getTestSetups } from "../testSetup/dataService.testSetup";
 
 type SetupsType = ReturnType<typeof getTestSetups>;

@@ -4,7 +4,7 @@ import { appConfig } from "../../appConfig";
 import * as dataService from "../../dataService";
 import * as QuickPick from "../../quickPick";
 import * as utils from "../../utils";
-import * as mock from "../mock/quickPick.mock";
+import * as mock from "../mocks";
 import { stubMultiple } from "../util/stubHelpers";
 
 type QuickPick = typeof QuickPick;

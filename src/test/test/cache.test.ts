@@ -2,7 +2,7 @@ import { assert } from "chai";
 import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
 import * as cache from "../../cache";
-import * as mock from "../mock/cache.mock";
+import * as mock from "../mocks";
 import { getTestSetups } from "../testSetup/cache.testSetup";
 
 type SetupsType = ReturnType<typeof getTestSetups>;

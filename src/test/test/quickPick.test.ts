@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { createQuickPick } from "../../quickPick";
-import * as mock from "../mock/quickPick.mock";
+import * as mock from "../mocks";
 import { getTestSetups } from "../testSetup/quickPick.testSetup";
 
 type QuickPick = ReturnType<typeof createQuickPick>;
@@ -44,7 +44,7 @@ describe("Quick Pick", () => {
     it("1: should load list of items", async () => {
       setups.loadQuickPickData1();
       await quickPick.loadQuickPickData();
-      assert.deepEqual(quickPick.quickPickControl!.items, mock.qpItems);
+      assert.deepEqual(quickPick.quickPickControl.items, mock.qpItems);
     });
   });
 
@@ -52,7 +52,7 @@ describe("Quick Pick", () => {
     it("1: should invoke open function", async () => {
       const [openStub] = setups.submit1();
       await quickPick.submit(mock.qpItem);
-      assert.equal(openStub.withArgs("http://test.com").calledOnce, true);
+      assert.equal(openStub.withArgs(mock.qpItem.url).calledOnce, true);
     });
 
     it("2: should invoke open function with search url if value is string", async () => {
@@ -70,7 +70,7 @@ describe("Quick Pick", () => {
       const [openInBrowserStub] = setups.submit3();
       await quickPick.submit(mock.qpItem);
       assert.equal(
-        openInBrowserStub.withArgs("http://test.com").calledOnce,
+        openInBrowserStub.withArgs(mock.qpItem.url).calledOnce,
         true
       );
     });
@@ -101,7 +101,7 @@ describe("Quick Pick", () => {
   describe("handleDidChangeValueClearing", () => {
     it("1: should quick pick items be cleared", () => {
       quickPick.handleDidChangeValueClearing();
-      assert.deepEqual(quickPick.quickPickControl!.items, []);
+      assert.deepEqual(quickPick.quickPickControl.items, []);
     });
   });
 
@@ -112,7 +112,7 @@ describe("Quick Pick", () => {
       const searchQuery = "test";
       quickPick.handleDidChangeValue(searchQuery);
 
-      assert.deepEqual(quickPick.quickPickControl!.items.length, 2);
+      assert.deepEqual(quickPick.quickPickControl.items.length, 2);
     });
   });
 });

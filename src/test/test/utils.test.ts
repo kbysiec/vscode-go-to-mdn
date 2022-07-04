@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import * as utils from "../../utils";
-import * as mock from "../mock/utils.mock";
+import * as mock from "../mocks";
 import { getTestSetups } from "../testSetup/utils.testSetup";
 
 type SetupsType = ReturnType<typeof getTestSetups>;
@@ -19,7 +19,7 @@ describe("Utils", () => {
     });
 
     it("2: should return false if value is not a string", () => {
-      assert.equal(utils.isValueStringType(mock.qpItemFile), false);
+      assert.equal(utils.isValueStringType(mock.qpItem), false);
     });
   });
 
@@ -40,10 +40,7 @@ describe("Utils", () => {
 
   describe("getNameFromQuickPickItem", () => {
     it("1: should return name from label without first category", () => {
-      assert.equal(
-        utils.getNameFromQuickPickItem(mock.qpItemFile),
-        "test-label sub-label"
-      );
+      assert.equal(utils.getNameFromQuickPickItem(mock.qpItem), "sub-label");
     });
 
     it("2: should return empty name", () => {

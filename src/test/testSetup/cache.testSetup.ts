@@ -1,6 +1,6 @@
 import * as sinon from "sinon";
 import { appConfig } from "../../appConfig";
-import * as mock from "../mock/cache.mock";
+import * as mock from "../mocks";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubHelpers";
 

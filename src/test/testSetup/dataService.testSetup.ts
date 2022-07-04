@@ -3,7 +3,7 @@ import * as cache from "../../cache";
 import * as dataConverter from "../../dataConverter";
 import * as dataDownloader from "../../dataDownloader";
 import * as utils from "../../utils";
-import * as mock from "../mock/mocks";
+import * as mock from "../mocks";
 import { stubMultiple } from "../util/stubHelpers";
 
 export const getTestSetups = () => {

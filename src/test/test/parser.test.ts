@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import * as parser from "../../parser";
-import * as mock from "../mock/mocks";
+import * as mock from "../mocks";
 
 describe("Parser", () => {
   describe("parseData", () => {

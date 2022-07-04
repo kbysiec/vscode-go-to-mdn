@@ -1,5 +1,5 @@
 import { assert, expect, use } from "chai";
-import * as mock from "../mock/mocks";
+import * as mock from "../mocks";
 import { getTestSetups } from "../testSetup/dataDownloader.testSetup";
 
 type SetupsType = ReturnType<typeof getTestSetups>;
