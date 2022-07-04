@@ -2,25 +2,23 @@ import * as vscode from "vscode";
 import { getDataFromCache, updateDataInCache } from "./cache";
 import { prepareQpData } from "./dataConverter";
 import { downloadData } from "./dataDownloader";
-import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
 
 export async function getQuickPickData(): Promise<QuickPickItem[]> {
   let data = getDataFromCache();
-  const inCache = data ? data.length > 0 : false;
+  const inCache = data ? data.count > 0 : false;
 
   if (!inCache) {
     await cacheDataWithProgress();
     data = getDataFromCache();
   }
 
-  return data ? prepareQpData(data) : [];
+  return data ? prepareQpData(data.items) : [];
 }
 
-async function downloadAllData(): Promise<Item[]> {
+async function downloadAllData() {
   const data = await downloadData();
   updateDataInCache(data);
-  return data;
 }
 
 async function getData(

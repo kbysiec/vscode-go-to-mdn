@@ -1,6 +1,5 @@
 import fetch, { Response } from "node-fetch";
 import { appConfig } from "./appConfig";
-import Item from "./interface/item";
 import { parseData } from "./parser";
 
 async function fetchFn(url: string) {
@@ -27,7 +26,7 @@ async function getJson(response: Response): Promise<any> {
   return await response.json();
 }
 
-export async function downloadData(): Promise<Item[]> {
+export async function downloadData() {
   const json = await fetchData();
   return parseData(json);
 }

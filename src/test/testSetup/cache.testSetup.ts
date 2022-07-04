@@ -44,7 +44,7 @@ export const getTestSetups = () => {
           {
             object: context.globalState,
             method: "get",
-            returns: mock.items,
+            returns: mock.outputData,
           },
         ],
         sandbox

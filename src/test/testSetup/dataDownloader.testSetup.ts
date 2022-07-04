@@ -3,7 +3,6 @@ import * as proxyquire from "proxyquire";
 import * as sinon from "sinon";
 import { appConfig } from "../../appConfig";
 import * as DataDownloader from "../../dataDownloader";
-import Item from "../../interface/item";
 import * as parser from "../../parser";
 import { stubMultiple } from "../util/stubHelpers";
 
@@ -32,20 +31,11 @@ export const getTestSetups = () => {
       sandbox.restore();
     },
     downloadData1: () => {
-      const expected: Item[] = [
-        {
-          name: "compact",
-          url: "https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact",
-          breadcrumbs: ["api", "HTMLU List Element", "compact"],
-        },
-      ];
-
-      stubMultiple(
+      const stubs = stubMultiple(
         [
           {
             object: parser,
             method: "parseData",
-            returns: expected,
           },
         ],
         sandbox
@@ -54,14 +44,14 @@ export const getTestSetups = () => {
       const fetchStub = fetchMock.get(
         appConfig.inputDataUrl,
         new Response(
-          '{"items":[{"id":216685,"name":"compact","url":"https://developer.mozilla.org/docs/Web/API/HTMLUListElement/compact","parent":null,"rootParent":null,"type":2,"breadcrumbs":["api","HTMLU List Element","compact"],"timestamp":"2019-11-19T00:00:00"}]}',
+          `{"prop1": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label"}},"prop2": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label-2"}}}`,
           { status: 200 }
         )
       );
 
       return {
         dataDownloader: getComponent(sandbox, fetchStub),
-        expected,
+        stubs,
       };
     },
     downloadData2: () => {

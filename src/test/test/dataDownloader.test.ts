@@ -1,4 +1,5 @@
 import { assert, expect, use } from "chai";
+import * as mock from "../mock/mocks";
 import { getTestSetups } from "../testSetup/dataDownloader.testSetup";
 
 type SetupsType = ReturnType<typeof getTestSetups>;
@@ -17,12 +18,13 @@ describe("DataDownloader", () => {
 
   describe("downloadData", () => {
     it("1: should return array with one item", async () => {
-      const { dataDownloader, expected } = setups.downloadData1();
-      const actual = await dataDownloader
-        .downloadData()
-        .catch((err) => console.log(err));
+      const {
+        dataDownloader,
+        stubs: [parseDataStub],
+      } = setups.downloadData1();
+      await dataDownloader.downloadData().catch((err) => console.log(err));
 
-      assert.deepEqual(actual, expected);
+      assert.equal(parseDataStub.calledWith(mock.parserInput), true);
     });
 
     it("2: should reject once api response with inappropriate status code", async () => {
