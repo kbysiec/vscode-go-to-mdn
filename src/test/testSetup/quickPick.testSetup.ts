@@ -68,7 +68,7 @@ export const getTestSetups = () => {
           {
             object: dataService,
             method: "getQuickPickData",
-            returns: Promise.resolve(mock.qpItems),
+            returns: Promise.resolve(mock.outputData),
           },
         ],
         sandbox

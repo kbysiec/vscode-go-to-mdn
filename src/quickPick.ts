@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { getQuickPickData } from "./dataService";
+import { OutputData } from "./interface/outputData";
 import QuickPickItem from "./interface/QuickPickItem";
 import { getSearchUrl, isValueStringType, printErrorMessage } from "./utils";
 const open = require("open");
@@ -23,13 +24,13 @@ function showQuickPick(): void {
 
 const loadQuickPickData = async (value?: QuickPickItem) => {
   showLoading(true);
-  let data: QuickPickItem[];
+  let data: OutputData;
 
   data = await getQuickPickData();
   preparePlaceholder();
 
   quickPick.clearText();
-  loadItems(data);
+  loadItems(data.items);
   showLoading(false);
 };
 

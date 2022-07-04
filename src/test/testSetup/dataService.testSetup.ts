@@ -27,8 +27,7 @@ export const getTestSetups = () => {
           },
           {
             object: dataConverter,
-            method: "prepareQpData",
-            returns: mock.qpItems,
+            method: "prepareOutputData",
           },
         ],
         sandbox
@@ -49,7 +48,7 @@ export const getTestSetups = () => {
 
           {
             object: dataConverter,
-            method: "prepareQpData",
+            method: "prepareOutputData",
             returns: mock.qpItems,
           },
           {

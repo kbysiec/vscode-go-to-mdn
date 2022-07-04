@@ -1,9 +1,11 @@
+import { InputData } from "./interface/inputData";
 import Item from "./interface/item";
+import { OutputData } from "./interface/outputData";
 import QuickPickItem from "./interface/quickPickItem";
 
 const linkIcon = "$(link)";
 
-function mapDataToQpData(
+function mapItemsToQpItems(
   data: Item[],
   isFlat: boolean = false
 ): QuickPickItem[] {
@@ -35,7 +37,10 @@ function getBreadcrumbs(item: Item | QuickPickItem): string {
   return breadcrumbs.join(" ");
 }
 
-export function prepareQpData(data: Item[]): QuickPickItem[] {
-  const qpData: QuickPickItem[] = mapDataToQpData(data);
-  return qpData;
+export function prepareOutputData(data: InputData): OutputData {
+  const outputData = {
+    items: mapItemsToQpItems(data.items),
+    count: data.count,
+  };
+  return outputData;
 }

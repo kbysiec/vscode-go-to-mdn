@@ -6,11 +6,11 @@ describe("Parser", () => {
   describe("parseData", () => {
     it("1: should return array of Item elements", () => {
       const actual = parser.parseData(mock.parserInput);
-      assert.deepEqual(actual, mock.outputData);
+      assert.deepEqual(actual, mock.inputData);
     });
 
     it("2: should return empty array", () => {
-      assert.deepEqual(parser.parseData({}), mock.emptyOutputData);
+      assert.deepEqual(parser.parseData({}), mock.emptyInputData);
     });
   });
 });

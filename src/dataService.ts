@@ -1,10 +1,9 @@
 import * as vscode from "vscode";
 import { getDataFromCache, updateDataInCache } from "./cache";
-import { prepareQpData } from "./dataConverter";
+import { prepareOutputData } from "./dataConverter";
 import { downloadData } from "./dataDownloader";
-import QuickPickItem from "./interface/quickPickItem";
 
-export async function getQuickPickData(): Promise<QuickPickItem[]> {
+export async function getQuickPickData() {
   let data = getDataFromCache();
   const inCache = data ? data.count > 0 : false;
 
@@ -13,12 +12,7 @@ export async function getQuickPickData(): Promise<QuickPickItem[]> {
     data = getDataFromCache();
   }
 
-  return data ? prepareQpData(data.items) : [];
-}
-
-async function downloadAllData() {
-  const data = await downloadData();
-  updateDataInCache(data);
+  return data || [];
 }
 
 async function getData(
@@ -27,17 +21,16 @@ async function getData(
     increment?: number | undefined;
   }>
 ): Promise<void> {
-  progress &&
-    progress.report({
-      increment: 40,
-    });
+  reportProgress(progress, 25);
+  const inputData = await downloadData();
 
-  await downloadAllData();
+  reportProgress(progress, 25);
+  const outputData = prepareOutputData(inputData);
 
-  progress &&
-    progress.report({
-      increment: 60,
-    });
+  reportProgress(progress, 25);
+  updateDataInCache(outputData);
+
+  reportProgress(progress, 25);
 }
 
 async function cacheDataWithProgress() {
@@ -49,6 +42,19 @@ async function cacheDataWithProgress() {
     },
     cacheDataWithProgressTask
   );
+}
+
+function reportProgress(
+  progress: vscode.Progress<{
+    message?: string | undefined;
+    increment?: number | undefined;
+  }>,
+  increment: number
+) {
+  progress &&
+    progress.report({
+      increment,
+    });
 }
 
 export async function cacheDataWithProgressTask(

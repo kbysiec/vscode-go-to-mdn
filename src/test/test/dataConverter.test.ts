@@ -13,10 +13,10 @@ describe("DataConverter", () => {
   });
   afterEach(() => setups.afterEach());
 
-  describe("prepareQpData", () => {
+  describe("prepareOutputData", () => {
     it("1: should return array of QuickPickItem", () => {
-      const actual = dataConverter.prepareQpData(mock.items);
-      assert.deepEqual(actual, mock.qpItems);
+      const actual = dataConverter.prepareOutputData(mock.inputData);
+      assert.deepEqual(actual, mock.outputData);
     });
   });
 });

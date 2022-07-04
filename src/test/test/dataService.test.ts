@@ -16,7 +16,7 @@ describe("DataService", () => {
   describe("getQuickPickData", () => {
     it("1: should return quick pick data from cache", async () => {
       setups.getQuickPickData1();
-      assert.deepEqual(await dataService.getQuickPickData(), mock.qpItems);
+      assert.deepEqual(await dataService.getQuickPickData(), mock.outputData);
     });
 
     it("2: should downloadData be invoked if cache is empty", async () => {
