@@ -1,6 +1,5 @@
 import { assert } from "chai";
 import * as dataConverter from "../../dataConverter";
-import Item from "../../interface/Item";
 import QuickPickItem from "../../interface/QuickPickItem";
 import * as mock from "../mock/dataConverter.mock";
 import { getTestSetups } from "../testSetup/dataConverter.testSetup";
@@ -23,15 +22,6 @@ describe("DataConverter", () => {
 
       assert.equal(actual.length, expectedLength);
       assert.deepEqual(actual[1], expectedSecondItem);
-    });
-  });
-
-  describe("mapQpItemToItem", () => {
-    it("1: should return Item object", () => {
-      const expected: Item = setups.mapQpItemToItem1();
-      const actual = dataConverter.mapQpItemToItem(mock.qpItemFile);
-
-      assert.deepEqual(actual, expected);
     });
   });
 });

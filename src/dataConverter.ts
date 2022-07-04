@@ -1,10 +1,7 @@
-// import { shouldDisplayFlatList } from "./config";
 import Item from "./interface/item";
 import QuickPickItem from "./interface/quickPickItem";
-import { getNameFromQuickPickItem } from "./utils";
 
 const linkIcon = "$(link)";
-const directoryIcon = "$(file-directory)";
 
 function mapDataToQpData(
   data: Item[],
@@ -41,12 +38,4 @@ function getBreadcrumbs(item: Item | QuickPickItem): string {
 export function prepareQpData(data: Item[]): QuickPickItem[] {
   const qpData: QuickPickItem[] = mapDataToQpData(data);
   return qpData;
-}
-
-export function mapQpItemToItem(qpItem: QuickPickItem): Item {
-  return {
-    name: getNameFromQuickPickItem(qpItem),
-    url: qpItem.url,
-    breadcrumbs: qpItem.breadcrumbs,
-  };
 }
