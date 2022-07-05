@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { getQuickPickData } from "./dataService";
-import { OutputData } from "./interface/outputData";
-import QuickPickItem from "./interface/QuickPickItem";
+import { OutputData, QuickPickItem } from "./types";
 import { getSearchUrl, isValueStringType, printErrorMessage } from "./utils";
 const open = require("open");
 const debounce = require("debounce");

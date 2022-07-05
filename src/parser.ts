@@ -1,6 +1,5 @@
 import { appConfig } from "./appConfig";
-import { InputData } from "./interface/inputData";
-import Item from "./interface/item";
+import { InputData, Item, Json } from "./types";
 
 function normalizeItemName(name: string): string {
   return name.split(/(?=[A-Z][a-z])/).join(" ");
@@ -19,12 +18,12 @@ function parseItem(keyValue: string): Item {
   };
 }
 
-function deleteReduntantPropsFromJson(json: any) {
+function deleteReduntantPropsFromJson(json: Json) {
   const redundantProps = ["__meta", "browsers", "webdriver", "webextensions"];
   redundantProps.forEach((key) => delete json[key]);
 }
 
-export function parseData(json: any): InputData {
+export function parseData(json: Json): InputData {
   deleteReduntantPropsFromJson(json);
   const jsonAsString = JSON.stringify(json);
   const urlsAsString = JSON.stringify(jsonAsString.match(appConfig.dataRegex));

@@ -1,5 +1,5 @@
 import * as sinon from "sinon";
-import Item from "../../interface/item";
+import { Item } from "../../types";
 import * as utils from "../../utils";
 import { stubMultiple } from "../util/stubHelpers";
 

@@ -1,7 +1,4 @@
-import { InputData } from "./interface/inputData";
-import Item from "./interface/item";
-import { OutputData } from "./interface/outputData";
-import QuickPickItem from "./interface/quickPickItem";
+import { InputData, Item, OutputData, QuickPickItem } from "./types";
 
 const linkIcon = "$(link)";
 

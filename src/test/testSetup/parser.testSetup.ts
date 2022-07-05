@@ -1,4 +1,4 @@
-import { InputData } from "../../interface/inputData";
+import { InputData } from "../../types";
 
 export const getTestSetups = () => {
   return {

@@ -1,7 +1,4 @@
-import { InputData } from "../interface/inputData";
-import Item from "../interface/item";
-import { OutputData } from "../interface/outputData";
-import QuickPickItem from "../interface/quickPickItem";
+import { InputData, Item, Json, OutputData, QuickPickItem } from "../types";
 
 export const emptyInputData: InputData = {
   items: [],
@@ -47,7 +44,7 @@ export const outputData: OutputData = {
   count: 2,
 };
 
-export const parserInput: any = {
+export const parserInput: Json = {
   __meta: "version 1.2.3",
   browsers: {
     __compat: {

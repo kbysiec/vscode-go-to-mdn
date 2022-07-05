@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { appConfig } from "./appConfig";
-import QuickPickItem from "./interface/quickPickItem";
+import { QuickPickItem } from "./types";
 
 export function isValueStringType(value: QuickPickItem | string): boolean {
   return typeof value === "string";

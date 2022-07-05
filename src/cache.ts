@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { appConfig } from "./appConfig";
-import { OutputData } from "./interface/outputData";
+import { OutputData } from "./types";
 
 let extensionContext: vscode.ExtensionContext;
 
@@ -13,7 +13,9 @@ export function updateDataInCache(data: OutputData): void {
 }
 
 export function getDataFromCache(): OutputData {
-  const data: any = extensionContext.globalState.get(appConfig.cacheKey);
+  const data: OutputData | undefined = extensionContext.globalState.get(
+    appConfig.cacheKey
+  );
 
   return data || { items: [], count: 0 };
 }
