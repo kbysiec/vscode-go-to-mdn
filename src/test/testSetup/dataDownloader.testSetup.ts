@@ -44,7 +44,7 @@ export const getTestSetups = () => {
       const fetchStub = fetchMock.get(
         appConfig.inputDataUrl,
         new Response(
-          `{"prop1": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label"}},"prop2": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label-2"}}}`,
+          `{"__meta": "version 1.2.3","browsers": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label-3"}},"prop1": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label"}},"prop2": {"__compat": {"mdn_url": "https://developer.mozilla.org/docs/api/test-label/sub-label-2"}}}`,
           { status: 200 }
         )
       );

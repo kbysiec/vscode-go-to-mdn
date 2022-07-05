@@ -19,7 +19,13 @@ function parseItem(keyValue: string): Item {
   };
 }
 
+function deleteReduntantPropsFromJson(json: any) {
+  const redundantProps = ["__meta", "browsers", "webdriver", "webextensions"];
+  redundantProps.forEach((key) => delete json[key]);
+}
+
 export function parseData(json: any): InputData {
+  deleteReduntantPropsFromJson(json);
   const jsonAsString = JSON.stringify(json);
   const urlsAsString = JSON.stringify(jsonAsString.match(appConfig.dataRegex));
   const urls: string[] = JSON.parse(urlsAsString);

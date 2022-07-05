@@ -17,7 +17,7 @@ describe("DataDownloader", () => {
   afterEach(() => setups.afterEach());
 
   describe("downloadData", () => {
-    it("1: should return array with one item", async () => {
+    it("1: should parserData function be invoked with json for extracting items", async () => {
       const {
         dataDownloader,
         stubs: [parseDataStub],

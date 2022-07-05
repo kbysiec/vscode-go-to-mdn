@@ -12,5 +12,9 @@ describe("Parser", () => {
     it("2: should return empty array", () => {
       assert.deepEqual(parser.parseData({}), mock.emptyInputData);
     });
+
+    it("3: should remove redundant json properties", () => {
+      assert.deepEqual(parser.parseData(mock.parserInput), mock.inputData);
+    });
   });
 });
