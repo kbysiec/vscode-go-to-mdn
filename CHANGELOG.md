@@ -4,6 +4,15 @@ All notable changes to the "vscode-go-to-mdn" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.0] - 2022-07-05
+
+- Full rebuilt from class based to function based approach
+- Test improvements
+- Improved loading time ux
+- Removed tree view approach
+- Updated data source to https://unpkg.com/@mdn/browser-compat-data/data.json
+- Logo changed
+
 ## [1.1.5] - 2021-03-20
 
 - Changed backend url for downloading flat view data

@@ -6,9 +6,8 @@ It allows user to browse MDN web docs directly from Visual Studio Code using com
 The data comes from [MDN Github repository](https://github.com/mdn/browser-compat-data).
 Big thanks for MDN and all contributors for great job.
 
-Due to big amount of data, to avoid delay in downloading everything at once, the requested data are lazy loaded.
-It means that they are downloaded once the user asks for them and cached after that.
-Second call for the same data will be fed from cache, not from github api.
+Due to big amount of data, they are downloaded once the user asks for them and cached after that.
+Second call and other calls will be fed from cache.
 This approach allows to keep the extension responsive.
 
 ## Features
@@ -16,15 +15,7 @@ This approach allows to keep the extension responsive.
 The data provided in extension are limited to the ones with valid url in MDN github repository mentioned at the beginning.
 Once confirming the interested item, the default browser will be opened with direct url according your request.
 
-You have two ways to browse the results:
-
-- flat navigation:
-
 ![Preview of the browse feature](img/browse_flat.gif)
-
-- tree navigation:
-
-![Preview of the browse feature](img/browse.gif)
 
 If you do not find what you are looking for, you could just type the term you are looking, press Enter and you MDN web docs
 website will be opened with search results for your query.
@@ -40,23 +31,6 @@ website will be opened with search results for your query.
 - `goToMDN.clearCache`
 
   If you know that the cached data is outdated, clear extension cache to download it one more time.
-
-## Extension Settings
-
-- `goToMDN.githubPersonalAccessToken`
-
-Allows to increase number of requests to API from 60 (unauthenticated) to 5000 (authenticated) per hour.
-
-Github API has limits for requests number. For unauthenticated users it is 60 requests per hour.
-For authenticated it equals to 5000 requests per hour.
-Most of users should not need more than 60, but in case anyone would like to browse a lot, he/she should
-provide a personal access token (in settings) generated in his/her github account to increase the available
-requests number.
-
-- `goToMDN.shouldDisplayFlatList`
-
-Flag to determine if the results should be displayed as flat list or as tree with navigation.
-Default value is `true`.
 
 ## Release Notes
 
