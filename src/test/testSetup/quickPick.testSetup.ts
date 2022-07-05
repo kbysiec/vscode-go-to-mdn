@@ -84,6 +84,11 @@ export const getTestSetups = () => {
               method: "isValueStringType",
               returns: false,
             },
+            {
+              object: dataService,
+              method: "getQuickPickData",
+              returns: Promise.resolve(mock.outputData),
+            },
           ],
           sandbox
         ),
@@ -134,6 +139,11 @@ export const getTestSetups = () => {
             object: utils,
             method: "isValueStringType",
             returns: false,
+          },
+          {
+            object: dataService,
+            method: "getQuickPickData",
+            returns: Promise.resolve(mock.outputData),
           },
         ],
         sandbox
