@@ -130,25 +130,8 @@ const handleDidChangeValue = (value: string) => {
   showLoading(false);
 };
 
-type quickPickModule = {
-  items: QuickPickItem[];
-  quickPickControl: vscode.QuickPick<QuickPickItem>;
-  registerEventListeners: () => void;
-  showQuickPick: () => void;
-  loadQuickPickData: (value?: QuickPickItem | undefined) => Promise<void>;
-  submit: (selected: QuickPickItem | undefined) => Promise<void>;
-  clearText: () => void;
-  processIfValueIsStringType: (value: string) => Promise<void>;
-  processIfValueIsQuickPickItemType: (value: QuickPickItem) => Promise<void>;
-  openInBrowser: (url: string) => Promise<void>;
-  handleDidAccept: () => Promise<void>;
-  handleDidHide: () => void;
-  handleDidChangeValueClearing: () => void;
-  handleDidChangeValue: (value: string) => void;
-};
-
-const quickPick: quickPickModule = {
-  items: [],
+const quickPick = {
+  items: [] as QuickPickItem[],
   quickPickControl: vscode.window.createQuickPick<QuickPickItem>(),
   registerEventListeners,
   showQuickPick,
