@@ -1,5 +1,6 @@
 import * as sinon from "sinon";
 import * as vscode from "vscode";
+import * as cache from "../../cache";
 import { controller } from "../../controller";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubHelpers";
@@ -17,7 +18,20 @@ export const getTestSetups = () => {
     },
     activate1: () => {
       return stubMultiple(
-        [{ object: vscode.commands, method: "registerCommand" }],
+        [
+          {
+            object: vscode.commands,
+            method: "registerCommand",
+          },
+          {
+            object: cache,
+            method: "initCache",
+          },
+          {
+            object: controller,
+            method: "init",
+          },
+        ],
         sandbox
       );
     },

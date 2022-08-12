@@ -11,6 +11,21 @@ export const getTestSetups = () => {
     afterEach: () => {
       sandbox.restore();
     },
+    init1: () => {
+      return stubMultiple(
+        [
+          {
+            object: cache,
+            method: "initCache",
+          },
+          {
+            object: quickPick,
+            method: "init",
+          },
+        ],
+        sandbox
+      );
+    },
     browse1() {
       return stubMultiple(
         [

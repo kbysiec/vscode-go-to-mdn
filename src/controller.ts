@@ -16,7 +16,6 @@ function clear(): void {
 function init(extensionContext: vscode.ExtensionContext) {
   quickPick.init();
   initCache(extensionContext);
-  return controller;
 }
 
 export const controller = {
