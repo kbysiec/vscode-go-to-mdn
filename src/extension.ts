@@ -1,27 +1,27 @@
 import * as vscode from "vscode";
-import { extensionController } from "./extensionController";
+import { controller } from "./controller";
 
 export async function browse() {
-  await extensionController.browse();
+  await controller.browse();
 }
 
 export function clearCache() {
-  extensionController.clear();
+  controller.clear();
 }
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Extension "Go to MDN" has been activated.');
 
-  extensionController.init(context);
+  controller.init(context);
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "goToMDN.browse",
-      browse.bind(null, extensionController)
+      browse.bind(null, controller)
     ),
     vscode.commands.registerCommand(
       "goToMDN.clearCache",
-      clearCache.bind(null, extensionController)
+      clearCache.bind(null, controller)
     )
   );
 }

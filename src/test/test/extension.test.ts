@@ -25,7 +25,7 @@ describe("extension", () => {
   });
 
   describe("browse", () => {
-    it("1: should extensionController.browse method be invoked", () => {
+    it("1: should controller.browse method be invoked", () => {
       const [browseStub] = setups.browse1();
       extension.browse();
 
@@ -34,7 +34,7 @@ describe("extension", () => {
   });
 
   describe("clearCache", () => {
-    it("1: should extensionController.clearCache method be invoked", () => {
+    it("1: should controller.clearCache method be invoked", () => {
       const [clearCacheStub] = setups.clearCache1();
       extension.clearCache();
 

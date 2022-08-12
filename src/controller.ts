@@ -16,10 +16,10 @@ function clear(): void {
 function init(extensionContext: vscode.ExtensionContext) {
   quickPick.init();
   initCache(extensionContext);
-  return extensionController;
+  return controller;
 }
 
-export const extensionController = {
+export const controller = {
   init,
   browse,
   clear,

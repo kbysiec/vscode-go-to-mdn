@@ -1,10 +1,10 @@
 import { assert } from "chai";
-import { extensionController } from "../../extensionController";
-import { getTestSetups } from "../testSetup/extensionController.testSetup";
+import { controller } from "../../controller";
+import { getTestSetups } from "../testSetup/controller.testSetup";
 
 type SetupsType = ReturnType<typeof getTestSetups>;
 
-describe("extensionController", () => {
+describe("controller", () => {
   let setups: SetupsType;
 
   before(() => {
@@ -16,7 +16,7 @@ describe("extensionController", () => {
     it("1: should load data and show quickPick", async () => {
       const [showStub, loadQuickPickDataStub] = setups.browse1();
 
-      await extensionController.browse();
+      await controller.browse();
       assert.equal(showStub.calledOnce, true);
       assert.equal(loadQuickPickDataStub.calledOnce, true);
     });
@@ -26,7 +26,7 @@ describe("extensionController", () => {
     it("1: should invoke cache clearing function on cache object", async () => {
       const [clearCacheStub] = setups.clearCache1();
 
-      await extensionController.clear();
+      await controller.clear();
       assert.equal(clearCacheStub.calledOnce, true);
     });
   });
