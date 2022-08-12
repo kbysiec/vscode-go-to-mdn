@@ -3,18 +3,6 @@ import { getDataFromCache, updateDataInCache } from "./cache";
 import { prepareOutputData } from "./dataConverter";
 import { downloadData } from "./dataDownloader";
 
-export async function getQuickPickData() {
-  let data = getDataFromCache();
-  const inCache = data ? data.count > 0 : false;
-
-  if (!inCache) {
-    await cacheDataWithProgress();
-    data = getDataFromCache();
-  }
-
-  return data || [];
-}
-
 async function getData(
   progress: vscode.Progress<{
     message?: string | undefined;
@@ -55,6 +43,18 @@ function reportProgress(
     progress.report({
       increment,
     });
+}
+
+export async function getQuickPickData() {
+  let data = getDataFromCache();
+  const inCache = data ? data.count > 0 : false;
+
+  if (!inCache) {
+    await cacheDataWithProgress();
+    data = getDataFromCache();
+  }
+
+  return data || [];
 }
 
 export async function cacheDataWithProgressTask(
