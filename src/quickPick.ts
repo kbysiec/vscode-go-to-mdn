@@ -6,19 +6,17 @@ const open = require("open");
 const debounce = require("debounce");
 
 function registerEventListeners(): void {
-  quickPick.quickPickControl.onDidHide(quickPick.handleDidHide);
-  quickPick.quickPickControl.onDidAccept(quickPick.handleDidAccept);
+  const control = quickPick.getControl();
+  control.onDidHide(quickPick.handleDidHide);
+  control.onDidAccept(quickPick.handleDidAccept);
 
-  quickPick.quickPickControl.onDidChangeValue(
-    quickPick.handleDidChangeValueClearing
-  );
-  quickPick.quickPickControl.onDidChangeValue(
-    debounce(quickPick.handleDidChangeValue, 350)
-  );
+  control.onDidChangeValue(quickPick.handleDidChangeValueClearing);
+  control.onDidChangeValue(debounce(quickPick.handleDidChangeValue, 350));
 }
 
 function showQuickPick(): void {
-  quickPick.quickPickControl.show();
+  const control = quickPick.getControl();
+  control.show();
 }
 
 const loadQuickPickData = async (value?: QuickPickItem) => {
@@ -52,20 +50,19 @@ function loadItems(items: QuickPickItem[]): void {
   setItems(items);
 }
 
-function setItems(newItems: QuickPickItem[]): void {
-  quickPick.items = newItems;
-}
-
 function setQpItems(items: QuickPickItem[]): void {
-  quickPick.quickPickControl.items = items;
+  const control = quickPick.getControl();
+  control.items = items;
 }
 
 function showLoading(flag: boolean): void {
-  quickPick.quickPickControl.busy = flag;
+  const control = quickPick.getControl();
+  control.busy = flag;
 }
 
 function setPlaceholder(text: string | undefined): void {
-  quickPick.quickPickControl.placeholder = text;
+  const control = quickPick.getControl();
+  control.placeholder = text;
 }
 
 function preparePlaceholder(): void {
@@ -73,15 +70,18 @@ function preparePlaceholder(): void {
 }
 
 const clearText = () => {
-  quickPick.quickPickControl.value = "";
+  const control = quickPick.getControl();
+  control.value = "";
 };
 
 function filter(value: string): QuickPickItem[] {
-  return quickPick.items.filter(
-    (item) =>
-      item.label.toLowerCase().includes(value.toLowerCase()) ||
-      item.description!.toLowerCase().includes(value.toLowerCase())
-  );
+  return quickPick
+    .getItems()
+    .filter(
+      (item) =>
+        item.label.toLowerCase().includes(value.toLowerCase()) ||
+        item.description!.toLowerCase().includes(value.toLowerCase())
+    );
 }
 
 async function processIfValueIsStringType(value: string) {
@@ -90,16 +90,14 @@ async function processIfValueIsStringType(value: string) {
 }
 
 async function processIfValueIsQuickPickItemType(value: QuickPickItem) {
-  // if (isValueFileType(value)) {
   let url = value.url;
   url && (await quickPick.openInBrowser(url));
-  // } else {
   quickPick.loadQuickPickData(value);
-  // }
 }
 
 function normalizeSubmittedValue(value: QuickPickItem | undefined) {
-  return value || quickPick.quickPickControl.value;
+  const control = quickPick.getControl();
+  return value || control.value;
 }
 
 async function openInBrowser(url: string): Promise<void> {
@@ -107,7 +105,8 @@ async function openInBrowser(url: string): Promise<void> {
 }
 
 function getSelectedItem(): QuickPickItem {
-  return quickPick.quickPickControl.selectedItems[0];
+  const control = quickPick.getControl();
+  return control.selectedItems[0];
 }
 
 const handleDidAccept = async () => {
@@ -130,9 +129,37 @@ const handleDidChangeValue = (value: string) => {
   showLoading(false);
 };
 
-const quickPick = {
-  items: [] as QuickPickItem[],
-  quickPickControl: vscode.window.createQuickPick<QuickPickItem>(),
+function init() {
+  const control = vscode.window.createQuickPick<QuickPickItem>();
+  setControl(control);
+  control.matchOnDescription = true;
+  quickPick.registerEventListeners();
+}
+
+let quickPickControl: vscode.QuickPick<QuickPickItem>;
+let items: QuickPickItem[];
+
+function getControl() {
+  return quickPickControl;
+}
+
+function setControl(newControl: vscode.QuickPick<QuickPickItem>) {
+  quickPickControl = newControl;
+}
+
+function getItems() {
+  return items;
+}
+
+function setItems(newItems: QuickPickItem[]): void {
+  items = newItems;
+}
+
+export const quickPick = {
+  getControl,
+  getItems,
+  setItems,
+  init,
   registerEventListeners,
   showQuickPick,
   loadQuickPickData,
@@ -146,10 +173,3 @@ const quickPick = {
   handleDidChangeValueClearing,
   handleDidChangeValue,
 };
-
-export function createQuickPick() {
-  quickPick.quickPickControl.matchOnDescription = true;
-  quickPick.registerEventListeners();
-
-  return quickPick;
-}

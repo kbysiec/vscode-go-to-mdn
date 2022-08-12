@@ -1,17 +1,15 @@
 import { assert } from "chai";
-import { createExtensionController } from "../../extensionController";
+import { extensionController } from "../../extensionController";
 import { getTestSetups } from "../testSetup/extensionController.testSetup";
 
-type ExtensionController = ReturnType<typeof createExtensionController>;
 type SetupsType = ReturnType<typeof getTestSetups>;
 
 describe("extensionController", () => {
   let setups: SetupsType;
-  let extensionController: ExtensionController;
 
   before(() => {
     setups = getTestSetups();
-    extensionController = setups.before();
+    // extensionController = setups.before();
   });
   afterEach(() => setups.afterEach());
 

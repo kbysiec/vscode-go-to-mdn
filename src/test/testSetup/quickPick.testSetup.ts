@@ -1,21 +1,19 @@
 import * as proxyquire from "proxyquire";
 import * as sinon from "sinon";
+import * as vscode from "vscode";
 import { appConfig } from "../../appConfig";
 import * as dataService from "../../dataService";
-import * as QuickPick from "../../quickPick";
 import * as utils from "../../utils";
 import * as mock from "../mocks";
 import { stubMultiple } from "../util/stubHelpers";
 
-type QuickPick = typeof QuickPick;
-
 const getComponent = (sandbox: sinon.SinonSandbox) => {
   const openStub = sandbox.stub().returns(Promise.resolve());
-  const proxiedModule: QuickPick = proxyquire("../../quickPick", {
+  const proxiedModule = proxyquire("../../quickPick", {
     open: openStub,
   });
-  const { createQuickPick } = proxiedModule;
-  const quickPick = createQuickPick();
+  const { quickPick } = proxiedModule;
+  quickPick.init();
   sandbox.restore();
 
   return {
@@ -39,26 +37,62 @@ export const getTestSetups = () => {
       sandbox.restore();
     },
     registerEventListeners1: () => {
+      const quickPickInner =
+        vscode.window.createQuickPick<vscode.QuickPickItem>();
       return stubMultiple(
         [
           {
-            object: quickPick.quickPickControl,
+            object: quickPickInner,
             method: "onDidHide",
           },
-          { object: quickPick.quickPickControl, method: "onDidAccept" },
+          {
+            object: quickPickInner,
+            method: "onDidAccept",
+          },
+          {
+            object: quickPick,
+            method: "getControl",
+            returns: quickPickInner,
+          },
         ],
         sandbox
       );
     },
     registerEventListeners2: () => {
+      const quickPickInner =
+        vscode.window.createQuickPick<vscode.QuickPickItem>();
+
       return stubMultiple(
-        [{ object: quickPick.quickPickControl, method: "onDidChangeValue" }],
+        [
+          {
+            object: quickPickInner,
+            method: "onDidChangeValue",
+          },
+          {
+            object: quickPick,
+            method: "getControl",
+            returns: quickPickInner,
+          },
+        ],
         sandbox
       );
     },
     show1: () => {
+      const quickPickInner =
+        vscode.window.createQuickPick<vscode.QuickPickItem>();
+
       return stubMultiple(
-        [{ object: quickPick.quickPickControl, method: "show" }],
+        [
+          {
+            object: quickPickInner,
+            method: "show",
+          },
+          {
+            object: quickPick,
+            method: "getControl",
+            returns: quickPickInner,
+          },
+        ],
         sandbox
       );
     },
@@ -95,12 +129,15 @@ export const getTestSetups = () => {
       ];
     },
     submit2: () => {
+      const quickPickInner =
+        vscode.window.createQuickPick<vscode.QuickPickItem>();
+
       return [
         openStub,
         ...stubMultiple(
           [
             {
-              object: quickPick.quickPickControl,
+              object: quickPickInner,
               method: "value",
               returns: "test search text",
               isNotMethod: true,
@@ -121,6 +158,11 @@ export const getTestSetups = () => {
               object: utils,
               method: "isValueStringType",
               returns: true,
+            },
+            {
+              object: quickPick,
+              method: "getControl",
+              returns: quickPickInner,
             },
           ],
           sandbox
@@ -171,31 +213,47 @@ export const getTestSetups = () => {
       );
     },
     handleDidAccept1: () => {
+      const quickPickInner =
+        vscode.window.createQuickPick<vscode.QuickPickItem>();
+
       return stubMultiple(
         [
-          { object: quickPick, method: "submit" },
           {
-            object: quickPick.quickPickControl,
+            object: quickPick,
+            method: "submit",
+          },
+          {
+            object: quickPickInner,
             method: "selectedItems",
             returns: [mock.qpItem],
             isNotMethod: true,
+          },
+          {
+            object: quickPick,
+            method: "getControl",
+            returns: quickPickInner,
           },
         ],
         sandbox
       );
     },
     handleDidHide1: () => {
-      return stubMultiple([{ object: quickPick, method: "clearText" }]);
+      return stubMultiple(
+        [{ object: quickPick, method: "clearText" }],
+        sandbox
+      );
     },
     handleDidChangeValue1: () => {
-      return stubMultiple([
-        {
-          object: quickPick,
-          method: "items",
-          returns: mock.qpItems,
-          isNotMethod: true,
-        },
-      ]);
+      return stubMultiple(
+        [
+          {
+            object: quickPick,
+            method: "getItems",
+            returns: mock.qpItems,
+          },
+        ],
+        sandbox
+      );
     },
     handleWillGoLowerTreeLevel1: () => {
       return stubMultiple(

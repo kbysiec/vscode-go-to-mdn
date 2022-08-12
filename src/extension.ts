@@ -1,22 +1,18 @@
 import * as vscode from "vscode";
-import { createExtensionController } from "./extensionController";
+import { extensionController } from "./extensionController";
 
-export async function browse(
-  extensionController: ReturnType<typeof createExtensionController>
-) {
+export async function browse() {
   await extensionController.browse();
 }
 
-export function clearCache(
-  extensionController: ReturnType<typeof createExtensionController>
-) {
+export function clearCache() {
   extensionController.clear();
 }
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Extension "Go to MDN" has been activated.');
 
-  const extensionController = createExtensionController(context);
+  extensionController.init(context);
 
   context.subscriptions.push(
     vscode.commands.registerCommand(

@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
 import { clearCache, initCache } from "./cache";
-import * as quickPick from "./quickPick";
+import { quickPick } from "./quickPick";
 import { printClearCacheMessage } from "./utils";
 
 async function browse(): Promise<void> {
-  await extensionController.quickPick!.loadQuickPickData();
-  extensionController.quickPick!.showQuickPick();
+  await quickPick.loadQuickPickData();
+  quickPick.showQuickPick();
 }
 
 function clear(): void {
@@ -13,21 +13,14 @@ function clear(): void {
   printClearCacheMessage();
 }
 
-type extensionController = {
-  quickPick?: ReturnType<typeof quickPick.createQuickPick>;
-  browse: () => Promise<void>;
-  clear: () => void;
-};
-
-const extensionController: extensionController = {
-  browse,
-  clear,
-};
-
-export function createExtensionController(
-  extensionContext: vscode.ExtensionContext
-) {
-  extensionController.quickPick = quickPick.createQuickPick();
+function init(extensionContext: vscode.ExtensionContext) {
+  quickPick.init();
   initCache(extensionContext);
   return extensionController;
 }
+
+export const extensionController = {
+  init,
+  browse,
+  clear,
+};

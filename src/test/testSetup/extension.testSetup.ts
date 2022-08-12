@@ -1,56 +1,40 @@
 import * as sinon from "sinon";
 import * as vscode from "vscode";
-import * as extensionController from "../../extensionController";
+import { extensionController } from "../../extensionController";
 import { getExtensionContext } from "../util/mockFactory";
 import { stubMultiple } from "../util/stubHelpers";
 
-const getComponent = (sandbox: sinon.SinonSandbox) => {
-  const context = getExtensionContext();
-  const extensionControllerStub = {
-    browse: () => Promise.resolve(),
-    clear: () => {},
-  };
-
-  stubMultiple(
-    [
-      {
-        object: extensionController,
-        method: "createExtensionController",
-        returns: extensionControllerStub,
-      },
-    ],
-    sandbox
-  );
-  return {
-    context,
-    extensionController: extensionControllerStub,
-  };
-};
-
 export const getTestSetups = () => {
   const sandbox = sinon.createSandbox();
-  const { context, extensionController } = getComponent(sandbox);
+  const context = getExtensionContext();
 
   return {
     before: () => {
-      return { context, extensionController };
+      return context;
     },
     afterEach: () => {
       sandbox.restore();
     },
     activate1: () => {
-      return stubMultiple([
-        { object: vscode.commands, method: "registerCommand" },
-      ]);
+      return stubMultiple(
+        [{ object: vscode.commands, method: "registerCommand" }],
+        sandbox
+      );
     },
     deactivate1: () => {
-      return stubMultiple([{ object: console, method: "log" }]);
+      return stubMultiple([{ object: console, method: "log" }], sandbox);
     },
     browse1: () => {
-      return stubMultiple([{ object: extensionController, method: "browse" }]);
+      return stubMultiple(
+        [{ object: extensionController, method: "browse" }],
+        sandbox
+      );
     },
     clearCache1: () => {
-      return stubMultiple([{ object: extensionController, method: "clear" }]);
+      return stubMultiple(
+        [{ object: extensionController, method: "clear" }],
+        sandbox
+      );
     },
   };
 };

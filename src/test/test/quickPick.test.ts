@@ -1,14 +1,13 @@
 import { assert } from "chai";
-import { createQuickPick } from "../../quickPick";
+import { quickPick as quickPickModule } from "../../quickPick";
 import * as mock from "../mocks";
 import { getTestSetups } from "../testSetup/quickPick.testSetup";
 
-type QuickPick = ReturnType<typeof createQuickPick>;
 type SetupsType = ReturnType<typeof getTestSetups>;
 
 describe("Quick Pick", () => {
   let setups: SetupsType;
-  let quickPick: QuickPick;
+  let quickPick: typeof quickPickModule;
 
   before(() => {
     setups = getTestSetups();
@@ -44,7 +43,7 @@ describe("Quick Pick", () => {
     it("1: should load list of items", async () => {
       setups.loadQuickPickData1();
       await quickPick.loadQuickPickData();
-      assert.deepEqual(quickPick.quickPickControl.items, mock.qpItems);
+      assert.deepEqual(quickPick.getControl().items, mock.qpItems);
     });
   });
 
@@ -82,6 +81,14 @@ describe("Quick Pick", () => {
     });
   });
 
+  describe("setItems", () => {
+    it("1: should items be set", () => {
+      quickPick.setItems(mock.qpItems);
+
+      assert.equal(quickPick.getItems().length, 2);
+    });
+  });
+
   describe("handleDidAccept", () => {
     it("1: should have selected item", () => {
       const [submitStub] = setups.handleDidAccept1();
@@ -101,7 +108,7 @@ describe("Quick Pick", () => {
   describe("handleDidChangeValueClearing", () => {
     it("1: should quick pick items be cleared", () => {
       quickPick.handleDidChangeValueClearing();
-      assert.deepEqual(quickPick.quickPickControl.items, []);
+      assert.deepEqual(quickPick.getControl().items, []);
     });
   });
 
@@ -112,7 +119,7 @@ describe("Quick Pick", () => {
       const searchQuery = "test";
       quickPick.handleDidChangeValue(searchQuery);
 
-      assert.deepEqual(quickPick.quickPickControl.items.length, 2);
+      assert.deepEqual(quickPick.getControl().items.length, 2);
     });
   });
 });
