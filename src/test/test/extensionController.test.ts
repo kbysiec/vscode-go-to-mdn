@@ -9,7 +9,6 @@ describe("extensionController", () => {
 
   before(() => {
     setups = getTestSetups();
-    // extensionController = setups.before();
   });
   afterEach(() => setups.afterEach());
 

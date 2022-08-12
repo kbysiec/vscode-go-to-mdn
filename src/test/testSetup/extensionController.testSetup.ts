@@ -4,38 +4,10 @@ import { quickPick } from "../../quickPick";
 import * as utils from "../../utils";
 import { stubMultiple } from "../util/stubHelpers";
 
-// type ExtensionController = typeof ExtensionController;
-
-// const getComponent = (sandbox: sinon.SinonSandbox) => {
-//   stubMultiple(
-//     [
-//       { object: cache, method: "initCache" },
-//       {
-//         object: quickPick,
-//         method: "init",
-//         returns: {
-//           showQuickPick: () => {},
-//           loadQuickPickData: () => {},
-//         },
-//       },
-//     ],
-//     sandbox
-//   );
-//   const context: vscode.ExtensionContext = getExtensionContext();
-//   const { init } = ExtensionController;
-//   return {
-//     extensionController: init(context),
-//   };
-// };
-
 export const getTestSetups = () => {
   const sandbox = sinon.createSandbox();
-  // const { extensionController } = getComponent(sandbox);
 
   return {
-    // before: () => {
-    //   return extensionController;
-    // },
     afterEach: () => {
       sandbox.restore();
     },
